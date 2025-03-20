@@ -18,6 +18,38 @@ html,
 body {
   font-family: 'Pretendard', sans-serif;
   font-weight: 400; /* 기본값 */
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+}
+
+@layer utilities {
+  .font-Black {
+    font-weight: var(--fontWeight-900);
+  }
+  .font-ExtraBold {
+    font-weight: var(--fontWeight-800);
+  }
+  .font-Bold {
+    font-weight: var(--fontWeight-700);
+  }
+  .font-SemiBold {
+    font-weight: var(--fontWeight-600);
+  }
+  .font-Medium {
+    font-weight: var(--fontWeight-500);
+  }
+  .font-Regular {
+    font-weight: var(--fontWeight-400);
+  }
+  .font-Light {
+    font-weight: var(--fontWeight-300);
+  }
+  .font-ExtraLight {
+    font-weight: var(--fontWeight-200);
+  }
+  .font-Thin {
+    font-weight: var(--fontWeight-100);
+  }
 }
 
 :root {
@@ -37,6 +69,23 @@ body {
   --gray03: rgba(211, 211, 211, 1);
   --gray02: rgba(234, 234, 234, 1);
   --gray01: rgba(248, 248, 248, 1);
+
+  --fontSize-40: 2.5rem;
+  --fontSize-18: 1.125rem;
+  --fontSize-16: 1rem;
+  --fontSize-15: 0.9375rem;
+  --fontSize-14: 0.875rem;
+  --fontSize-13: 0.8125rem;
+
+  --fontWeight-900: 900;
+  --fontWeight-800: 800;
+  --fontWeight-700: 700;
+  --fontWeight-600: 600;
+  --fontWeight-500: 500;
+  --fontWeight-400: 400;
+  --fontWeight-300: 300;
+  --fontWeight-200: 200;
+  --fontWeight-100: 100;
 
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -105,6 +154,13 @@ body {
   --color-gray03: var(--gray03);
   --color-gray02: var(--gray02);
   --color-gray01: var(--gray01);
+
+  --text-40: var(--fontSize-40);
+  --text-18: var(--fontSize-18);
+  --text-16: var(--fontSize-16);
+  --text-15: var(--fontSize-15);
+  --text-14: var(--fontSize-14);
+  --text-13: var(--fontSize-13);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
