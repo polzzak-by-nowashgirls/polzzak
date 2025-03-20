@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-const category = [
+const CATEGORY_LIST = [
   {
     id: 0,
     name: '즐겨찾기',
@@ -34,7 +34,7 @@ function Category() {
         className="bg-gray01 flex items-center justify-center gap-6 py-[0.75rem]"
         role="menubar"
       >
-        {category.map((item) => (
+        {CATEGORY_LIST.map((item) => (
           <li key={item.id}>
             <Link
               to={item.linkURL}
