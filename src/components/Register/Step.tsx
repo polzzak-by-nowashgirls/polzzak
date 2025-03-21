@@ -28,11 +28,17 @@ const STEP_LIST = [
 function Step({ step }: StepProps) {
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-14 text-regular text-gray06 flex items-center justify-start">
-        <strong className="text-18 text-semibold text-primary mr-[0.1875rem]">
+      <div
+        className="text-14 text-regular text-gray06 flex items-center justify-start"
+        aria-label={`5단계 중 ${step}단계`}
+      >
+        <strong
+          className="text-18 text-semibold text-primary mr-[0.1875rem]"
+          aria-label="hidden"
+        >
           {step}
         </strong>
-        <span>/ 5</span>
+        <span aria-label="hidden">/ 5</span>
       </div>
       <h3 className="text-16 font-semibold text-black">
         {STEP_LIST[step - 1].title.map((line, index) => (

@@ -10,6 +10,7 @@ function Progress({
 }: React.ComponentProps<typeof ProgressPrimitive.Root>) {
   return (
     <ProgressPrimitive.Root
+      role="progressbar"
       data-slot="progress"
       className={cn(
         `bg-gray02 relative h-2 w-full overflow-hidden rounded-none`,
