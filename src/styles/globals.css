@@ -23,31 +23,31 @@ body {
 }
 
 @layer utilities {
-  .font-Black {
+  .font-black {
     font-weight: var(--fontWeight-900);
   }
-  .font-ExtraBold {
+  .font-extrabold {
     font-weight: var(--fontWeight-800);
   }
-  .font-Bold {
+  .font-bold {
     font-weight: var(--fontWeight-700);
   }
-  .font-SemiBold {
+  .font-semibold {
     font-weight: var(--fontWeight-600);
   }
-  .font-Medium {
+  .font-medium {
     font-weight: var(--fontWeight-500);
   }
-  .font-Regular {
+  .font-regular {
     font-weight: var(--fontWeight-400);
   }
-  .font-Light {
+  .font-light {
     font-weight: var(--fontWeight-300);
   }
-  .font-ExtraLight {
+  .font-extralight {
     font-weight: var(--fontWeight-200);
   }
-  .font-Thin {
+  .font-thin {
     font-weight: var(--fontWeight-100);
   }
 }
@@ -162,6 +162,10 @@ body {
   --text-14: var(--fontSize-14);
   --text-13: var(--fontSize-13);
 
+  --primary: var(--brand-color);
+  --primary-hover: var(--brand-hover);
+  --primary-active: var(--brand-active);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
@@ -174,10 +178,6 @@ body {
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-active: var(--primary-active);
-
-  --primary: var(--brand-color);
-  --primary-hover: var(--brand-hover);
-  --primary-active: var(--brand-active);
 
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
