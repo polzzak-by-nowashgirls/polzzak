@@ -7,6 +7,7 @@ interface InputProps extends Omit<React.ComponentProps<'input'>, 'type'> {
   type: 'text' | 'password' | 'button' | 'file';
   label: string;
   hideLabel?: boolean;
+  placeholder?: string;
   children?: React.ReactNode;
 }
 
@@ -15,10 +16,18 @@ function Input({
   type,
   label,
   hideLabel,
+  placeholder,
   children,
   ...props
 }: InputProps) {
   const labelId = React.useId();
+  const [fileName, setFileName] = React.useState<string>('');
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setFileName(file ? file.name : '');
+    props.onChange?.(e); // 파일 자체를 상위에 넘기기 위함
+  };
 
   const inputClassName = cn(
     'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-full file:cursor-pointer file:border-0 file:bg-transparent file:pr-2 file:font-medium',
@@ -31,8 +40,39 @@ function Input({
     className,
   );
 
-  return (
-    <div>
+  const iconBtn = children && (
+    <div className="absolute inset-y-0 right-0 flex items-center px-4">
+      {children}
+    </div>
+  );
+
+  return type === 'file' ? (
+    <>
+      <Label hideLabel={hideLabel} htmlFor={labelId}>
+        {label}
+      </Label>
+      <div className={cn(children && 'relative')}>
+        <label className={inputClassName}>
+          <input
+            type="file"
+            data-slot="input"
+            className="hidden"
+            id={labelId}
+            onChange={handleFileChange}
+            accept=".jpg,.jpeg,.png,.heic,.webp"
+            {...props}
+          />
+          <span
+            className={`${fileName ? 'text-black' : 'text-gray05'} flex-1 truncate text-left`}
+          >
+            {fileName || placeholder}
+          </span>
+        </label>
+        {iconBtn}
+      </div>
+    </>
+  ) : (
+    <>
       <Label hideLabel={hideLabel} htmlFor={labelId}>
         {label}
       </Label>
@@ -42,15 +82,13 @@ function Input({
           data-slot="input"
           className={`${inputClassName} ${type === 'button' && 'text-gray05 text-justify text-left'}`}
           id={labelId}
+          placeholder={placeholder}
           {...props}
         />
-        {children && (
-          <div className="absolute inset-y-0 right-0 flex items-center px-4">
-            {children}
-          </div>
-        )}
+
+        {iconBtn}
       </div>
-    </div>
+    </>
   );
 }
 
