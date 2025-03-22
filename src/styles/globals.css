@@ -70,6 +70,9 @@ body {
   --gray02: rgba(234, 234, 234, 1);
   --gray01: rgba(248, 248, 248, 1);
 
+  --success: rgba(88, 187, 118, 1);
+  --error: rgba(229, 89, 89, 1);
+
   --fontSize-40: 2.5rem;
   --fontSize-18: 1.125rem;
   --fontSize-16: 1rem;
@@ -154,6 +157,9 @@ body {
   --color-gray03: var(--gray03);
   --color-gray02: var(--gray02);
   --color-gray01: var(--gray01);
+
+  --color-success: var(--success);
+  --color-error: var(--error);
 
   --text-40: var(--fontSize-40);
   --text-18: var(--fontSize-18);
