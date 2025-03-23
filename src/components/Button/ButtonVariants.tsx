@@ -13,6 +13,8 @@ export const buttonVariants = cva(
           'bg-white text-gray08 hover:text-primary-hover active:text-primary-active disabled:bg-white disabled:text-gray04',
         float:
           'absolute bottom-[16px] right-[16px] bg-primary/75 px-3 text-white rounded-3xl hover:bg-primary/85 active:bg-primary',
+        input:
+          'm-0 p-0 text-gray05 hover:text-primary-hover active:text-primary',
       },
       size: {
         default: 'h-[46px] px-3.5 [&_svg:not([class*="size-"])]:size-5',
@@ -20,6 +22,12 @@ export const buttonVariants = cva(
         md: 'h-[32px] px-2 rounded-md [&_svg:not([class*="size-"])]:size-4',
       },
     },
+    compoundVariants: [
+      {
+        variant: 'input',
+        class: 'w-[32px] h-[32px] rounded-sm',
+      },
+    ],
     defaultVariants: {
       variant: 'default',
       size: 'default',
