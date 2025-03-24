@@ -31,10 +31,10 @@ function Input({
 
   const inputClassName = cn(
     'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-full file:cursor-pointer file:border-0 file:bg-transparent file:pr-2 file:font-medium',
-    'focus-visible:ring-ring/50 placeholder:text-gray05 focus-visible:ring-[2px] focus-visible:ring-offset-2',
+    'focus-visible:ring-ring placeholder:text-gray05 focus-visible:ring-[2px] focus-visible:ring-offset-2',
     'aria-invalid:ring-destructive/20 aria-invalid:border-destructive',
     'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-    'border-input text-14 m-0.5 flex h-10 w-full min-w-0 items-center rounded-md border bg-transparent px-4 py-3 shadow-xs transition-[color,box-shadow] outline-none',
+    'border-input fs-14 m-0.5 flex h-11.5 w-full min-w-0 items-center rounded-md border bg-transparent px-4 py-3 shadow-xs transition-[color,box-shadow] outline-none',
     (type === 'file' || type === 'button') && 'cursor-pointer py-0',
     children && 'pr-14',
     className,
