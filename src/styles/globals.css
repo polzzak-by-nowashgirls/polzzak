@@ -1,9 +1,6 @@
 @import 'tailwindcss';
-
 @plugin 'tailwindcss-animate';
-
-@custom-variant dark (&:is(.dark *));
-
+/* @custom-variant dark (&:is(.dark *)); */
 @tailwind utilities;
 
 @font-face {
@@ -18,208 +15,200 @@ html,
 body {
   font-family: 'Pretendard', sans-serif;
   font-weight: 400; /* 기본값 */
-  line-height: 1.6;
-  letter-spacing: -0.005em;
-}
-
-@layer utilities {
-  .font-black {
-    font-weight: var(--fontWeight-900);
-  }
-  .font-extrabold {
-    font-weight: var(--fontWeight-800);
-  }
-  .font-bold {
-    font-weight: var(--fontWeight-700);
-  }
-  .font-semibold {
-    font-weight: var(--fontWeight-600);
-  }
-  .font-medium {
-    font-weight: var(--fontWeight-500);
-  }
-  .font-regular {
-    font-weight: var(--fontWeight-400);
-  }
-  .font-light {
-    font-weight: var(--fontWeight-300);
-  }
-  .font-extralight {
-    font-weight: var(--fontWeight-200);
-  }
-  .font-thin {
-    font-weight: var(--fontWeight-100);
-  }
+  font-size: 1rem;
+  line-height: 160%;
+  letter-spacing: -0.005rem;
 }
 
 :root {
-  --radius: 0.625rem;
-  --brand-color: rgba(230, 106, 71, 1);
-  --brand-hover: rgba(255, 159, 123, 1);
-  --brand-active: rgba(208, 92, 42, 1);
-
-  --black: rgba(18, 18, 18, 1);
+  /* 기본 색상 */
   --white: rgba(255, 255, 255, 1);
-
-  --gray08: rgba(51, 51, 51, 1);
-  --gray07: rgba(102, 102, 102, 1);
-  --gray06: rgba(138, 138, 138, 1);
-  --gray05: rgba(153, 153, 153, 1);
-  --gray04: rgba(182, 182, 182, 1);
-  --gray03: rgba(211, 211, 211, 1);
-  --gray02: rgba(234, 234, 234, 1);
   --gray01: rgba(248, 248, 248, 1);
+  --gray02: rgba(234, 234, 234, 1);
+  --gray03: rgba(211, 211, 211, 1);
+  --gray04: rgba(182, 182, 182, 1);
+  --gray05: rgba(153, 153, 153, 1);
+  --gray06: rgba(138, 138, 138, 1);
+  --gray07: rgba(102, 102, 102, 1);
+  --gray08: rgba(51, 51, 51, 1);
+  --black: rgba(18, 18, 18, 1);
 
-  --success: rgba(88, 187, 118, 1);
-  --error: rgba(229, 89, 89, 1);
+  /* primary 색상 */
+  --primary: rgba(230, 106, 71, 1);
+  --primary-hover: rgba(255, 159, 123, 1);
+  --primary-active: rgba(208, 92, 42, 1);
 
-  --fontSize-40: 2.5rem;
-  --fontSize-18: 1.125rem;
-  --fontSize-16: 1rem;
-  --fontSize-15: 0.9375rem;
-  --fontSize-14: 0.875rem;
-  --fontSize-13: 0.8125rem;
+  /* status 색상 */
+  --status-green: rgba(88, 187, 118, 1);
+  --status-red: rgba(229, 89, 89, 1);
 
-  --fontWeight-900: 900;
-  --fontWeight-800: 800;
-  --fontWeight-700: 700;
-  --fontWeight-600: 600;
-  --fontWeight-500: 500;
-  --fontWeight-400: 400;
-  --fontWeight-300: 300;
-  --fontWeight-200: 200;
-  --fontWeight-100: 100;
+  /* radius */
+  --radius: 0.5rem; /* 8px */
 
+  /* font weight */
+  --font-weight-thin: 100;
+  --font-weight-extralight: 200;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+
+  /* font size */
+  --font-size-13: 0.8125rem; /* 13px */
+  --font-size-14: 0.875rem; /* 14px */
+  --font-size-15: 0.9375rem; /* 15px */
+  --font-size-16: 1rem; /* 16px */
+  --font-size-18: 1.125rem; /* 18px */
+  --font-size-40: 2.5rem; /* 40px */
+
+  /* shad cn style */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
-
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
-
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-
-  --primary: var(--brand-color);
-  --primary-hover: var(--brand-hover);
-  --primary-active: var(--brand-active);
-
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
-
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-
   --destructive: oklch(0.577 0.245 27.325);
-
   --border: oklch(0.922 0 0);
-
   --input: oklch(0.922 0 0);
-
   --ring: rgba(230, 106, 71, 0.5);
-
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-
   --sidebar-primary: oklch(0.205 0 0);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
-
   --sidebar-border: oklch(0.922 0 0);
-
   --sidebar-ring: oklch(0.708 0 0);
 }
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-
-  --color-black: var(--black);
+  /* 기본 색상 */
   --color-white: var(--white);
-
-  --color-gray08: var(--gray08);
-  --color-gray07: var(--gray07);
-  --color-gray06: var(--gray06);
-  --color-gray05: var(--gray05);
-  --color-gray04: var(--gray04);
-  --color-gray03: var(--gray03);
-  --color-gray02: var(--gray02);
   --color-gray01: var(--gray01);
+  --color-gray02: var(--gray02);
+  --color-gray03: var(--gray03);
+  --color-gray04: var(--gray04);
+  --color-gray05: var(--gray05);
+  --color-gray06: var(--gray06);
+  --color-gray07: var(--gray07);
+  --color-gray08: var(--gray08);
+  --color-black: var(--black);
 
-  --color-success: var(--success);
-  --color-error: var(--error);
-
-  --text-40: var(--fontSize-40);
-  --text-18: var(--fontSize-18);
-  --text-16: var(--fontSize-16);
-  --text-15: var(--fontSize-15);
-  --text-14: var(--fontSize-14);
-  --text-13: var(--fontSize-13);
-
-  --primary: var(--brand-color);
-  --primary-hover: var(--brand-hover);
-  --primary-active: var(--brand-active);
-
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-
+  /* primary 색상 */
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-active: var(--primary-active);
 
+  /* status 색상 */
+  --color-success: var(--status-green);
+  --color-error: var(--status-red);
+
+  /* radius */
+  --radius-xxs: calc(var(--radius) - 6px); /* 2px */
+  --radius-xs: calc(var(--radius) - 4px); /* 4px */
+  --radius-sm: calc(var(--radius) - 2px); /* 6px */
+  --radius-md: var(--radius); /* 8px */
+  --radius-lg: calc(var(--radius) + 4px); /* 12px */
+  --radius-xl: calc(var(--radius) + 4px); /* 16px */
+  --radius-xxl: calc(var(--radius) + 4px); /* 20px */
+  --radius-full: 624.9375rem;
+
+  /* shad cn style */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-
   --color-destructive: var(--destructive);
-
   --color-border: var(--border);
-
   --color-input: var(--input);
-
   --color-ring: var(--ring);
-
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
   --color-sidebar: var(--sidebar);
-
   --color-sidebar-foreground: var(--sidebar-foreground);
-
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-
   --color-sidebar-border: var(--sidebar-border);
-
   --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer utillities {
+  /* font weight */
+  .font-thin {
+    font-weight: var(--font-weight-thin);
+  }
+  .font-extralight {
+    font-weight: var(--font-weight-extralight);
+  }
+  .font-light {
+    font-weight: var(--font-weight-light);
+  }
+  .font-regular {
+    font-weight: var(--font-weight-regular);
+  }
+  .font-medium {
+    font-weight: var(--font-weight-medium);
+  }
+  .font-semibold {
+    font-weight: var(--font-weight-semibold);
+  }
+  .font-bold {
+    font-weight: var(--font-weight-bold);
+  }
+  .font-extrabold {
+    font-weight: var(--font-weight-extrabold);
+  }
+  .font-black {
+    font-weight: var(--font-weight-black);
+  }
+
+  /* font size */
+  .fs-13 {
+    font-size: var(--font-size-13); /* 13px */
+  }
+  .fs-14 {
+    font-size: var(--font-size-14); /* 14px */
+  }
+  .fs-15 {
+    font-size: var(--font-size-15); /* 15px */
+  }
+  .fs-16 {
+    font-size: var(--font-size-16); /* 16px */
+  }
+  .fs-18 {
+    font-size: var(--font-size-18); /* 18px */
+  }
+  .fs-40 {
+    font-size: var(--font-size-40); /* 40px */
+  }
 }
 
 @layer base {
