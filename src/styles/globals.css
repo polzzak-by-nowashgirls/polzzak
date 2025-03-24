@@ -7,14 +7,14 @@
   font-family: 'Pretendard';
   src: url('/src/assets/fonts/PretendardVariable.woff2')
     format('woff2-variations');
-  font-weight: 100 900; /* 가변 폰트 범위 */
+  font-weight: 100 900;
   font-style: normal;
 }
 
 html,
 body {
   font-family: 'Pretendard', sans-serif;
-  font-weight: 400; /* 기본값 */
+  font-weight: 400;
   font-size: 1rem;
   line-height: 160%;
   letter-spacing: -0.005rem;
@@ -160,7 +160,7 @@ body {
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@layer utillities {
+@layer utilities {
   /* font weight */
   .font-thin {
     font-weight: var(--font-weight-thin);
@@ -208,6 +208,12 @@ body {
   }
   .fs-40 {
     font-size: var(--font-size-40); /* 40px */
+  }
+  .lh {
+    line-height: 160%;
+  }
+  .ls {
+    letter-spacing: -0.005rem;
   }
 }
 
