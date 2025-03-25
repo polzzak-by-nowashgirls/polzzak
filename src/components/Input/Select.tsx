@@ -33,7 +33,7 @@ function SelectTrigger({
       className={cn(
         "border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground aria-invalid:ring-destructive/20 aria-invalid:border-destructive whitespace-nowrap shadow-xs transition-[color,box-shadow] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         'focus-visible:border-ring focus-visible:ring-ring outline-none focus-visible:ring-[2px] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-        'font-regular fs-14 m-0.5 flex h-11.5 w-full items-center justify-between gap-2 rounded-md border bg-transparent px-4 py-3',
+        'font-regular fs-14 m-1 flex h-11.5 w-[calc(100%-8px)] items-center justify-between gap-2 rounded-md border bg-transparent px-4 py-3',
         className,
       )}
       {...props}
@@ -103,7 +103,11 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "focus:bg-primary-hover [&_svg:not([class*='text-'])]:text-muted-primary-hover fs-14 relative flex w-full cursor-default items-center gap-2 rounded-sm py-1 pr-8 pl-4 outline-hidden select-none focus:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        "fs-14 relative flex w-full cursor-default items-center gap-2 rounded-sm py-1 pr-8 pl-4 outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        'data-[state=checked]:bg-primary data-[state=checked]:text-white',
+        'data-[highlighted]:text-primary data-[highlighted]:bg-transparent',
+        '[data-highlighted] svg:not([class*="text-"]):text-primary',
+        '[&_svg:not([class*="text-"])]:text-muted-primary',
         className,
       )}
       {...props}
