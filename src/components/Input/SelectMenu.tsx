@@ -9,12 +9,17 @@ import {
 } from '@/components/Input/Select';
 import { formatDate, getTripDays, Schedule } from '@/lib/dateUtils';
 
-function SelectMenu({ data }: { data: Schedule }) {
+type SelectMenuProps = {
+  data: Schedule;
+  className?: string;
+};
+
+function SelectMenu({ data, className }: SelectMenuProps) {
   const [selected, setSelected] = useState('Day1');
 
-  const tripDays = getTripDays(data); // 예: 19일
+  const { days } = getTripDays(data);
 
-  const selectItems = Array.from({ length: tripDays }, (_, i) => {
+  const selectItems = Array.from({ length: days }, (_, i) => {
     const dayLabel = `Day${i + 1}`;
     const dateLabel = formatDate(data.startDate, i, false);
 
@@ -27,7 +32,7 @@ function SelectMenu({ data }: { data: Schedule }) {
 
   return (
     <Select value={selected} onValueChange={setSelected}>
-      <SelectTrigger>
+      <SelectTrigger className={className}>
         <SelectValue placeholder="Select a day" />
       </SelectTrigger>
       <SelectContent>{selectItems}</SelectContent>

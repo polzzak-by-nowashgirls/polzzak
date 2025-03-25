@@ -49,7 +49,7 @@ function Input({
 
   return type === 'file' ? (
     <>
-      <Label hideLabel={hideLabel} htmlFor={labelId}>
+      <Label hideLabel={hideLabel} htmlFor={labelId} className="mx-2 my-1">
         {label}
       </Label>
       <Wrapper {...(children ? { className: 'relative' } : {})}>
