@@ -215,10 +215,6 @@ body {
   .ls {
     letter-spacing: -0.005rem;
   }
-  .webkit-overflow-touch {
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-  }
 }
 
 @layer base {
@@ -232,19 +228,21 @@ body {
 
 @layer components {
   /* Sort 컴포넌트 */
+  .sort-scroll {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
   .sort-scroll::-webkit-scrollbar {
     width: 0.5rem;
     height: 0.5rem;
   }
-
   .sort-scroll::-webkit-scrollbar-track {
     @apply rounded-md bg-transparent;
   }
-
   .sort-scroll::-webkit-scrollbar-thumb {
     @apply rounded-md bg-transparent transition-colors;
   }
-
   .sort-scroll::-webkit-scrollbar-thumb:hover {
     @apply bg-transparent;
   }
