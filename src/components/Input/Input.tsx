@@ -4,7 +4,7 @@ import { Label } from '@/components/Label';
 import { cn } from '@/lib/utils';
 
 interface InputProps extends Omit<React.ComponentProps<'input'>, 'type'> {
-  type: 'text' | 'password' | 'button' | 'file';
+  type?: 'text' | 'password' | 'button' | 'file';
   label: string;
   hideLabel?: boolean;
   placeholder?: string;
@@ -13,15 +13,16 @@ interface InputProps extends Omit<React.ComponentProps<'input'>, 'type'> {
 
 function Input({
   className,
-  type,
+  type = 'text',
   label,
-  hideLabel,
+  hideLabel = false,
   placeholder,
   children,
   ...props
 }: InputProps) {
   const labelId = React.useId();
   const [fileName, setFileName] = React.useState<string>('');
+  const Wrapper = children ? 'div' : React.Fragment;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -31,10 +32,10 @@ function Input({
 
   const inputClassName = cn(
     'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-full file:cursor-pointer file:border-0 file:bg-transparent file:pr-2 file:font-medium',
-    'focus-visible:ring-ring/50 placeholder:text-gray05 focus-visible:ring-[2px] focus-visible:ring-offset-2',
+    'focus-visible:ring-ring placeholder:text-gray05 focus-visible:ring-[2px] focus-visible:ring-offset-2',
     'aria-invalid:ring-destructive/20 aria-invalid:border-destructive',
     'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-    'border-input text-14 m-0.5 flex h-10 w-full min-w-0 items-center rounded-md border bg-transparent px-4 py-3 shadow-xs transition-[color,box-shadow] outline-none',
+    'border-input fs-14 m-1 flex h-11.5 w-[calc(100%-8px)] min-w-0 items-center rounded-md border bg-transparent px-4 py-3 shadow-xs transition-[color,box-shadow] outline-none',
     (type === 'file' || type === 'button') && 'cursor-pointer py-0',
     children && 'pr-14',
     className,
@@ -51,7 +52,7 @@ function Input({
       <Label hideLabel={hideLabel} htmlFor={labelId}>
         {label}
       </Label>
-      <div className={cn(children && 'relative')}>
+      <Wrapper {...(children ? { className: 'relative' } : {})}>
         <label className={inputClassName}>
           <input
             type="file"
@@ -69,14 +70,14 @@ function Input({
           </span>
         </label>
         {iconBtn}
-      </div>
+      </Wrapper>
     </>
   ) : (
     <>
       <Label hideLabel={hideLabel} htmlFor={labelId}>
         {label}
       </Label>
-      <div className={cn(children && 'relative')}>
+      <Wrapper {...(children ? { className: 'relative' } : {})}>
         <input
           type={type}
           data-slot="input"
@@ -87,7 +88,7 @@ function Input({
         />
 
         {iconBtn}
-      </div>
+      </Wrapper>
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import Button from '@/components/Button/Button';
-import SvgIcon from '@/components/Icon/Icon';
+import Icon from '@/components/Icon/Icon';
 
 type ToastProps = {
   text: string;
@@ -31,7 +31,7 @@ function Toast({ text, close, onClickClose }: ToastProps) {
           className="bg-transparent text-white"
           onClick={handleClose}
         >
-          <SvgIcon id="close" />
+          <Icon id="close" />
         </Button>
       ) : null}
     </div>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DayPicker } from 'react-day-picker';
 
 import ButtonVariants from '@/components/Button/Button';
-import SvgIcon from '@/components/Icon/Icon';
+import Icon from '@/components/Icon/Icon';
 import { cn } from '@/lib/utils';
 
 function Calendar({
@@ -59,14 +59,14 @@ function Calendar({
       }}
       components={{
         IconLeft: ({ className, ...props }) => (
-          <SvgIcon
+          <Icon
             id="arrow-large-left"
             className={cn('size-4', className)}
             {...props}
           />
         ),
         IconRight: ({ className, ...props }) => (
-          <SvgIcon
+          <Icon
             id="arrow-large-right"
             className={cn('size-4', className)}
             {...props}
