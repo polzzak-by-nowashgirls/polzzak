@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import Button from '@/components/Button/Button';
-import SvgIcon from '@/components/Icon/Icon';
+import Icon from '@/components/Icon/Icon';
 import { LIST_ITEM_DUMMY_DATA } from '@/mockData/ListItemDummyData';
 
 function ListItem() {
@@ -50,7 +50,7 @@ function ListItem() {
                 aria-label={isCheck ? '즐겨찾기 취소' : '즐겨찾기 추가'}
                 aria-live="polite"
               >
-                <SvgIcon
+                <Icon
                   id={isCheck[item.id] ? 'favorite-true' : 'favorite-false'}
                   className="text-primary"
                 />
@@ -61,19 +61,15 @@ function ListItem() {
             </span>
             <span className="fs-14 ls lh font-regular text-gray07 inline-flex items-center">
               {item.region}
-              <SvgIcon
-                id="arrow-small-right"
-                size={16}
-                className="text-gray07"
-              />
+              <Icon id="arrow-small-right" size={16} className="text-gray07" />
               {item.district}
             </span>
-            <dl className="fs-14 ls lh font-regular text-gray07 flex gap-2">
+            <dl className="fs-14 ls lh font-regular text-gray07 flex items-center gap-2">
               <div className="flex items-center gap-1" aria-label="즐겨찾기 수">
                 <dt>
-                  <SvgIcon id="favorite-false" size={16} />
+                  <Icon id="favorite-false" size={16} />
                 </dt>
-                <dd>
+                <dd className="align-top">
                   {favoriteCount[item.id] >= 999
                     ? '+999'
                     : favoriteCount[item.id]}
@@ -81,7 +77,7 @@ function ListItem() {
               </div>
               <div className="flex items-center gap-1" aria-label="리뷰 수">
                 <dt>
-                  <SvgIcon id="review" size={16} />
+                  <Icon id="review" size={16} />
                 </dt>
                 <dd>{item.review_count}</dd>
               </div>
