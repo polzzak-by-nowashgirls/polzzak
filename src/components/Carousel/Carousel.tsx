@@ -184,7 +184,7 @@ function CarouselPrevious({
       variant={variant}
       size={size}
       className={cn(
-        'absolute m-0 size-7 rounded-full border-none bg-transparent p-0 text-white hover:bg-transparent disabled:bg-transparent disabled:text-white/40 [&_svg:not([class*="size-"])]:size-[34px]',
+        'absolute m-0 size-6 rounded-full border-none bg-transparent p-0 text-white hover:bg-transparent disabled:bg-transparent disabled:text-white/40 [&_svg:not([class*="size-"])]:size-[34px]',
         orientation === 'horizontal'
           ? 'top-1/2 left-3 -translate-y-1/2'
           : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
@@ -214,7 +214,7 @@ function CarouselNext({
       variant={variant}
       size={size}
       className={cn(
-        'hover:text-primary-hover absolute m-0 size-7 rounded-full border-none bg-transparent text-white hover:bg-transparent disabled:bg-transparent disabled:text-white/40 [&_svg:not([class*="size-"])]:size-[34px]',
+        'hover:text-primary-hover absolute m-0 size-6 rounded-full border-none bg-transparent text-white hover:bg-transparent disabled:bg-transparent disabled:text-white/40 [&_svg:not([class*="size-"])]:size-[34px]',
         orientation === 'horizontal'
           ? 'top-1/2 right-3 -translate-y-1/2'
           : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
