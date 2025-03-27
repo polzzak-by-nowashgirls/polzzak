@@ -2,14 +2,16 @@ import { create } from 'zustand';
 
 interface ToastState {
   message: string | null;
-  showToast: (messate: string) => void;
+  position: string;
+  showToast: (messate: string, position?: string) => void;
   hideToast: () => void;
 }
 
 export const useToastStore = create<ToastState>((set) => ({
   message: null,
-  showToast: (message) => {
-    set({ message });
+  position: 'top-[64px]',
+  showToast: (message, position = 'top-[64px]') => {
+    set({ message, position });
 
     setTimeout(() => {
       set({ message: null });
