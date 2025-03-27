@@ -4,7 +4,8 @@ import Icon from '@/components/Icon/Icon';
 
 type Menu = {
   label: string;
-  href: string;
+  href?: string;
+  onClick?: () => void;
 };
 
 type MenuItemProps = {
@@ -16,14 +17,24 @@ function MenuItem({ menus }: MenuItemProps) {
     <ul role="list">
       {menus.map((menu, index) => (
         <li key={index} role="listitem" className="rounded-sm px-1 py-0.5">
-          <Link
-            to={menu.href}
-            aria-label={menu.label}
-            className="font-regular fs-14 focus-visible:border-ring focus-visible:ring-ring flex items-center justify-between rounded-xs px-2 py-3 text-black outline-none focus-visible:ring-[2px] focus-visible:ring-offset-2"
-          >
-            {menu.label}
-            <Icon id="arrow-large-right" className="text-gray05" />
-          </Link>
+          {menu.onClick ? (
+            <button
+              onClick={menu.onClick}
+              className="font-regular fs-14 focus-visible:border-ring focus-visible:ring-ring hover:bg-gray02 flex w-full cursor-pointer items-center justify-between rounded-xs px-2 py-3 text-black outline-none focus-visible:ring-[2px] focus-visible:ring-offset-2"
+            >
+              {menu.label}
+              <Icon id="arrow-right" className="text-gray05" />
+            </button>
+          ) : (
+            <Link
+              to={menu.href!}
+              aria-label={menu.label}
+              className="font-regular fs-14 focus-visible:border-ring focus-visible:ring-ring hover:bg-gray02 flex items-center justify-between rounded-xs px-2 py-3 text-black outline-none focus-visible:ring-[2px] focus-visible:ring-offset-2"
+            >
+              {menu.label}
+              <Icon id="arrow-right" className="text-gray05" />
+            </Link>
+          )}
         </li>
       ))}
     </ul>
