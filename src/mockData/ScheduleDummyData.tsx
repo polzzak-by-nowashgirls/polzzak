@@ -1,3 +1,5 @@
+import { LIST_ITEM_DUMMY_DATA } from '@/mockData/ListItemDummyData';
+
 export const ScheduleDummyData = [
   {
     id: 0,
@@ -25,26 +27,36 @@ export const ScheduleDummyData = [
   },
 ];
 
-export const BookmarkDummyData = [
+interface Bookmark {
+  id: number;
+  name: string;
+  storage: {
+    id: number;
+    imgUrl: string;
+    title: string;
+    start_date: string;
+    end_date: string;
+    region: string;
+    district: string;
+    favorite_count: number;
+    review_count: number;
+  }[];
+}
+
+export const BookmarkDummyData: Bookmark[] = [
   {
     id: 0,
     name: '기본 폴더',
-    storage: ['보롬왓 튤립 축제', '보롬왓 튤립 축제', '보롬왓 튤립 축제'],
+    storage: LIST_ITEM_DUMMY_DATA,
   },
   {
     id: 1,
-    name: '서울',
-    storage: [
-      '보롬왓 튤립 축제',
-      '보롬왓 튤립 축제',
-      '보롬왓 튤립 축제',
-      '보롬왓 튤립 축제',
-      '보롬왓 튤립 축제',
-    ],
+    name: '서울 맛집',
+    storage: [LIST_ITEM_DUMMY_DATA[0], LIST_ITEM_DUMMY_DATA[1]],
   },
   {
     id: 2,
-    name: '제주',
-    storage: ['보롬왓 튤립 축제'],
+    name: '제주 여행',
+    storage: [],
   },
 ];
