@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
@@ -7,20 +7,15 @@ import Icon from '@/components/Icon/Icon';
 interface HeaderProps {
   title: string;
   subTitle?: string;
-  IconHide?: boolean;
   editHide?: boolean;
   iconId?: string;
 }
 
-function Header({
-  title,
-  subTitle,
-  IconHide = false,
-  editHide = false,
-  iconId,
-}: HeaderProps) {
+function Header({ title, subTitle, editHide = false, iconId }: HeaderProps) {
   const [editText, setEditText] = useState('편집');
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHome = location.pathname === '/';
 
   const handleEditText = () => {
     setEditText((prev) => (prev === '편집' ? '완료' : '편집'));
@@ -28,7 +23,7 @@ function Header({
 
   return (
     <header
-      className={`flex h-12 items-center justify-start ${IconHide ? 'px-4' : 'px-2'}`}
+      className={`flex h-12 items-center justify-start ${isHome ? 'px-4' : 'px-2'}`}
     >
       <div className="flex flex-1 items-center justify-start gap-2">
         <h1 className="fs-16 ls lh font-semibold text-black">{title}</h1>
@@ -38,11 +33,11 @@ function Header({
           </span>
         )}
       </div>
-      {!IconHide && (
+      {!isHome && (
         <Button
           type="button"
           variant={'tertiary'}
-          className={IconHide ? 'hidden' : 'order-first'}
+          className={isHome ? 'hidden' : 'order-first'}
           size="md"
           aria-label="이전 페이지로 이동"
           onClick={() => navigate(-1)}
