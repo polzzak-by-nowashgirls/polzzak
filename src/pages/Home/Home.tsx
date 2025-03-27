@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 
+import Icon from '@/components/Icon/Icon';
+
 function Home() {
   return (
     <>
@@ -11,6 +13,8 @@ function Home() {
         <Link to="/map">지도</Link>
         <Link to="/polzzak">폴짝</Link>
         <Link to="/my">마이페이지</Link>
+
+        <Icon id="add" className="text-red-50" />
       </div>
     </>
   );
