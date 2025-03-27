@@ -9,7 +9,7 @@ interface HeaderProps {
   subTitle?: string;
   IconHide?: boolean;
   editHide?: boolean;
-  IconId?: string;
+  iconId?: string;
 }
 
 function Header({
@@ -17,7 +17,7 @@ function Header({
   subTitle,
   IconHide = false,
   editHide = false,
-  IconId,
+  iconId,
 }: HeaderProps) {
   const [editText, setEditText] = useState('편집');
   const navigate = useNavigate();
@@ -59,15 +59,15 @@ function Header({
         >
           {editText}
         </Button>
-      ) : IconId ? (
+      ) : iconId ? (
         <Button
           type="button"
           variant="tertiary"
           size="md"
-          aria-label={`${IconId} 버튼`}
+          aria-label={`${iconId} 버튼`}
           onClick={() => navigate(`/search`)}
         >
-          <Icon id={IconId} />
+          <Icon id={iconId} />
         </Button>
       ) : null}
     </header>
