@@ -42,7 +42,7 @@ export const routes = [
         element: <Polzzak />,
       },
       {
-        path: '/My',
+        path: '/my',
         element: <My />,
       },
     ],
