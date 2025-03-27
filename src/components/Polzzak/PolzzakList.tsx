@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { POLZZAK_LIST, PolzzakType } from '@/mockData/PolzzakListDummyData';
 
 import PolzzakListItem from './PolzzakListItem';
@@ -17,6 +19,8 @@ const getTitleWithEmoji = (title: string) => {
 };
 
 function PolzzakList() {
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
   return (
     <div className="flex flex-col gap-6">
       {POLZZAK_LIST.map((data: PolzzakType) => (
@@ -33,7 +37,13 @@ function PolzzakList() {
               </li>
             ) : (
               data.list.map((item) => (
-                <PolzzakListItem key={item.label} item={item} img={data.img} />
+                <PolzzakListItem
+                  key={item.label}
+                  item={item}
+                  img={data.img}
+                  openMenuId={openMenuId}
+                  setOpenMenuId={setOpenMenuId}
+                />
               ))
             )}
           </ul>
