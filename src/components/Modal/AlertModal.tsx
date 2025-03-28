@@ -12,14 +12,14 @@ interface AlertModalProps {
 const MODAL_DATA = [
   {
     id: 0,
-    type: 'certify_success',
+    type: 'certify_fail',
     title: '인증에 실패하였습니다.',
     content: ['인증번호를 확인해 주세요.'],
     nextBtn: '다시 인증하기',
   },
   {
     id: 1,
-    type: 'certify_fail',
+    type: 'certify_success',
     title: '인증에 성공하였습니다.',
     content: ['다음을 눌러 진행해 주세요.'],
     prevBtn: '취소',
