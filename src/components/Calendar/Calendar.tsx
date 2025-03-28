@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DayPicker } from 'react-day-picker';
 
-import ButtonVariants from '@/components/Button/Button';
+import buttonVariants from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
 import { cn } from '@/lib/utils';
 
@@ -16,13 +16,13 @@ function Calendar({
       showOutsideDays={showOutsideDays}
       className={cn('border-none p-2', className)}
       classNames={{
-        months: 'max-w-2xs m-auto',
-        month: 'p-2 flex flex-col gap-4',
+        months: 'max-w-[266px] m-auto',
+        month: 'flex flex-col gap-4',
         caption: 'flex justify-center relative items-center w-full',
         caption_label: 'text-16 font-semibold',
         nav: 'flex items-center gap-1',
         nav_button: cn(
-          ButtonVariants({ variant: 'tertiary' }),
+          buttonVariants({ variant: 'tertiary' }),
           'text-center size-7 p-0 text-black cursor-pointer hover:text-primary-hover active:text-primary',
         ),
         nav_button_previous: 'absolute left-1 flex items-center justify-center',
@@ -32,26 +32,27 @@ function Calendar({
         head_cell: 'flex-1 py-1 font-medium text-14 text-black',
         row: 'flex my-1',
         cell: cn(
-          'flex flex-1 items-center justify-center p-1 relative font-medium text-14 focus-within:relative focus-within:z-20',
+          'flex flex-1 items-center justify-center relative font-medium text-14 focus-within:relative focus-within:z-20',
           props.mode === 'range'
-            ? '[&:has([aria-selected])]:bg-primary/20 [&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md [&:has(.day-today[aria-selected])]:rounded-md'
-            : '[&:has([aria-selected])]:rounded-md',
+            ? '[&:has([aria-selected])]:bg-primary/20 [&:has(>.day-range-end)]:rounded-r-full [&:has(>.day-range-start)]:rounded-l-full first:[&:has([aria-selected])]:rounded-l-full last:[&:has([aria-selected])]:rounded-r-full [&:has(.day-today[aria-selected])]:rounded-full'
+            : '[&:has([aria-selected])]:rounded-full',
         ),
         day: cn(
-          ButtonVariants({ variant: 'tertiary' }),
-          'aspect-square flex-1 text-14 font-medium rounded-sm aria-selected:opacity-100 hover:bg-primary-hover hover:text-white cursor-pointer',
+          buttonVariants({ variant: 'tertiary' }),
+          'aspect-square flex-1 font-medium text-black rounded-full aria-selected:opacity-100 hover:bg-primary-hover hover:text-white cursor-pointer m-[3px] p-0 w-[32px] h-[32px]',
         ),
         day_range_start:
           'day-range-start aria-selected:bg-primary aria-selected:text-white',
         day_range_end:
           'day-range-end aria-selected:bg-primary aria-selected:text-white',
-        day_selected:
+        day_selected: cn(
           'bg-primary hover:bg-primary-hover hover:text-white focus:bg-primary focus:text-white [&:has([aria-selected])]:text-primary',
+          props.mode === 'range' ? 'text-black' : 'text-white',
+        ),
         day_today:
           'bg-primary/20 text-primary hover:bg-primary-hover hover:text-white',
-        day_outside:
-          'day-outside text-muted-foreground aria-selected:text-white',
-        day_disabled: 'text-muted-foreground opacity-50',
+        day_outside: 'day-outside text-gray05 aria-selected:text-white',
+        day_disabled: 'text-gray05 opacity-50',
         day_range_middle:
           'aria-selected:bg-transparent text-primary aria-selected:transparent',
         day_hidden: 'invisible',
@@ -60,15 +61,15 @@ function Calendar({
       components={{
         IconLeft: ({ className, ...props }) => (
           <Icon
-            id="arrow-large-left"
-            className={cn('size-4', className)}
+            id="arrow_left"
+            className={cn('text-black', className)}
             {...props}
           />
         ),
         IconRight: ({ className, ...props }) => (
           <Icon
-            id="arrow-large-right"
-            className={cn('size-4', className)}
+            id="arrow_right"
+            className={cn('text-black', className)}
             {...props}
           />
         ),

@@ -6,7 +6,13 @@ interface IconProps {
 
 function Icon({ id, size = 24, className }: IconProps) {
   return (
-    <svg width={size} height={size} className={className} aria-hidden={true}>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      className={className}
+      aria-hidden={true}
+    >
       <use href={`/sprite.svg#${id}`} />
     </svg>
   );

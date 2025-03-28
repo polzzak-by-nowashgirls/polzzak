@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import Dropdown from '@/components/SortDropdown/Dropdown';
 import { dropdownData } from '@/mockData/SortDropdownData';
 
-function Sort() {
+function DropdownCustom() {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [isDown, setIsDown] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -52,4 +52,4 @@ function Sort() {
   );
 }
 
-export default Sort;
+export default DropdownCustom;
