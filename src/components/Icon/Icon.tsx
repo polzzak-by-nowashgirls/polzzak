@@ -7,16 +7,16 @@ interface IconProps {
 function Icon({ id, size = 24, className }: IconProps) {
   return (
     <svg width={size} height={size} className={className} aria-hidden={true}>
-      <use xlinkHref={`/stack.svg#${id}`} />
+      <use href={`/sprite.svg#${id}`} />
     </svg>
   );
 }
 
 export default Icon;
 
-type IconId =
+export type IconId =
   | 'add'
-  | 'arror_left'
+  | 'arrow_left'
   | 'arrow_bottom'
   | 'arrow_circle_left'
   | 'arrow_circle_right'
@@ -52,5 +52,5 @@ type IconId =
   | 'search'
   | 'share'
   | 'time'
-  | 'visibillity_-1'
-  | 'visibillity_';
+  | 'visibillity_on'
+  | 'visibillity_off';
