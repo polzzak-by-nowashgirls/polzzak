@@ -194,7 +194,7 @@ function CarouselPrevious({
       onClick={scrollPrev}
       {...props}
     >
-      <Icon id="arrow_circle-left" />
+      <Icon id="arrow_circle_left" />
       <span className="sr-only">이전 슬라이드 보기</span>
     </Button>
   );
@@ -224,7 +224,7 @@ function CarouselNext({
       onClick={scrollNext}
       {...props}
     >
-      <Icon id="arrow_circle-right" />
+      <Icon id="arrow_circle_right" />
       <span className="sr-only">다음 슬라이드 보기</span>
     </Button>
   );
