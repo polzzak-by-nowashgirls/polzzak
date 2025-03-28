@@ -145,7 +145,13 @@ function SlideUpModal({ type }: SlideUpModal) {
 
   return (
     <dialog className="fixed bottom-0 left-1/2 flex w-screen -translate-x-1/2 transform flex-col gap-4 rounded-t-2xl bg-white px-8 py-6">
-      <div className="-translateX-1/2 absolute top-0 left-1/2 flex transform cursor-grab items-center justify-center">
+      <div
+        className={`${
+          ['favorite_list', 'search_list', 'select'].includes(modalContent.type)
+            ? 'absolute top-0 left-1/2 -translate-x-1/2 transform cursor-grab items-center justify-center'
+            : 'hidden'
+        }`}
+      >
         <Icon id="drag_handle" />
       </div>
       <header className="flex items-center justify-between">
