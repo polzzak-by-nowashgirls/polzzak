@@ -27,7 +27,7 @@ export const ScheduleDummyData = [
   },
 ];
 
-interface Bookmark {
+export interface Bookmark {
   id: number;
   name: string;
   storage: {
@@ -57,6 +57,11 @@ export const BookmarkDummyData: Bookmark[] = [
   {
     id: 2,
     name: '제주 여행',
+    storage: [LIST_ITEM_DUMMY_DATA[0]],
+  },
+  {
+    id: 3,
+    name: '부산 갈매기 끼룩끼룩끼룩끼룩',
     storage: [],
   },
 ];

@@ -1,3 +1,4 @@
+import Button from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
 import { cn } from '@/lib/utils';
 
@@ -5,6 +6,7 @@ interface BookmarkFolderCardProps {
   name: string;
   images?: string[];
   addFolder?: boolean;
+  mode?: 'list' | 'edit';
   onClick?: () => void;
 }
 
@@ -12,9 +14,10 @@ function BookmarkFolderCard({
   name,
   images = [],
   addFolder = false,
+  mode,
   onClick,
 }: BookmarkFolderCardProps) {
-  const commonImgClass = cn('object-cover object-center aspect-[3/2]');
+  const commonImgClass = cn('h-full object-cover object-center aspect-[3/2]');
 
   const renderImages = () => {
     if (images.length === 0 && addFolder) {
@@ -35,7 +38,7 @@ function BookmarkFolderCard({
           key={index}
           src={url}
           alt={`${name} 폴더의 ${index + 1}번`}
-          className={commonImgClass}
+          className={`${commonImgClass} ${images.length === 1 ? 'w-full' : 'w-1/2'}`}
         />
       ));
     }
@@ -45,7 +48,7 @@ function BookmarkFolderCard({
         <img
           src={images[0]}
           alt={`${name} 폴더의 1번`}
-          className={`${commonImgClass} h-full w-1/2`}
+          className={`${commonImgClass} w-1/2`}
         />
         <div className="w-1/2">
           {[images[1], images[2]].map((url, index) => (
@@ -66,6 +69,7 @@ function BookmarkFolderCard({
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
+      className="outline-none"
     >
       <div
         className={cn(
@@ -74,7 +78,37 @@ function BookmarkFolderCard({
       >
         {renderImages()}
       </div>
-      <p className={cn('fs-14 lh mt-2 truncate px-2')}>{name}</p>
+      {mode === 'edit' ? (
+        <>
+          <Button
+            variant={'tertiary'}
+            className="text-primary hover:border-primary-hover absolute top-0 right-0 bg-transparent"
+            onClick={() => console.log('‼️ Delete Folder ‼️')}
+          >
+            <Icon id="delete" />
+          </Button>
+          <Button
+            variant={'tertiary'}
+            size={'md'}
+            onClick={() => {
+              console.log('‼️ Modify Folder Name ‼️');
+            }}
+            className={cn(
+              'mt-[8px] h-auto w-full justify-start truncate border py-[4px]',
+            )}
+          >
+            <p className={cn('fs-14 lh truncate')}>{name}</p>
+          </Button>
+        </>
+      ) : (
+        <p
+          className={cn(
+            'fs-14 lh m-1 mt-2 truncate border border-transparent px-2 py-1',
+          )}
+        >
+          {name}
+        </p>
+      )}
     </article>
   );
 }
