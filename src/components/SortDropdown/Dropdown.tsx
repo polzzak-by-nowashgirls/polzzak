@@ -24,13 +24,10 @@ function Dropdown({ options }: DropdownProps) {
         <Button
           variant="secondary"
           size="md"
-          className="border-gray03 rounded-full px-[14px] py-[6px] text-black"
+          className="border-gray03 h-9 rounded-full px-3 text-black"
         >
           {dropdownMenu}
-          <Icon
-            id={isOpen ? 'arrow-large-top' : 'arrow-large-bottom'}
-            className="size-3"
-          />
+          <Icon id={isOpen ? 'arrow_top' : 'arrow_bottom'} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="" align="start">
