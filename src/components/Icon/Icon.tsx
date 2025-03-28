@@ -14,7 +14,7 @@ function Icon({ id, size = 24, className }: IconProps) {
 
 export default Icon;
 
-type IconId =
+export type IconId =
   | 'add'
   | 'arror_left'
   | 'arrow_bottom'

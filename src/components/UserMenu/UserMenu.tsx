@@ -1,16 +1,16 @@
 import { Link } from 'react-router-dom';
 
-import Icon from '@/components/Icon/Icon';
+import Icon, { IconId } from '@/components/Icon/Icon';
 
-interface MenuItem {
+export interface MenuItemTypes {
   label: string;
-  icon: string;
+  icon: IconId;
   path?: string;
   onClick?: () => void;
 }
 
 interface UserMenuProps {
-  menus: MenuItem[];
+  menus: MenuItemTypes[];
 }
 
 function UserMenu({ menus }: UserMenuProps) {

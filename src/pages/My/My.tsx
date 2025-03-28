@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 import MenuItem from '@/components/My/MenuItem';
-import UserMenu from '@/components/UserMenu/UserMenu';
+import UserMenu, { MenuItemTypes } from '@/components/UserMenu/UserMenu';
 
 function My() {
   const navigate = useNavigate();
@@ -12,10 +12,16 @@ function My() {
     });
   };
 
-  const userMenus = [
+  const menus = [
+    { label: '공지사항', href: '/notice' },
+    { label: '서비스 이용약관', href: '/terms' },
+    { label: '로그아웃', onClick: handleLogoutClick },
+  ];
+
+  const userMenus: MenuItemTypes[] = [
     {
       label: '즐겨찾기',
-      icon: 'favorite',
+      icon: 'favorite_off',
       onClick: () => {
         console.log('클릭');
       },
@@ -35,14 +41,10 @@ function My() {
     {
       label: '공유하기',
       icon: 'share',
-      path: '/customer',
+      onClick: () => {
+        console.log('공유하기 클릭');
+      },
     },
-  ];
-
-  const menus = [
-    { label: '공지사항', href: '/notice' },
-    { label: '서비스 이용약관', href: '/terms' },
-    { label: '로그아웃', onClick: handleLogoutClick },
   ];
 
   return (
