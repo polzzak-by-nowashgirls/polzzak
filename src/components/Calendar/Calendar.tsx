@@ -62,14 +62,14 @@ function Calendar({
         IconLeft: ({ className, ...props }) => (
           <Icon
             id="arrow_left"
-            className={cn('text-red-300', className)}
+            className={cn('text-black', className)}
             {...props}
           />
         ),
         IconRight: ({ className, ...props }) => (
           <Icon
             id="arrow_right"
-            className={cn('text-red-300', className)}
+            className={cn('text-black', className)}
             {...props}
           />
         ),

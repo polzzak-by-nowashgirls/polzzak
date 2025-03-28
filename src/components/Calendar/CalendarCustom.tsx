@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
@@ -8,7 +9,6 @@ function CalendarCustom() {
   const [selected, setSelected] = useState<DateRange | undefined>(undefined);
 
   const handleSelect = (range: DateRange | undefined) => {
-    console.log('선택된 날짜:', range);
     setSelected(range);
   };
 
@@ -19,6 +19,9 @@ function CalendarCustom() {
       onSelect={handleSelect}
       locale={ko}
       className="rounded-md border"
+      formatters={{
+        formatCaption: (date) => format(date, 'yyyy년 M월', { locale: ko }),
+      }}
     />
   );
 }
