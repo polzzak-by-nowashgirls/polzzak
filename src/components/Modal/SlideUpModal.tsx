@@ -13,6 +13,7 @@ import { useModalStore } from '@/store/useModalStore';
 
 interface SlideUpModal {
   type: string;
+  handleButtonClick: (buttonText: string) => void;
 }
 
 const MODAL_DATA = [
@@ -138,8 +139,8 @@ const MODAL_DATA = [
   },
 ];
 
-function SlideUpModal({ type }: SlideUpModal) {
-  const { closeModal } = useModalStore();
+function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
+  const { closeModal, setButtonText } = useModalStore();
   const modalContent = MODAL_DATA.find((item) => item.type === type);
   if (!modalContent) return null;
 
@@ -171,8 +172,11 @@ function SlideUpModal({ type }: SlideUpModal) {
         {modalContent.content
           ? modalContent.content
           : modalContent.text &&
-            modalContent.text.map((i) => (
-              <p className="fs-14 ls lh font-regular text-gray07 text-center">
+            modalContent.text.map((i, index) => (
+              <p
+                className="fs-14 ls lh font-regular text-gray07 text-center"
+                key={index}
+              >
                 <span>{i}</span>
               </p>
             ))}
@@ -184,6 +188,10 @@ function SlideUpModal({ type }: SlideUpModal) {
           <Button
             className={`${type === 'calendar' ? 'w-full' : 'w-1/2'}`}
             variant={'secondary'}
+            onClick={() => {
+              setButtonText(modalContent.prevBtn);
+              handleButtonClick(modalContent.prevBtn);
+            }}
           >
             {modalContent.prevBtn}
           </Button>
@@ -191,6 +199,7 @@ function SlideUpModal({ type }: SlideUpModal) {
         {modalContent.nextBtn && (
           <Button
             className={`${type === 'calendar' ? 'order-first w-full' : 'w-1/2'}`}
+            onClick={() => handleButtonClick(modalContent.nextBtn)}
           >
             {modalContent.nextBtn}
           </Button>

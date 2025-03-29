@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom';
-
 import Button from '@/components/Button/Button';
 import { useModalStore } from '@/store/useModalStore';
 
@@ -7,6 +5,7 @@ import Icon from '../Icon/Icon';
 
 interface AlertModalProps {
   type: string;
+  handleButtonClick: (buttonText: string) => void;
 }
 
 const MODAL_DATA = [
@@ -60,35 +59,11 @@ const MODAL_DATA = [
   },
 ];
 
-function AlertModal({ type }: AlertModalProps) {
+function AlertModal({ type, handleButtonClick }: AlertModalProps) {
   const { isOpen, closeModal } = useModalStore();
-  const navigate = useNavigate();
   const modalContent = MODAL_DATA.find((item) => item.type === type);
   if (!modalContent) return null;
   if (!isOpen) return null;
-
-  const handleNextClick = () => {
-    switch (type) {
-      case 'logout':
-        navigate(modalContent.url || '/');
-        break;
-      case 'register':
-        navigate(modalContent.url || '/');
-        break;
-      case 'certify_success':
-        console.log('인증 성공, 회원가입 다음 페이지로 이동');
-        break;
-      case 'certify_fail':
-        console.log('인증 실패');
-        closeModal();
-        break;
-      case 'polzzak_add':
-        console.log('폴짝 추가 로직 실행');
-        break;
-      default:
-        closeModal();
-    }
-  };
 
   return (
     <dialog className="absolute top-1/2 left-1/2 flex w-full max-w-[17.3125rem] -translate-x-1/2 -translate-y-1/2 transform flex-col rounded-2xl bg-white p-6">
@@ -96,8 +71,8 @@ function AlertModal({ type }: AlertModalProps) {
         <h1 className="fs-18 lh ls mb-4 font-semibold text-black">
           {modalContent.title}
         </h1>
-        {modalContent.content.map((i) => (
-          <p className="fs-14 ls lh font-regular text-gray07">
+        {modalContent.content.map((i, index) => (
+          <p className="fs-14 ls lh font-regular text-gray07" key={index}>
             <span>{i}</span>
           </p>
         ))}
@@ -111,6 +86,7 @@ function AlertModal({ type }: AlertModalProps) {
           <Button
             className={type === 'polzzak_add' ? 'w-full' : 'w-1/2'}
             variant="secondary"
+            onClick={() => handleButtonClick(modalContent.prevBtn)}
           >
             {modalContent.prevBtn}
           </Button>
@@ -124,7 +100,7 @@ function AlertModal({ type }: AlertModalProps) {
               : 'w-full'
           }
           variant={type === 'polzzak_add' ? 'secondary' : 'default'}
-          onClick={handleNextClick}
+          onClick={() => handleButtonClick(modalContent.nextBtn)}
         >
           {modalContent.nextBtn}
         </Button>

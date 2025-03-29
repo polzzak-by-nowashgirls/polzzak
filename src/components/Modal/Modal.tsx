@@ -1,4 +1,5 @@
 import Dimd from '@/components/Modal/Dimd';
+import { useModalActions } from '@/hooks/useModalActions';
 import { useModalStore } from '@/store/useModalStore';
 
 import AlertModal from './AlertModal';
@@ -11,14 +12,15 @@ interface ModalProps {
 
 function Modal({ mode, type }: ModalProps) {
   const { isOpen } = useModalStore();
+  const { handleButtonClick } = useModalActions();
   if (!isOpen) return null;
 
   return (
     <Dimd>
       {mode === 'alert' ? (
-        <AlertModal type={type} />
+        <AlertModal type={type} handleButtonClick={handleButtonClick} />
       ) : (
-        <SlideUpModal type={type} />
+        <SlideUpModal type={type} handleButtonClick={handleButtonClick} />
       )}
     </Dimd>
   );
