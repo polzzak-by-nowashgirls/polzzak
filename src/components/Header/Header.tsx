@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
-import Icon from '@/components/Icon/Icon';
+import Icon, { type IconId } from '@/components/Icon/Icon';
 
 interface HeaderProps {
   title: string;
   subTitle?: string;
   editHide?: boolean;
-  iconId?: string;
+  iconId?: IconId;
 }
 
 function Header({ title, subTitle, editHide = false, iconId }: HeaderProps) {
@@ -23,7 +23,7 @@ function Header({ title, subTitle, editHide = false, iconId }: HeaderProps) {
 
   return (
     <header
-      className={`flex h-12 items-center justify-start ${isHome ? 'px-4' : 'px-2'}`}
+      className={`flex h-12 items-center justify-start bg-white shadow-xs ${isHome ? 'px-4' : 'px-2'}`}
     >
       <div className="flex flex-1 items-center justify-start gap-2">
         <h1 className="fs-16 ls lh font-semibold text-black">{title}</h1>
@@ -42,7 +42,7 @@ function Header({ title, subTitle, editHide = false, iconId }: HeaderProps) {
           aria-label="이전 페이지로 이동"
           onClick={() => navigate(-1)}
         >
-          <Icon id="arrow-small-left" />
+          <Icon id="arrow_left" />
         </Button>
       )}
       {editHide === false ? (

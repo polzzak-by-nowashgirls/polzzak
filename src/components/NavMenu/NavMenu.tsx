@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 
 import { cn } from '@/lib/utils';
 
-function NavMenu() {
+function NavMenu({ className }: { className?: string }) {
   const navList = [
     ['/', '홈'],
     ['/search', '검색'],
@@ -14,7 +14,8 @@ function NavMenu() {
   return (
     <nav
       className={cn(
-        'border-gray02 fixed bottom-0 flex h-15 w-full flex-1 items-center gap-2 border-t-1 bg-white px-4',
+        'border-gray02 order-1 flex h-15 w-full items-center gap-2 border-t-1 bg-white px-4 transition-transform duration-300 ease-in-out',
+        className,
       )}
     >
       {navList.map(([to, label]) => (
