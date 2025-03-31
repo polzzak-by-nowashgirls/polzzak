@@ -32,23 +32,30 @@ const THEME_DATA = [
 
 interface ChipProps {
   mode: 'region' | 'theme';
+  type?: 'default' | 'multiple';
 }
 
-function Chip({ mode }: ChipProps) {
+function Chip({ mode, type = 'default' }: ChipProps) {
   const [regions, setRegions] = useState(REGIONS_DATA);
   const [themes, setThemes] = useState(THEME_DATA);
   const HandleToggleRegion = (id: number) => {
     setRegions((prev) =>
-      prev.map((region) =>
-        region.id === id ? { ...region, selected: !region.selected } : region,
-      ),
+      type === 'multiple'
+        ? prev.map((region) =>
+            region.id === id
+              ? { ...region, selected: !region.selected }
+              : region,
+          )
+        : prev.map((region) => ({ ...region, selected: region.id === id })),
     );
   };
   const HandleToggleTheme = (id: number) => {
     setThemes((prev) =>
-      prev.map((theme) =>
-        theme.id === id ? { ...theme, selected: !theme.selected } : theme,
-      ),
+      type === 'multiple'
+        ? prev.map((theme) =>
+            theme.id === id ? { ...theme, selected: !theme.selected } : theme,
+          )
+        : prev.map((theme) => ({ ...theme, selected: theme.id === id })),
     );
   };
 
