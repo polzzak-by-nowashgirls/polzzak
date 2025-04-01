@@ -1,12 +1,4 @@
-type RabbitFaceProps = {
-  src: string;
-  alt: string;
-};
-const RabbitFace = ({ src, alt }: RabbitFaceProps) => (
-  <span className="w-[48px]" aria-hidden={true}>
-    <img src={src} alt={alt} className="h-full w-full" />
-  </span>
-);
+import RabbitFace from '@/components/RabbitFace/RabbitFace';
 
 function Splash() {
   return (

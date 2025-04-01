@@ -5,6 +5,7 @@ import Button from '@/components/Button/Button';
 import Checkbox from '@/components/Checkbox/Checkbox';
 import Icon from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
+import RabbitFace from '@/components/RabbitFace/RabbitFace';
 import { useToast } from '@/hooks/useToast';
 
 function Login() {
@@ -19,8 +20,10 @@ function Login() {
 
   return (
     <div className="m-auto flex h-full max-w-[420px] flex-col justify-center pb-12">
-      <h1 className="fs-40 py-8 text-center font-semibold text-black">
-        🐰 폴짝 🐰
+      <h1 className="fs-40 flex items-center justify-center gap-2 py-8 text-center font-semibold whitespace-nowrap text-black">
+        <RabbitFace src="/images/rabbit_face.png" alt="토끼 얼굴" />
+        폴짝
+        <RabbitFace src="/images/rabbit_face.png" alt="토끼 얼굴" />
       </h1>
       <div className="fs-14 text-gray05 font-regular pb-4 text-center">
         <p>로그인이 필요한 서비스 입니다.</p>
