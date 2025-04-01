@@ -10,6 +10,7 @@ import {
   Polzzak,
   Register,
   Search,
+  Splash,
 } from './pages';
 
 export const routes = [
@@ -44,6 +45,10 @@ export const routes = [
       {
         path: '/my',
         element: <My />,
+      },
+      {
+        path: '/splash',
+        element: <Splash />,
       },
     ],
   },
