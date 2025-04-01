@@ -6,3 +6,4 @@ export { default as NotFound } from './NotFound';
 export { default as Polzzak } from './Polzzak/Polzzak';
 export { default as Register } from './Register/Register';
 export { default as Search } from './Search/Search';
+export { default as Splash } from './Splash/Splash';
