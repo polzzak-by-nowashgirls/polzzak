@@ -1,15 +1,15 @@
-import { useNavigate } from 'react-router-dom';
-
+import Modal from '@/components/Modal/Modal';
 import MenuItem from '@/components/My/MenuItem';
+import Profile from '@/components/Profile/Profile';
 import UserMenu, { MenuItemTypes } from '@/components/UserMenu/UserMenu';
+import { USER_INFO } from '@/mockData';
+import { useModalStore } from '@/store/useModalStore';
 
 function My() {
-  const navigate = useNavigate();
+  const { openModal } = useModalStore();
 
   const handleLogoutClick = () => {
-    navigate('/login', {
-      state: { toastMessage: '로그아웃이 완료되었습니다.' },
-    });
+    openModal();
   };
 
   const menus = [
@@ -48,11 +48,13 @@ function My() {
   ];
 
   return (
-    <div>
-      <h1>마이페이지</h1>
+    <section className="flex flex-col gap-6">
+      <h1 className="sr-only">마이페이지</h1>
+      <Profile userInfo={USER_INFO} />
       <UserMenu menus={userMenus} />
       <MenuItem menus={menus} />
-    </div>
+      <Modal mode="alert" type="logout" />
+    </section>
   );
 }
 
