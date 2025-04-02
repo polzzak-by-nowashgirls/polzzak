@@ -29,7 +29,7 @@ function Profile({ userInfo }: ProfileProps) {
         variant="input"
         size="md"
         className="text-gray06 shrink-0"
-        onClick={() => navigate('/userInfo')}
+        onClick={() => navigate('/my/edit')}
       >
         편집
       </Button>

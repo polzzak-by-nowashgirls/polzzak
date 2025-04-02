@@ -1,6 +1,9 @@
+import { useNavigate } from 'react-router-dom';
+
 import { useModalStore } from '@/store/useModalStore';
 
 export function useModalActions() {
+  const navigate = useNavigate();
   const { closeModal } = useModalStore();
 
   const modalActions: Record<string, () => void> = {
@@ -13,8 +16,18 @@ export function useModalActions() {
     추가: () => console.log('추가 버튼에 맞는 함수'),
     초기화: () => console.log('초기화 버튼에 맞는 함수'),
     변경: () => console.log('변경 버튼에 맞는 함수'),
-    로그아웃: () => console.log('로그아웃 버튼에 맞는 함수'),
-    탈퇴: () => console.log('탈퇴 버튼에 맞는 함수'),
+    로그아웃: () => {
+      navigate('/login', {
+        state: { toastMessage: '로그아웃이 완료되었습니다.' },
+      });
+      closeModal();
+    },
+    탈퇴: () => {
+      navigate('/login', {
+        state: { toastMessage: '회원 탈퇴가 완료되었습니다.' },
+      });
+      closeModal();
+    },
     '신규 폴짝 추가하기': () =>
       console.log('신규 폴짝 추가하기 버튼에 맞는 함수'),
     '기존 폴짝 추가하기': () =>

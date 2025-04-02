@@ -37,7 +37,7 @@ const MODAL_DATA = [
     title: '로그아웃 하시겠습니까?',
     content: ['로그인 페이지로 돌아갑니다.'],
     prevBtn: '취소',
-    nextBtn: '확인',
+    nextBtn: '로그아웃',
     url: '/',
   },
   {
