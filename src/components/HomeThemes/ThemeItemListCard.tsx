@@ -7,7 +7,7 @@ function ThemeItemListCard({ item }: { item: ThemeItemList }) {
   const { imgUrl, title, region } = item;
 
   return (
-    <CarouselItem className="ml-3 shrink-0 basis-[150px]">
+    <CarouselItem className="shrink-0 basis-[150px]">
       {/* 상세페이지 생성 후 수정 */}
       <Link to={`/search/상세보기로이동`}>
         <figure>
