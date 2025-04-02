@@ -1,5 +1,6 @@
 import Button from '@/components/Button/Button';
 import Input from '@/components/Input/Input';
+import SelectMenu from '@/components/Input/SelectMenu';
 
 function Email() {
   return (
@@ -13,7 +14,7 @@ function Email() {
           <Input label="　" />
         </div>
       </div>
-      {/* select 컴포넌트는 완료되면 수정 */}
+      <SelectMenu data={'email'} />
       <Button disabled>저장</Button>
     </section>
   );
