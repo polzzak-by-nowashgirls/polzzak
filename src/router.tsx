@@ -16,6 +16,7 @@ import {
   Polzzak,
   Register,
   Search,
+  Splash,
 } from './pages';
 
 export const routes = [
@@ -70,6 +71,10 @@ export const routes = [
       {
         path: '/my/edit/email',
         element: <Email />,
+      },
+      {
+        path: '/splash',
+        element: <Splash />,
       },
     ],
   },

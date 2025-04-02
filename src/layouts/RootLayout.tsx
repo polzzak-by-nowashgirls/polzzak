@@ -26,8 +26,8 @@ function RootLayout() {
   const defaultTitle = '🐰폴짝🐰';
   const headerTitle = headerTitles[path] || defaultTitle;
 
-  const showHeader = !['/map'].includes(path);
-  const showNav = !['/search'].includes(path);
+  const showHeader = !['/map', '/login', '/splash'].includes(path);
+  const showNav = !['/search', '/login', '/splash'].includes(path);
 
   const mainRef = useRef<HTMLDivElement | null>(null);
   const lastScrollY = useRef(0);
