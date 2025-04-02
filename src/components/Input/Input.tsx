@@ -49,7 +49,7 @@ function Input({
 
   return type === 'file' ? (
     <>
-      <Label hideLabel={hideLabel} htmlFor={labelId} className="mx-2 my-1">
+      <Label hideLabel={hideLabel} htmlFor={labelId} className="mx-1 my-1">
         {label}
       </Label>
       <Wrapper {...(children ? { className: 'relative' } : {})}>
@@ -74,14 +74,14 @@ function Input({
     </>
   ) : (
     <>
-      <Label hideLabel={hideLabel} htmlFor={labelId}>
+      <Label hideLabel={hideLabel} htmlFor={labelId} className="mx-1 my-1">
         {label}
       </Label>
       <Wrapper {...(children ? { className: 'relative' } : {})}>
         <input
           type={type}
           data-slot="input"
-          className={`${inputClassName} ${type === 'button' && 'text-gray05 text-justify text-left'}`}
+          className={`${inputClassName} ${type === 'button' && 'text-gray05 text-left'}`}
           id={labelId}
           placeholder={placeholder}
           {...props}

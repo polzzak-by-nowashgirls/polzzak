@@ -15,6 +15,7 @@ function RootLayout() {
     '/search': '검색',
     '/map': '지도',
     '/polzzak': '폴짝',
+    '/polzzak/add': '폴짝 추가',
     '/my': 'MY',
   };
 
@@ -22,7 +23,9 @@ function RootLayout() {
   const headerTitle = headerTitles[path] || defaultTitle;
 
   const showHeader = !['/map', '/login', '/splash'].includes(path);
-  const showNav = !['/search', '/login', '/splash'].includes(path);
+  const showNav = !['/search', '/login', '/splash', '/polzzak/add'].includes(
+    path,
+  );
 
   const mainRef = useRef<HTMLDivElement | null>(null);
   const lastScrollY = useRef(0);

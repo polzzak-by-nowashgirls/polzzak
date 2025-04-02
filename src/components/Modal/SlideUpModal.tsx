@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+
 import Button from '@/components/Button/Button';
 import Calendar from '@/components/Calendar/Calendar';
 import Icon from '@/components/Icon/Icon';
@@ -145,7 +147,13 @@ function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
   if (!modalContent) return null;
 
   return (
-    <dialog className="fixed bottom-0 left-1/2 flex w-screen -translate-x-1/2 transform flex-col gap-4 rounded-t-2xl bg-white px-8 py-6">
+    <motion.dialog
+      initial={{ y: '100%', opacity: 0 }}
+      animate={{ y: '0%', opacity: 1 }}
+      exit={{ y: '100%', opacity: 0 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+      className="fixed bottom-0 left-1/2 z-99 flex w-screen -translate-x-1/2 transform flex-col gap-4 rounded-t-2xl bg-white px-8 py-6"
+    >
       <div
         className={`${
           ['favorite_list', 'search_list', 'select'].includes(modalContent.type)
@@ -205,7 +213,7 @@ function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
           </Button>
         )}
       </div>
-    </dialog>
+    </motion.dialog>
   );
 }
 

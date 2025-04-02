@@ -12,6 +12,7 @@ import {
   Search,
   Splash,
 } from './pages';
+import { Add } from './pages/Polzzak';
 
 export const routes = [
   {
@@ -41,6 +42,16 @@ export const routes = [
       {
         path: '/polzzak',
         element: <Polzzak />,
+        children: [
+          {
+            index: true,
+            element: <Polzzak />,
+          },
+          {
+            path: 'add',
+            element: <Add />,
+          },
+        ],
       },
       {
         path: '/my',
