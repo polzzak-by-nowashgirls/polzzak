@@ -23,14 +23,28 @@ function RootLayout() {
     '/my/edit/phone-number': '휴대폰 번호 설정',
     '/my/edit/email': '이메일 설정',
   };
+  const isRegisterPath = path.startsWith('/register');
 
   const defaultTitle = '🐰폴짝🐰';
-  const headerTitle = headerTitles[path] || defaultTitle;
+  const getHeaderTitle = () => {
+    if (isRegisterPath) {
+      return '회원가입';
+    }
+    return headerTitles[path] || defaultTitle;
+  };
+  const headerTitle = getHeaderTitle();
 
+  // Header ❌
   const showHeader = !['/map', '/login', '/splash'].includes(path);
-  const showNav = !['/search', '/login', '/splash', '/polzzak/add'].includes(
-    path,
-  );
+
+  // Nav ❌
+  const isHiddenPathNav = [
+    '/search',
+    '/login',
+    '/splash',
+    '/polzzak/add',
+  ].includes(path);
+  const showNav = !(isHiddenPathNav || isRegisterPath);
 
   const mainRef = useRef<HTMLDivElement | null>(null);
   const lastScrollY = useRef(0);
