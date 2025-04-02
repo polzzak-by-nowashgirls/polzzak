@@ -60,27 +60,37 @@ function Chip({ mode, type = 'default' }: ChipProps) {
   };
 
   return (
-    <ul className="flex flex-wrap gap-2" role="list">
-      {(mode === 'region' ? regions : themes).map((item) => (
-        <li
-          key={item.id}
-          onClick={() =>
-            mode === 'region'
-              ? HandleToggleRegion(item.id)
-              : HandleToggleTheme(item.id)
-          }
-          aria-pressed={item.selected}
-          tabIndex={0}
-          className={`fs-14 font-regular ls lh cursor-pointer rounded-4xl border px-3.5 py-1.5 whitespace-nowrap transition-all ${
-            item.selected
-              ? 'bg-primary border-primary text-white'
-              : 'text-gray07 border-gray07 bg-white'
-          }`}
-        >
-          {item.name}
-        </li>
-      ))}
-    </ul>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-start gap-2 pl-2">
+        <h3 className="fs-14 ls lh font-regular text-black">
+          {mode === 'region' ? '지역 선택' : '테마 선택'}
+        </h3>
+        <span className="fs-13 ls lh font-regular text-gray06">
+          {type === 'multiple' ? '다중 선택' : '단일 선택'}
+        </span>
+      </div>
+      <ul className="flex flex-wrap gap-2" role="list">
+        {(mode === 'region' ? regions : themes).map((item) => (
+          <li
+            key={item.id}
+            onClick={() =>
+              mode === 'region'
+                ? HandleToggleRegion(item.id)
+                : HandleToggleTheme(item.id)
+            }
+            aria-pressed={item.selected}
+            tabIndex={0}
+            className={`fs-14 font-regular ls lh cursor-pointer rounded-4xl border px-3.5 py-1.5 whitespace-nowrap transition-all ${
+              item.selected
+                ? 'bg-primary border-primary text-white'
+                : 'text-gray07 border-gray07 bg-white'
+            }`}
+          >
+            {item.name}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
