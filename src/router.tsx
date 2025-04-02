@@ -51,26 +51,38 @@ export const routes = [
       {
         path: '/my',
         element: <My />,
-      },
-      {
-        path: '/my/edit',
-        element: <Edit />,
-      },
-      {
-        path: '/my/edit/nickname',
-        element: <NickName />,
-      },
-      {
-        path: '/my/edit/password',
-        element: <Password />,
-      },
-      {
-        path: '/my/edit/phone-number',
-        element: <PhoneNumber />,
-      },
-      {
-        path: '/my/edit/email',
-        element: <Email />,
+        children: [
+          {
+            index: true,
+            element: <My />,
+          },
+          {
+            path: 'edit',
+            element: <Edit />,
+            children: [
+              {
+                index: true,
+                element: <Edit />,
+              },
+              {
+                path: 'nickname',
+                element: <NickName />,
+              },
+              {
+                path: 'password',
+                element: <Password />,
+              },
+              {
+                path: 'phone-number',
+                element: <PhoneNumber />,
+              },
+              {
+                path: 'email',
+                element: <Email />,
+              },
+            ],
+          },
+        ],
       },
       {
         path: '/splash',

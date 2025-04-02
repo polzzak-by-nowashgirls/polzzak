@@ -1,3 +1,5 @@
+import { Outlet, useLocation } from 'react-router-dom';
+
 import Modal from '@/components/Modal/Modal';
 import MenuItem from '@/components/My/MenuItem';
 import Profile from '@/components/Profile/Profile';
@@ -7,7 +9,9 @@ import { useModalStore } from '@/store/useModalStore';
 
 function My() {
   const { openModal } = useModalStore();
+  const location = useLocation();
 
+  const isMyPage = location.pathname === '/my';
   const handleLogoutClick = () => {
     openModal();
   };
@@ -48,12 +52,18 @@ function My() {
   ];
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex h-full w-full flex-col">
       <h1 className="sr-only">마이페이지</h1>
-      <Profile userInfo={USER_INFO} />
-      <UserMenu menus={userMenus} />
-      <MenuItem menus={menus} />
-      <Modal mode="alert" type="logout" />
+      {isMyPage ? (
+        <div className="flex flex-col gap-6">
+          <Profile userInfo={USER_INFO} />
+          <UserMenu menus={userMenus} />
+          <MenuItem menus={menus} />
+          <Modal mode="alert" type="logout" />
+        </div>
+      ) : (
+        <Outlet />
+      )}
     </section>
   );
 }
