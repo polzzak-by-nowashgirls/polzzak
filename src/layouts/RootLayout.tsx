@@ -16,6 +16,11 @@ function RootLayout() {
     '/map': '지도',
     '/polzzak': '폴짝',
     '/my': 'MY',
+    '/my/edit': '내 정보',
+    '/my/edit/nickname': '닉네임 설정',
+    '/my/edit/password': '비밀번호 설정',
+    '/my/edit/phone-number': '휴대폰 번호 설정',
+    '/my/edit/email': '이메일 설정',
   };
 
   const defaultTitle = '🐰폴짝🐰';
