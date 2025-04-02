@@ -1,5 +1,11 @@
+import { Outlet } from 'react-router-dom';
+
 function Register() {
-  return <h1>회원가입</h1>;
+  return (
+    <section>
+      <Outlet />
+    </section>
+  );
 }
 
 export default Register;
