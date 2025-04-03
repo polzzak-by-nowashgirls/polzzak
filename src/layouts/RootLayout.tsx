@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Outlet, useLocation } from 'react-router-dom';
 
@@ -6,45 +6,47 @@ import Header from '@/components/Header/Header';
 import NavMenu from '@/components/NavMenu/NavMenu';
 import { cn } from '@/lib/utils';
 
+// ✅ 상수 분리
+const HEADER_TITLES: Record<string, string> = {
+  '/': '🐰폴짝🐰',
+  '/login': '로그인',
+  '/search': '검색',
+  '/map': '지도',
+  '/polzzak': '폴짝',
+  '/polzzak/add': '폴짝 추가',
+  '/my': 'MY',
+  '/my/edit': '내 정보',
+  '/my/edit/nickname': '닉네임 설정',
+  '/my/edit/password': '비밀번호 설정',
+  '/my/edit/phone-number': '휴대폰 번호 설정',
+  '/my/edit/email': '이메일 설정',
+};
+
+const HIDDEN_NAV_PATHS = new Set([
+  '/search',
+  '/login',
+  '/splash',
+  '/polzzak/add',
+]);
+
+const HIDDEN_HEADER_PATHS = new Set(['/map', '/splash']);
+
 function RootLayout() {
   const location = useLocation();
   const path = location.pathname;
-
-  const headerTitles: Record<string, string> = {
-    '/': '🐰폴짝🐰',
-    '/search': '검색',
-    '/map': '지도',
-    '/polzzak': '폴짝',
-    '/polzzak/add': '폴짝 추가',
-    '/my': 'MY',
-    '/my/edit': '내 정보',
-    '/my/edit/nickname': '닉네임 설정',
-    '/my/edit/password': '비밀번호 설정',
-    '/my/edit/phone-number': '휴대폰 번호 설정',
-    '/my/edit/email': '이메일 설정',
-  };
   const isRegisterPath = path.startsWith('/register');
 
-  const defaultTitle = '🐰폴짝🐰';
-  const getHeaderTitle = () => {
-    if (isRegisterPath) {
-      return '회원가입';
-    }
-    return headerTitles[path] || defaultTitle;
-  };
-  const headerTitle = getHeaderTitle();
+  // ✅ useMemo 최적화 (path가 변경될 때만 연산 실행)
+  const headerTitle = useMemo(() => {
+    if (isRegisterPath) return '회원가입';
+    return HEADER_TITLES[path] || '🐰폴짝🐰';
+  }, [path, isRegisterPath]);
 
-  // Header ❌
-  const showHeader = !['/map', '/login', '/splash'].includes(path);
-
-  // Nav ❌
-  const isHiddenPathNav = [
-    '/search',
-    '/login',
-    '/splash',
-    '/polzzak/add',
-  ].includes(path);
-  const showNav = !(isHiddenPathNav || isRegisterPath);
+  const showHeader = useMemo(() => !HIDDEN_HEADER_PATHS.has(path), [path]);
+  const showNav = useMemo(
+    () => !(HIDDEN_NAV_PATHS.has(path) || isRegisterPath),
+    [path, isRegisterPath],
+  );
 
   return (
     <>
