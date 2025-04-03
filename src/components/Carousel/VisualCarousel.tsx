@@ -8,19 +8,23 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/Carousel/Carousel';
+import RabbitFace from '@/components/RabbitFace/RabbitFace';
 
 const banner = [
   {
     src: 'images/visual_1.png',
     alt: '친구와 함께 서울로 폴짝',
+    text: ['친구와 함께', '서울로 폴짝'],
   },
   {
     src: 'images/visual_2.png',
     alt: '연인과 함께 제주로 폴짝',
+    text: ['연인과 함께', '제주도로 폴짝'],
   },
   {
     src: 'images/visual_3.png',
     alt: '가족과 함께 부산으로 폴짝',
+    text: ['가족과 함께', '부산으로 폴짝'],
   },
 ];
 
@@ -53,10 +57,22 @@ function VisualCarousel() {
       >
         <CarouselContent>
           {banner.map((item, index) => (
-            <CarouselItem key={index}>
-              <div className="h-full w-full">
-                <img src={item.src} alt={item.alt} className="h-full w-full" />
-              </div>
+            <CarouselItem key={index} className="relative">
+              <h3 className="absolute bottom-[14%] left-[14%] flex flex-col gap-1 text-2xl font-semibold text-white">
+                {item.text.map((text, index) => (
+                  <p key={index}>{text}</p>
+                ))}
+                <RabbitFace
+                  src="/images/rabbit.svg"
+                  alt="깡총"
+                  className="mt-2"
+                />
+              </h3>
+              <img
+                src={item.src}
+                alt={item.alt}
+                className="h-full min-h-[15rem] w-full"
+              />
             </CarouselItem>
           ))}
         </CarouselContent>
