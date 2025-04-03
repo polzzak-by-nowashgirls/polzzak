@@ -7,7 +7,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/Carousel/Carousel';
+} from '@/components/Home/Carousel';
 import RabbitFace from '@/components/RabbitFace/RabbitFace';
 
 const banner = [
@@ -28,7 +28,7 @@ const banner = [
   },
 ];
 
-function VisualCarousel() {
+function CarouselVisual() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
@@ -95,4 +95,4 @@ function VisualCarousel() {
   );
 }
 
-export default VisualCarousel;
+export default CarouselVisual;
