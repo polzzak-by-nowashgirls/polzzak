@@ -2,11 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { StepPage } from '@/pages/Register';
 
-import Edit from '@/pages/My/Edit/Edit';
-import Email from '@/pages/My/Edit/Email/Email';
-import NickName from '@/pages/My/Edit/NickName/NickName';
-import Password from '@/pages/My/Edit/Password/Password';
-import PhoneNumber from '@/pages/My/Edit/PhoneNumber/PhoneNumber';
+import { Edit, Email, NickName, Password, PhoneNumber } from '@/pages/My/Edit';
 
 import RootLayout from './layouts/RootLayout';
 import {
