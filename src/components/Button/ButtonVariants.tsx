@@ -12,7 +12,7 @@ export const buttonVariants = cva(
         tertiary:
           'bg-white text-gray08 hover:text-primary-hover active:text-primary-active disabled:bg-white disabled:text-gray04',
         float:
-          'absolute bottom-[16px] right-[16px] px-3 text-white rounded-3xl bg-primary/75 hover:bg-primary/85 active:bg-primary',
+          'fixed bottom-[76px] right-[24px] px-3 text-white bg-primary/75 hover:bg-primary/85 active:bg-primary',
         input:
           'm-0 p-0 text-gray05 hover:text-primary-hover active:text-primary',
       },
@@ -27,6 +27,10 @@ export const buttonVariants = cva(
       {
         variant: 'input',
         class: 'w-[32px] h-[32px] rounded-sm',
+      },
+      {
+        variant: 'float',
+        class: 'rounded-3xl',
       },
     ],
     defaultVariants: {
