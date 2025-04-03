@@ -11,11 +11,7 @@ function NotFound() {
       <div className="flex flex-col gap-4 pb-12">
         <h1 className="text-primary flex items-center justify-center gap-1 text-center text-[64px] font-semibold whitespace-nowrap">
           <p>4</p>
-          <RabbitFace
-            src="/images/rabbit_face.png"
-            alt="토끼 얼굴"
-            className="w-[64px]"
-          />
+          <RabbitFace src="/images/rabbit_face.png" alt="토끼 얼굴" size={64} />
           <p>4</p>
         </h1>
         <p className="fs-16 font-semibold">
