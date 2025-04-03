@@ -19,16 +19,17 @@ function Login() {
   }, [location.state, showToast]);
 
   return (
-    <div className="m-auto flex h-full max-w-[420px] flex-col justify-center pb-12">
-      <h1 className="fs-40 flex items-center justify-center gap-2 py-8 text-center font-semibold whitespace-nowrap text-black">
-        <RabbitFace src="/images/rabbit_face.png" alt="토끼 얼굴" />
-        폴짝
-        <RabbitFace src="/images/rabbit_face.png" alt="토끼 얼굴" />
-      </h1>
-      <div className="fs-14 text-gray05 font-regular pb-4 text-center">
-        <p>로그인이 필요한 서비스 입니다.</p>
-        <p>로그인을 해주세요.</p>
-      </div>
+    <div className="m-auto flex h-full max-w-[420px] flex-col justify-center gap-8 pb-14">
+      <h2>
+        <Link
+          to="/"
+          className="fs-40 text-primary font-title flex items-center justify-center gap-2 py-3 font-bold whitespace-nowrap"
+        >
+          <RabbitFace src="/images/rabbit_face.png" alt="토끼 얼굴" size={40} />
+          폴짝
+          <RabbitFace src="/images/rabbit_face.png" alt="토끼 얼굴" size={40} />
+        </Link>
+      </h2>
       <fieldset className="flex flex-col gap-2">
         <Input
           type="text"
@@ -52,7 +53,7 @@ function Login() {
         </div>
         <Button>로그인</Button>
       </fieldset>
-      <div className="flex justify-center gap-1 py-4">
+      <div className="flex justify-center gap-1">
         <p className="fs-14 font-regular text-gray07">
           아직 회원이 아니신가요?
         </p>

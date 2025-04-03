@@ -13,6 +13,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'ownglyph';
+  src: url('/fonts/ownglyphDah.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 html,
 body {
   font-family: 'Pretendard', sans-serif;
@@ -225,6 +233,11 @@ body {
   }
   .ls {
     letter-spacing: -0.005rem;
+  }
+
+  /* font title */
+  .font-title {
+    font-family: 'ownglyph', 'Pretendard', sans-serif;
   }
 }
 
