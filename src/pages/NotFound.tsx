@@ -8,11 +8,16 @@ function NotFound() {
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4">
-      <div className="flex flex-col gap-4 pb-12">
-        <h1 className="text-primary flex items-center justify-center gap-1 text-center text-[64px] font-semibold whitespace-nowrap">
-          <p>4</p>
-          <RabbitFace src="/images/rabbit_face.png" alt="토끼 얼굴" size={64} />
-          <p>4</p>
+      <div className="flex flex-col gap-10 pb-12">
+        <h1 className="text-primary relative flex items-center justify-center gap-9 text-center text-[80px] font-bold whitespace-nowrap">
+          <span>4</span>
+          <span>4</span>
+          <RabbitFace
+            src="/images/rabbit_face.png"
+            alt="토끼 얼굴"
+            size={64}
+            className="absolute"
+          />
         </h1>
         <p className="fs-16 font-semibold">
           요청하신 페이지를 찾을 수 없습니다.
