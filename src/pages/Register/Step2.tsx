@@ -37,7 +37,9 @@ function Step2() {
         onClick={() => {
           navigate('/register/3');
         }}
-      ></Button>
+      >
+        다음
+      </Button>
     </>
   );
 }
