@@ -1,11 +1,13 @@
 type RabbitFaceProps = {
   src: string;
   alt: string;
+  size?: number;
+  className?: string;
 };
 
-function RabbitFace({ src, alt }: RabbitFaceProps) {
+function RabbitFace({ src, alt, size = 48, className }: RabbitFaceProps) {
   return (
-    <span className="w-[48px]" aria-hidden={true}>
+    <span className={`w-[${size}px] ${className}`} aria-hidden={true}>
       <img src={src} alt={alt} className="h-full w-full" />
     </span>
   );
