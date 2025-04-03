@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 
-import { CarouselItem } from '@/components/Carousel/Carousel';
+import { CarouselItem } from '@/components/Home/Carousel';
 import { ThemeItemList } from '@/mockData/ListItemDummyData';
 
-function ThemeItemListCard({ item }: { item: ThemeItemList }) {
+function ThemeItemCard({ item }: { item: ThemeItemList }) {
   const { imgUrl, title, region } = item;
 
   return (
@@ -26,4 +26,4 @@ function ThemeItemListCard({ item }: { item: ThemeItemList }) {
   );
 }
 
-export default ThemeItemListCard;
+export default ThemeItemCard;

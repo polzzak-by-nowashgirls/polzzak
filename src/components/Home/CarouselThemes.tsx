@@ -1,10 +1,14 @@
 import { Link } from 'react-router-dom';
 
-import { Carousel, CarouselContent } from '@/components/Carousel/Carousel';
-import ThemeItemListCard from '@/components/HomeThemes/ThemeItemListCard';
-import { THEMES_ITEM_DUMMY_DATA } from '@/mockData/ListItemDummyData';
+import { Carousel, CarouselContent } from '@/components/Home/Carousel';
+import ThemeItemCard from '@/components/Home/ThemeItemCard';
+import { type ThemeItem } from '@/mockData/ListItemDummyData';
 
-function HomeThemes({ data = THEMES_ITEM_DUMMY_DATA[0] }) {
+interface ThemeItemProps {
+  data: ThemeItem;
+}
+
+function CarouselThemes({ data }: ThemeItemProps) {
   return (
     <section>
       <header className="mb-4 flex w-full justify-between px-6">
@@ -18,7 +22,7 @@ function HomeThemes({ data = THEMES_ITEM_DUMMY_DATA[0] }) {
       <Carousel>
         <CarouselContent className="gap-4 px-6">
           {data.itemList.map((item) => (
-            <ThemeItemListCard key={item.id} item={item} />
+            <ThemeItemCard key={item.id} item={item} />
           ))}
         </CarouselContent>
       </Carousel>
@@ -26,4 +30,4 @@ function HomeThemes({ data = THEMES_ITEM_DUMMY_DATA[0] }) {
   );
 }
 
-export default HomeThemes;
+export default CarouselThemes;

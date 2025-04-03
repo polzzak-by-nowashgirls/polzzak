@@ -14,7 +14,7 @@ function NavMenu({ className }: { className?: string }) {
   return (
     <nav
       className={cn(
-        'border-gray02 order-1 flex h-15 w-full items-center gap-2 border-t-1 bg-white px-4 transition-transform duration-300 ease-in-out',
+        'border-gray02 relative order-1 flex h-15 w-full items-center gap-2 border-t-1 bg-white px-4 transition-transform duration-300 ease-in-out',
         className,
       )}
     >

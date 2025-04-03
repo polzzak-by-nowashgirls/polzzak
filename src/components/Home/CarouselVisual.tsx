@@ -7,7 +7,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/Carousel/Carousel';
+} from '@/components/Home/Carousel';
 import RabbitFace from '@/components/RabbitFace/RabbitFace';
 
 const banner = [
@@ -28,7 +28,7 @@ const banner = [
   },
 ];
 
-function VisualCarousel() {
+function CarouselVisual() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
@@ -58,15 +58,15 @@ function VisualCarousel() {
         <CarouselContent>
           {banner.map((item, index) => (
             <CarouselItem key={index} className="relative">
-              <h3 className="absolute bottom-[14%] left-[14%] flex flex-col gap-1 text-2xl font-semibold text-white">
-                {item.text.map((text, index) => (
-                  <p key={index}>{text}</p>
-                ))}
+              <h3 className="absolute bottom-[14%] left-[14%] flex flex-col gap-0 text-xl font-bold text-white sm:gap-0 sm:text-xl md:gap-1 md:text-3xl lg:text-4xl">
                 <RabbitFace
                   src="/images/rabbit.svg"
                   alt="깡총"
-                  className="mt-2"
+                  className="mb-2 w-[32px] sm:w-[32px] md:w-[48px]"
                 />
+                {item.text.map((text, index) => (
+                  <p key={index}>{text}</p>
+                ))}
               </h3>
               <img
                 src={item.src}
@@ -95,4 +95,4 @@ function VisualCarousel() {
   );
 }
 
-export default VisualCarousel;
+export default CarouselVisual;

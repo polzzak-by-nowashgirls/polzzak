@@ -1,18 +1,17 @@
-import { Link } from 'react-router-dom';
+import Category from '@/components/Category/Category';
+import CarouselThemes from '@/components/Home/CarouselThemes';
+import CarouselVisual from '@/components/Home/CarouselVisual';
+import { THEMES_ITEM_DUMMY_DATA } from '@/mockData/ListItemDummyData';
 
 function Home() {
   return (
-    <>
-      <h1>홈</h1>
-      <div className="flex flex-col">
-        <Link to="/login">로그인</Link>
-        <Link to="/register">회원가입</Link>
-        <Link to="/search">검색</Link>
-        <Link to="/map">지도</Link>
-        <Link to="/polzzak">폴짝</Link>
-        <Link to="/my">마이페이지</Link>
-      </div>
-    </>
+    <div className="flex flex-col gap-6 pb-8">
+      <CarouselVisual />
+      <Category />
+      <CarouselThemes data={THEMES_ITEM_DUMMY_DATA[0]} />
+      <CarouselThemes data={THEMES_ITEM_DUMMY_DATA[1]} />
+      <CarouselThemes data={THEMES_ITEM_DUMMY_DATA[2]} />
+    </div>
   );
 }
 
