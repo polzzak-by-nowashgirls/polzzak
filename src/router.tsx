@@ -1,4 +1,6 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
+
+import { StepPage } from '@/pages/Register';
 
 import Edit from '@/pages/My/Edit/Edit';
 import Email from '@/pages/My/Edit/Email/Email';
@@ -36,6 +38,10 @@ export const routes = [
       {
         path: '/register',
         element: <Register />,
+        children: [
+          { index: true, element: <Navigate to="1" replace /> },
+          { path: ':step', element: <StepPage /> },
+        ],
       },
       {
         path: '/search',

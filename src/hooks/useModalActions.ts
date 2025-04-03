@@ -9,8 +9,12 @@ export function useModalActions() {
   const modalActions: Record<string, () => void> = {
     취소: closeModal,
     '다시 인증하기': closeModal,
-    다음: () => console.log('다음 버튼에 맞는 함수'),
-    확인: () => console.log('확인 버튼에 맞는 함수'),
+    다음: () => {
+      navigate('/register/4');
+    },
+    확인: () => {
+      navigate('/login');
+    },
     저장: () => console.log('저장 버튼에 맞는 함수'),
     삭제: () => console.log('삭제 버튼에 맞는 함수'),
     추가: () => console.log('추가 버튼에 맞는 함수'),

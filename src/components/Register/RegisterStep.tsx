@@ -17,7 +17,7 @@ function RegisterStep({ step }: RegisterStepProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <Progress value={progress} className="fixed top-0 left-0" />
+      <Progress value={progress} className="fixed top-12 left-0" />
       <Step step={step} />
     </div>
   );
