@@ -1,10 +1,12 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
 import Input from '@/components/Input/Input';
 import Validation from '@/components/Input/Validation';
 
 function Step2() {
+  const navigate = useNavigate();
+
   const message = {
     success: '사용 가능한 비밀번호입니다.',
     error: '영문과 숫자, 특수문자를 포함하여 8~20자여야 합니다.',
@@ -31,9 +33,11 @@ function Step2() {
         />
         <Validation status={false} message={message.confirmError} />
       </div>
-      <Button>
-        <Link to={'/register/3'}>다음</Link>
-      </Button>
+      <Button
+        onClick={() => {
+          navigate('/register/3');
+        }}
+      ></Button>
     </>
   );
 }

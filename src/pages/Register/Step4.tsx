@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
 import Input from '@/components/Input/Input';
@@ -6,6 +6,7 @@ import SelectMenu from '@/components/Input/SelectMenu';
 import { Label } from '@/components/Label';
 
 function Step4() {
+  const navigate = useNavigate();
   return (
     <>
       <div>
@@ -31,15 +32,12 @@ function Step4() {
         </div>
       </div>
       <SelectMenu data={'email'} />
-      <Button>
-        <Link
-          to={'/register/5'}
-          onClick={() => {
-            console.log('클릭함!');
-          }}
-        >
-          다음
-        </Link>
+      <Button
+        onClick={() => {
+          navigate('/register/5');
+        }}
+      >
+        다음
       </Button>
     </>
   );

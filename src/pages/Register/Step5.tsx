@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
 import Validation from '@/components/Input/Validation';
-import AlertModal from '@/components/Modal/AlertModal';
+import Modal from '@/components/Modal/Modal';
 
 function Step5() {
-  const navigate = useNavigate();
+  // 로그인 완료 후 뒤로가기 막기 기능 필요
+  // 회원가입 페이지를 아예 못들어오게 할 것인지?
+  // 회원가입 step1 페이지로만 들어가게 할 것인지?
   const [joinModal, setJoinModal] = useState(false);
 
   const handleMoveLogin = () => {
@@ -36,14 +37,7 @@ function Step5() {
         <Validation status={false} message={message.errorDup} />
       </div>
       <Button onClick={handleMoveLogin}>완료</Button>
-      {joinModal && (
-        <AlertModal
-          type={'register'}
-          handleButtonClick={() => {
-            navigate('/login');
-          }}
-        />
-      )}
+      {joinModal && <Modal mode={'alert'} type={'register'} />}
     </>
   );
 }
