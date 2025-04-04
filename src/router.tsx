@@ -7,7 +7,6 @@ import {
   NickName,
   Password,
   PhoneNumber,
-  Schedule,
 } from '@/pages/My/Edit';
 import { StepPage } from '@/pages/Register';
 
@@ -25,7 +24,7 @@ import {
   Search,
   Splash,
 } from './pages';
-import { Add, Edit as PolzzakEdit } from './pages/Polzzak';
+import { Add, Edit as PolzzakEdit, Schedule } from './pages/Polzzak';
 
 export const routes = [
   {
