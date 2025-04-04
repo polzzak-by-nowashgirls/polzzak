@@ -16,6 +16,7 @@ function RootLayout() {
     '/map': '지도',
     '/polzzak': '폴짝',
     '/polzzak/add': '폴짝 추가',
+    '/polzzak/edit': '폴짝 편집',
     '/my': 'MY',
     '/my/edit': '내 정보',
     '/my/edit/nickname': '닉네임 설정',
@@ -24,12 +25,14 @@ function RootLayout() {
     '/my/edit/email': '이메일 설정',
   };
   const isRegisterPath = path.startsWith('/register');
+  const isPolzzakEditPath = path.startsWith('/polzzak/edit');
 
   const defaultTitle = '🐰폴짝🐰';
   const getHeaderTitle = () => {
     if (isRegisterPath) {
       return '회원가입';
     }
+    if (isPolzzakEditPath) return '폴짝 편집';
     return headerTitles[path] || defaultTitle;
   };
   const headerTitle = getHeaderTitle();
@@ -43,8 +46,9 @@ function RootLayout() {
     '/login',
     '/splash',
     '/polzzak/add',
+    '/polzzak/edit',
   ].includes(path);
-  const showNav = !(isHiddenPathNav || isRegisterPath);
+  const showNav = !(isHiddenPathNav || isRegisterPath || isPolzzakEditPath);
 
   return (
     <>

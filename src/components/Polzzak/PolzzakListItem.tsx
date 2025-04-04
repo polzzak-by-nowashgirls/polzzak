@@ -41,7 +41,7 @@ function PolzzakListItem({
   }, [setOpenMenuId]);
 
   const onClickEdit = () => {
-    navigate(`/polzzak/edit/${item.id}`);
+    navigate(`/polzzak/edit/${item.id}`, { state: { item, img } });
     console.log('해당 아이템 편집 화면(/polzzak/edit)으로 이동');
   };
   const onClickDelete = () => {
@@ -87,8 +87,9 @@ function PolzzakListItem({
             {[
               { label: '편집하기', onClick: onClickEdit },
               { label: '삭제하기', onClick: onClickDelete },
-            ].map(({ label, onClick }) => (
+            ].map(({ label, onClick }, index) => (
               <Button
+                key={index}
                 variant="tertiary"
                 size="md"
                 className="hover:bg-gray02 fs-14 font-regular h-9 rounded-sm bg-white px-3 hover:text-black active:text-black"

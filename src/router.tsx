@@ -1,8 +1,13 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
+import {
+  Edit as UserEdit,
+  Email,
+  NickName,
+  Password,
+  PhoneNumber,
+} from '@/pages/My/Edit';
 import { StepPage } from '@/pages/Register';
-
-import { Edit, Email, NickName, Password, PhoneNumber } from '@/pages/My/Edit';
 
 import RootLayout from './layouts/RootLayout';
 import {
@@ -16,7 +21,7 @@ import {
   Search,
   Splash,
 } from './pages';
-import { Add } from './pages/Polzzak';
+import { Add, Edit as PolzzakEdit } from './pages/Polzzak';
 
 export const routes = [
   {
@@ -59,6 +64,10 @@ export const routes = [
             path: 'add',
             element: <Add />,
           },
+          {
+            path: 'edit/:id',
+            element: <PolzzakEdit />,
+          },
         ],
       },
       {
@@ -71,11 +80,11 @@ export const routes = [
           },
           {
             path: 'edit',
-            element: <Edit />,
+            element: <UserEdit />,
             children: [
               {
                 index: true,
-                element: <Edit />,
+                element: <UserEdit />,
               },
               {
                 path: 'nickname',
