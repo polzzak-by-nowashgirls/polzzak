@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
+import ViewDetails from '@/pages/Contents/ViewDetails';
 import {
   Edit as UserEdit,
   Email,
@@ -7,7 +8,6 @@ import {
   Password,
   PhoneNumber,
 } from '@/pages/My/Edit';
-import ViewDetails from '@/pages/Contents/ViewDetails';
 import { StepPage } from '@/pages/Register';
 
 import RootLayout from './layouts/RootLayout';

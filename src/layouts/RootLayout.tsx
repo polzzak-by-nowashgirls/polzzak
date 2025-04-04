@@ -75,7 +75,7 @@ function RootLayout() {
       <main
         className={cn(
           'flex-1 overflow-auto',
-          path !== '/' && path !== 'map' && 'p-6',
+          path !== '/' && path !== '/map' && 'p-6',
         )}
       >
         <Suspense>
