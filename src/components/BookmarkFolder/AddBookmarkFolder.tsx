@@ -1,9 +1,13 @@
 import BookmarkFolderCard from '@/components/BookmarkFolder/BookmarkFolderCard';
 import { cn } from '@/lib/utils';
 
-function AddBookmarkFolder() {
-  const openModal = () => {
-    console.log('📂 폴더 추가 모달 열기');
+type AddBookmarkFolderProps = {
+  onClickAdd: () => void;
+};
+
+function AddBookmarkFolder({ onClickAdd }: AddBookmarkFolderProps) {
+  const handleAddClick = () => {
+    onClickAdd();
   };
 
   return (
@@ -16,7 +20,7 @@ function AddBookmarkFolder() {
         name="폴더 추가하기"
         images={[]}
         addFolder={true}
-        onClick={openModal}
+        onClick={handleAddClick}
       />
     </div>
   );

@@ -26,9 +26,7 @@ function My() {
     {
       label: '즐겨찾기',
       icon: 'favorite_off',
-      onClick: () => {
-        console.log('클릭');
-      },
+      path: '/my/bookmark',
     },
     {
       label: '폴짝추가',

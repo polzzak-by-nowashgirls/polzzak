@@ -1,15 +1,22 @@
-import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import RegisterStep from '@/components/Register/RegisterStep';
-import NotFound from '@/pages/NotFound';
 import { Step1, Step2, Step3, Step4, Step5 } from '@/pages/Register';
 
 function StepPage() {
   const { step } = useParams();
+  const navigate = useNavigate();
   const trimmed = (step ?? '').trim();
   const isValidStep = ['1', '2', '3', '4', '5'].includes(trimmed);
 
-  if (!isValidStep) return <NotFound />;
+  useEffect(() => {
+    if (!isValidStep) {
+      navigate('/not-found');
+    }
+  }, [isValidStep, navigate]);
+
+  if (!isValidStep) return null;
 
   const stepNumber = parseInt(trimmed);
 

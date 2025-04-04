@@ -7,10 +7,13 @@ import {
   Password,
   PhoneNumber,
 } from '@/pages/My/Edit';
+import ViewDetails from '@/pages/Contents/ViewDetails';
 import { StepPage } from '@/pages/Register';
 
 import RootLayout from './layouts/RootLayout';
 import {
+  Bookmark,
+  Contents,
   Home,
   Login,
   Map,
@@ -104,7 +107,16 @@ export const routes = [
               },
             ],
           },
+          {
+            path: 'bookmark',
+            element: <Bookmark />,
+          },
         ],
+      },
+      {
+        path: '/contents',
+        element: <Contents />,
+        children: [{ path: ':id', element: <ViewDetails /> }],
       },
       {
         path: '/splash',
