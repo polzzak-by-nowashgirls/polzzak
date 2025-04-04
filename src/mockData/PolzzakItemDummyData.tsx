@@ -5,7 +5,7 @@ export interface PolzzakCard {
   memo: string;
 }
 
-interface PolzzakItemList {
+export interface PolzzakItemList {
   day: number;
   date: string;
   itemList: PolzzakCard[];

@@ -1,9 +1,12 @@
+import { PolzzakItemDummyData, PolzzakItemList } from './PolzzakItemDummyData';
+
 export interface ListItemType {
   id: string;
   label: string;
   startDate?: string;
   endDate?: string;
   city: string[];
+  schedule: [] | PolzzakItemList[];
 }
 
 export interface PolzzakType {
@@ -24,6 +27,7 @@ export const POLZZAK_LIST: PolzzakType[] = [
         startDate: '2025.03.15',
         endDate: '2025.03.17',
         city: ['인천'],
+        schedule: PolzzakItemDummyData,
       },
     ],
   },
@@ -37,11 +41,13 @@ export const POLZZAK_LIST: PolzzakType[] = [
         startDate: '2025.04.22',
         endDate: '2025.04.23',
         city: ['인천', '서울'],
+        schedule: [],
       },
       {
         id: 'id#3',
         label: '떠나요 셋이서',
         city: ['제주'],
+        schedule: [],
       },
     ],
   },
@@ -55,12 +61,14 @@ export const POLZZAK_LIST: PolzzakType[] = [
         startDate: '2025.01.05',
         endDate: '2025.01.07',
         city: ['부산'],
+        schedule: [],
       },
       {
         id: 'id#5',
         label: '보노보노의 기묘한 모험',
         startDate: '2025.01.05',
         city: ['제주', '여수', '전주'],
+        schedule: [],
       },
     ],
   },

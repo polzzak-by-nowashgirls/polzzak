@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import ViewDetails from '@/pages/Contents/ViewDetails';
 import { Edit, Email, NickName, Password, PhoneNumber } from '@/pages/My/Edit';
+import { Add, Schedule } from '@/pages/Polzzak';
 import { StepPage } from '@/pages/Register';
 
 import RootLayout from './layouts/RootLayout';
@@ -17,7 +18,6 @@ import {
   Search,
   Splash,
 } from './pages';
-import { Add } from './pages/Polzzak';
 
 export const routes = [
   {
@@ -59,6 +59,10 @@ export const routes = [
           {
             path: 'add',
             element: <Add />,
+          },
+          {
+            path: ':id',
+            element: <Schedule />,
           },
         ],
       },
