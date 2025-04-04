@@ -20,6 +20,7 @@ const HEADER_TITLES: Record<string, string> = {
   '/my/edit/password': '비밀번호 설정',
   '/my/edit/phone-number': '휴대폰 번호 설정',
   '/my/edit/email': '이메일 설정',
+  '/my/bookmark': '즐겨찾기',
 };
 
 const HIDDEN_NAV_PATHS = new Set([
@@ -49,6 +50,7 @@ function RootLayout() {
     () => !(HIDDEN_NAV_PATHS.has(path) || isRegisterPath),
     [path, isRegisterPath],
   );
+  const editHide = useMemo(() => path !== '/my/bookmark', [path]);
 
   return (
     <>
@@ -67,13 +69,13 @@ function RootLayout() {
         <meta name="og:site_name" content="국내 여행지를 찾고 싶을 땐, 폴짝!" />
         <meta name="og:site_author" content="nowashgirls" />
       </Helmet>
-      {showHeader && <Header title={headerTitle} editHide={true} />}
+      {showHeader && <Header title={headerTitle} editHide={editHide} />}
       {showNav && <NavMenu />}
 
       <main
         className={cn(
           'flex-1 overflow-auto',
-          path !== '/' && path !== 'map' && 'p-6',
+          path !== '/' && path !== '/map' && 'p-6',
         )}
       >
         <Suspense>

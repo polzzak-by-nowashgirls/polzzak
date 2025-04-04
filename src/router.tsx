@@ -1,12 +1,19 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import ViewDetails from '@/pages/Contents/ViewDetails';
-import { Edit, Email, NickName, Password, PhoneNumber } from '@/pages/My/Edit';
-import { Add, Schedule } from '@/pages/Polzzak';
+import {
+  Edit as UserEdit,
+  Email,
+  NickName,
+  Password,
+  PhoneNumber,
+  Schedule,
+} from '@/pages/My/Edit';
 import { StepPage } from '@/pages/Register';
 
 import RootLayout from './layouts/RootLayout';
 import {
+  Bookmark,
   Contents,
   Home,
   Login,
@@ -18,6 +25,7 @@ import {
   Search,
   Splash,
 } from './pages';
+import { Add, Edit as PolzzakEdit } from './pages/Polzzak';
 
 export const routes = [
   {
@@ -61,6 +69,10 @@ export const routes = [
             element: <Add />,
           },
           {
+            path: 'edit/:id',
+            element: <PolzzakEdit />,
+          },
+          {
             path: ':id',
             element: <Schedule />,
           },
@@ -76,11 +88,11 @@ export const routes = [
           },
           {
             path: 'edit',
-            element: <Edit />,
+            element: <UserEdit />,
             children: [
               {
                 index: true,
-                element: <Edit />,
+                element: <UserEdit />,
               },
               {
                 path: 'nickname',
@@ -99,6 +111,10 @@ export const routes = [
                 element: <Email />,
               },
             ],
+          },
+          {
+            path: 'bookmark',
+            element: <Bookmark />,
           },
         ],
       },

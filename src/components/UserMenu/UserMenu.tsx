@@ -15,7 +15,7 @@ interface UserMenuProps {
 
 function UserMenu({ menus }: UserMenuProps) {
   return (
-    <div className="m-auto flex max-w-md gap-4 px-1 py-0.5">
+    <div className="flex flex-1 gap-4 px-1 py-0.5">
       {menus.map((item, index) =>
         item.onClick ? (
           <button

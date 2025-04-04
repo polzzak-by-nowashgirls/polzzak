@@ -19,9 +19,16 @@ interface BookmarkFolderData {
 interface BookmarkFolderProps {
   data: BookmarkFolderData;
   mode: 'list' | 'edit';
+  onClickDelete?: () => void;
+  onClickModify?: () => void;
 }
 
-function BookmarkFolder({ data, mode }: BookmarkFolderProps) {
+function BookmarkFolder({
+  data,
+  mode,
+  onClickDelete,
+  onClickModify,
+}: BookmarkFolderProps) {
   const { id, name, storage } = data;
 
   const images = storage.map((item) => item.imgUrl);
@@ -32,7 +39,13 @@ function BookmarkFolder({ data, mode }: BookmarkFolderProps) {
         'focus-visible:ring-ring relative w-full outline-none focus-visible:rounded-md focus-visible:ring-[2px] focus-visible:ring-offset-2',
       )}
     >
-      <BookmarkFolderCard name={name} images={images} mode={mode} />
+      <BookmarkFolderCard
+        name={name}
+        images={images}
+        mode={mode}
+        onClickDelete={onClickDelete}
+        onClickModify={onClickModify}
+      />
     </div>
   ) : (
     <Link

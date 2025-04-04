@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+// import { useState } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
 import Icon, { type IconId } from '@/components/Icon/Icon';
@@ -12,13 +12,21 @@ interface HeaderProps {
 }
 
 function Header({ title, subTitle, editHide = false, iconId }: HeaderProps) {
-  const [editText, setEditText] = useState('편집');
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const handleEditText = () => {
-    setEditText((prev) => (prev === '편집' ? '완료' : '편집'));
+  const mode = searchParams.get('mode') || 'list';
+  const isEditMode = mode === 'edit';
+
+  const toggleEditMode = () => {
+    const newMode = isEditMode ? 'list' : 'edit';
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set('mode', newMode);
+      return params;
+    });
   };
 
   return (
@@ -48,11 +56,11 @@ function Header({ title, subTitle, editHide = false, iconId }: HeaderProps) {
       {editHide === false ? (
         <Button
           type="button"
-          onClick={handleEditText}
+          onClick={toggleEditMode}
           variant="tertiary"
-          aria-label={`${editText} 모드로 전환`}
+          aria-label={`${isEditMode ? '완료' : '편집'} 모드로 전환`}
         >
-          {editText}
+          {isEditMode ? '완료' : '편집'}
         </Button>
       ) : iconId ? (
         <Button
