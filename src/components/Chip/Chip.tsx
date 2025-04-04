@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const REGIONS_DATA = [
   { id: 0, name: '서울', selected: false },
@@ -33,11 +33,24 @@ const THEME_DATA = [
 interface ChipProps {
   mode: 'region' | 'theme';
   type?: 'default' | 'multiple';
+  selectedRegions?: string[];
 }
 
-function Chip({ mode, type = 'default' }: ChipProps) {
+function Chip({ mode, type = 'default', selectedRegions = [] }: ChipProps) {
   const [regions, setRegions] = useState(REGIONS_DATA);
   const [themes, setThemes] = useState(THEME_DATA);
+
+  useEffect(() => {
+    if (mode === 'region') {
+      setRegions((prevRegions) =>
+        prevRegions.map((region) => ({
+          ...region,
+          selected: selectedRegions.includes(region.name),
+        })),
+      );
+    }
+  }, [selectedRegions, mode]);
+
   const HandleToggleRegion = (id: number) => {
     setRegions((prev) =>
       type === 'multiple'
@@ -49,6 +62,7 @@ function Chip({ mode, type = 'default' }: ChipProps) {
         : prev.map((region) => ({ ...region, selected: region.id === id })),
     );
   };
+
   const HandleToggleTheme = (id: number) => {
     setThemes((prev) =>
       type === 'multiple'
