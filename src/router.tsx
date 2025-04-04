@@ -1,11 +1,12 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
-import { StepPage } from '@/pages/Register';
-
+import ViewDetails from '@/pages/Contents/ViewDetails';
 import { Edit, Email, NickName, Password, PhoneNumber } from '@/pages/My/Edit';
+import { StepPage } from '@/pages/Register';
 
 import RootLayout from './layouts/RootLayout';
 import {
+  Contents,
   Home,
   Login,
   Map,
@@ -96,6 +97,11 @@ export const routes = [
             ],
           },
         ],
+      },
+      {
+        path: '/contents',
+        element: <Contents />,
+        children: [{ path: ':id', element: <ViewDetails /> }],
       },
       {
         path: '/splash',

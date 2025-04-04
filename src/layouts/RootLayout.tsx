@@ -35,12 +35,14 @@ function RootLayout() {
   const location = useLocation();
   const path = location.pathname;
   const isRegisterPath = path.startsWith('/register');
+  const isContentsPath = path.startsWith('/contents');
 
   // ✅ useMemo 최적화 (path가 변경될 때만 연산 실행)
   const headerTitle = useMemo(() => {
     if (isRegisterPath) return '회원가입';
+    if (isContentsPath) return '2025 보롬왓 튤립 축제'; // 데이터 받아와야 함.
     return HEADER_TITLES[path] || '🐰폴짝🐰';
-  }, [path, isRegisterPath]);
+  }, [path, isRegisterPath, isContentsPath]);
 
   const showHeader = useMemo(() => !HIDDEN_HEADER_PATHS.has(path), [path]);
   const showNav = useMemo(
