@@ -6,6 +6,7 @@ import { StepPage } from '@/pages/Register';
 
 import RootLayout from './layouts/RootLayout';
 import {
+  Bookmark,
   Contents,
   Home,
   Login,
@@ -95,6 +96,10 @@ export const routes = [
                 element: <Email />,
               },
             ],
+          },
+          {
+            path: 'bookmark',
+            element: <Bookmark />,
           },
         ],
       },

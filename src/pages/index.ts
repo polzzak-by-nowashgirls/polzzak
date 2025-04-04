@@ -2,6 +2,7 @@ export { default as Contents } from './Contents/Contents';
 export { default as Home } from './Home/Home';
 export { default as Login } from './Login/Login';
 export { default as Map } from './Map/Map';
+export { default as Bookmark } from './My/Bookmark';
 export { default as My } from './My/My';
 export { default as NotFound } from './NotFound';
 export { default as Polzzak } from './Polzzak/Polzzak';
