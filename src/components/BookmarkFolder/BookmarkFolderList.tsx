@@ -5,17 +5,17 @@ import { Bookmark, BookmarkDummyData } from '@/mockData/ScheduleDummyData';
 interface BookmarkFolderListProps {
   myBookmark?: Bookmark[];
   mode: 'list' | 'edit';
-  openModal: () => void;
-  funcDelete?: () => void;
-  funcModify?: () => void;
+  onClickAdd: () => void;
+  onClickDelete?: () => void;
+  onClickModify?: () => void;
 }
 
 function BookmarkFolderList({
   myBookmark = BookmarkDummyData,
   mode,
-  openModal,
-  funcDelete,
-  funcModify,
+  onClickAdd,
+  onClickDelete,
+  onClickModify,
 }: BookmarkFolderListProps) {
   return (
     <section className="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-6">
@@ -24,11 +24,11 @@ function BookmarkFolderList({
           key={folder.name}
           data={folder}
           mode={mode}
-          funcDelete={funcDelete}
-          funcModify={funcModify}
+          onClickDelete={onClickDelete}
+          onClickModify={onClickModify}
         />
       ))}
-      <AddBookmarkFolder openModal={openModal} />
+      <AddBookmarkFolder onClickAdd={onClickAdd} />
     </section>
   );
 }

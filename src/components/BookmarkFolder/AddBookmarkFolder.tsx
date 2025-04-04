@@ -2,12 +2,12 @@ import BookmarkFolderCard from '@/components/BookmarkFolder/BookmarkFolderCard';
 import { cn } from '@/lib/utils';
 
 type AddBookmarkFolderProps = {
-  openModal: () => void;
+  onClickAdd: () => void;
 };
 
-function AddBookmarkFolder({ openModal }: AddBookmarkFolderProps) {
+function AddBookmarkFolder({ onClickAdd }: AddBookmarkFolderProps) {
   const handleAddClick = () => {
-    openModal();
+    onClickAdd();
   };
 
   return (

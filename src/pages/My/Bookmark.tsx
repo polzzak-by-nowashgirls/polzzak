@@ -15,13 +15,16 @@ function Bookmark() {
   const modalType = useModalStore((state) => state.modalType);
   const openModal = useModalStore((state) => state.openModal);
 
-  const handleFolderAddClick = () => openModal('folder_add');
-  const handleDelete = () => {
-    console.log('❌ 삭제 ❌');
+  const handleAddClick = () => {
+    console.log('➕ 폴더 추가 ➕');
+    openModal('folder_add');
+  };
+  const handleDeleteClick = () => {
+    console.log('❌ 폴더 삭제 ❌');
     openModal('folder_delete');
   };
-  const handleModify = () => {
-    console.log('⚠️ 편집 ⚠️');
+  const handleModifyClick = () => {
+    console.log('⚠️ 폴더 편집 ⚠️');
     openModal('folder_edit');
   };
 
@@ -29,9 +32,9 @@ function Bookmark() {
     <>
       <BookmarkFolderList
         mode={mode}
-        openModal={handleFolderAddClick}
-        funcDelete={handleDelete}
-        funcModify={handleModify}
+        onClickAdd={handleAddClick}
+        onClickDelete={handleDeleteClick}
+        onClickModify={handleModifyClick}
       />
       {isOpen && modalType === 'folder_add' && (
         <Modal mode="slide" type="folder_add" />

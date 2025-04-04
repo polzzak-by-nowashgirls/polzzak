@@ -19,15 +19,15 @@ interface BookmarkFolderData {
 interface BookmarkFolderProps {
   data: BookmarkFolderData;
   mode: 'list' | 'edit';
-  funcDelete?: () => void;
-  funcModify?: () => void;
+  onClickDelete?: () => void;
+  onClickModify?: () => void;
 }
 
 function BookmarkFolder({
   data,
   mode,
-  funcDelete,
-  funcModify,
+  onClickDelete,
+  onClickModify,
 }: BookmarkFolderProps) {
   const { id, name, storage } = data;
 
@@ -43,8 +43,8 @@ function BookmarkFolder({
         name={name}
         images={images}
         mode={mode}
-        funcDelete={funcDelete}
-        funcModify={funcModify}
+        onClickDelete={onClickDelete}
+        onClickModify={onClickModify}
       />
     </div>
   ) : (

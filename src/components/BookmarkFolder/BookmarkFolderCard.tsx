@@ -8,8 +8,8 @@ interface BookmarkFolderCardProps {
   addFolder?: boolean;
   mode?: 'list' | 'edit';
   onClick?: () => void;
-  funcDelete?: () => void;
-  funcModify?: () => void;
+  onClickDelete?: () => void;
+  onClickModify?: () => void;
 }
 
 function BookmarkFolderCard({
@@ -18,8 +18,8 @@ function BookmarkFolderCard({
   addFolder = false,
   mode,
   onClick,
-  funcDelete,
-  funcModify,
+  onClickDelete,
+  onClickModify,
 }: BookmarkFolderCardProps) {
   const commonImgClass = cn('h-full object-cover object-center aspect-[3/2]');
 
@@ -69,14 +69,14 @@ function BookmarkFolderCard({
   };
 
   const handleDeleteFolder = () => {
-    if (funcDelete) {
-      funcDelete();
+    if (onClickDelete) {
+      onClickDelete();
     }
   };
 
   const handleModifyFolder = () => {
-    if (funcModify) {
-      funcModify();
+    if (onClickModify) {
+      onClickModify();
     }
   };
 
