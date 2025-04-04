@@ -2,14 +2,17 @@ import { Reorder } from 'framer-motion';
 import { useState } from 'react';
 
 import TimelineCard from '@/components/Timeline/TimelineCard';
-import {
-  PolzzakCard,
-  PolzzakItemDummyData,
-} from '@/mockData/PolzzakItemDummyData';
+import { PolzzakCard } from '@/mockData/PolzzakItemDummyData';
 
-function TimelineList({ data = PolzzakItemDummyData[0] }) {
-  const [cards, setCards] = useState<PolzzakCard[]>(data.itemList);
+interface TimelineListProps {
+  itemList: PolzzakCard[];
+}
+
+function TimelineList({ itemList }: TimelineListProps) {
+  const [cards, setCards] = useState<PolzzakCard[]>(itemList);
   // 정렬된 상태 저장 시 cards 저장!
+
+  console.log('cards : ', cards);
 
   const [openCardId, setOpenCardId] = useState<number | null>(null);
 

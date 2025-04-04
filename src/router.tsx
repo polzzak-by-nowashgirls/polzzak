@@ -7,6 +7,7 @@ import {
   NickName,
   Password,
   PhoneNumber,
+  Schedule,
 } from '@/pages/My/Edit';
 import { StepPage } from '@/pages/Register';
 
@@ -70,6 +71,10 @@ export const routes = [
           {
             path: 'edit/:id',
             element: <PolzzakEdit />,
+          },
+          {
+            path: ':id',
+            element: <Schedule />,
           },
         ],
       },
