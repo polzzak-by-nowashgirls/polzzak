@@ -8,6 +8,8 @@ interface BookmarkFolderCardProps {
   addFolder?: boolean;
   mode?: 'list' | 'edit';
   onClick?: () => void;
+  funcDelete?: () => void;
+  funcModify?: () => void;
 }
 
 function BookmarkFolderCard({
@@ -16,6 +18,8 @@ function BookmarkFolderCard({
   addFolder = false,
   mode,
   onClick,
+  funcDelete,
+  funcModify,
 }: BookmarkFolderCardProps) {
   const commonImgClass = cn('h-full object-cover object-center aspect-[3/2]');
 
@@ -64,6 +68,18 @@ function BookmarkFolderCard({
     );
   };
 
+  const handleDeleteFolder = () => {
+    if (funcDelete) {
+      funcDelete();
+    }
+  };
+
+  const handleModifyFolder = () => {
+    if (funcModify) {
+      funcModify();
+    }
+  };
+
   return (
     <article
       onClick={onClick}
@@ -83,16 +99,14 @@ function BookmarkFolderCard({
           <Button
             variant={'tertiary'}
             className="text-primary hover:border-primary-hover absolute top-0 right-0 bg-transparent"
-            onClick={() => console.log('‼️ Delete Folder ‼️')}
+            onClick={handleDeleteFolder}
           >
             <Icon id="delete" />
           </Button>
           <Button
             variant={'tertiary'}
             size={'md'}
-            onClick={() => {
-              console.log('‼️ Modify Folder Name ‼️');
-            }}
+            onClick={handleModifyFolder}
             className={cn(
               'mt-[8px] h-auto w-full justify-start truncate border py-[4px]',
             )}

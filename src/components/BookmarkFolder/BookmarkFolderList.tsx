@@ -5,18 +5,30 @@ import { Bookmark, BookmarkDummyData } from '@/mockData/ScheduleDummyData';
 interface BookmarkFolderListProps {
   myBookmark?: Bookmark[];
   mode: 'list' | 'edit';
+  openModal: () => void;
+  funcDelete?: () => void;
+  funcModify?: () => void;
 }
 
 function BookmarkFolderList({
   myBookmark = BookmarkDummyData,
   mode,
+  openModal,
+  funcDelete,
+  funcModify,
 }: BookmarkFolderListProps) {
   return (
     <section className="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-6">
       {myBookmark.map((folder) => (
-        <BookmarkFolder key={folder.name} data={folder} mode={mode} />
+        <BookmarkFolder
+          key={folder.name}
+          data={folder}
+          mode={mode}
+          funcDelete={funcDelete}
+          funcModify={funcModify}
+        />
       ))}
-      <AddBookmarkFolder />
+      <AddBookmarkFolder openModal={openModal} />
     </section>
   );
 }
