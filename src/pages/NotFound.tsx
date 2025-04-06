@@ -7,7 +7,7 @@ function NotFound() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-4">
+    <div className="flex h-full flex-col items-center justify-center gap-4 bg-[url('/images/pattern.png')]">
       <div className="flex flex-col gap-10 pb-12">
         <h1 className="text-primary relative flex items-center justify-center gap-9 text-center text-[80px] font-bold whitespace-nowrap">
           <span>4</span>
