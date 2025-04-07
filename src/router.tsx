@@ -1,16 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
-import ViewDetails from '@/pages/Contents/ViewDetails';
-import {
-  Edit as UserEdit,
-  Email,
-  NickName,
-  Password,
-  PhoneNumber,
-} from '@/pages/My/Edit';
-import { StepPage } from '@/pages/Register';
-
-import RootLayout from './layouts/RootLayout';
+import RootLayout from '@/layouts/RootLayout';
 import {
   Bookmark,
   Contents,
@@ -23,8 +13,18 @@ import {
   Register,
   Search,
   Splash,
-} from './pages';
-import { Add, Edit as PolzzakEdit, Schedule } from './pages/Polzzak';
+} from '@/pages';
+import ViewDetails from '@/pages/Contents/ViewDetails';
+import {
+  Edit as UserEdit,
+  Email,
+  NickName,
+  Password,
+  PhoneNumber,
+} from '@/pages/My/Edit';
+import { Add, Edit as PolzzakEdit, Schedule } from '@/pages/Polzzak';
+import { StepPage } from '@/pages/Register';
+import SearchResult from '@/pages/Search/SearchResult';
 
 export const routes = [
   {
@@ -50,6 +50,10 @@ export const routes = [
       {
         path: '/search',
         element: <Search />,
+      },
+      {
+        path: '/search/result',
+        element: <SearchResult />,
       },
       {
         path: '/map',
