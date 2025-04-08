@@ -5,6 +5,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Header from '@/components/Header/Header';
 import NavMenu from '@/components/NavMenu/NavMenu';
 import { cn } from '@/lib/utils';
+import { useHeaderStore } from '@/store/useHeaderStore';
 
 // ✅ 상수 분리
 const HEADER_TITLES: Record<string, string> = {
@@ -36,14 +37,15 @@ function RootLayout() {
   const location = useLocation();
   const path = location.pathname;
   const isRegisterPath = path.startsWith('/register');
-  const isContentsPath = path.startsWith('/contents');
+
+  const { contentsTitle } = useHeaderStore();
 
   // ✅ useMemo 최적화 (path가 변경될 때만 연산 실행)
   const headerTitle = useMemo(() => {
     if (isRegisterPath) return '회원가입';
-    if (isContentsPath) return '2025 보롬왓 튤립 축제'; // 데이터 받아와야 함.
+    if (contentsTitle) return contentsTitle;
     return HEADER_TITLES[path] || '🐰폴짝🐰';
-  }, [path, isRegisterPath, isContentsPath]);
+  }, [path, isRegisterPath, contentsTitle]);
 
   const showHeader = useMemo(() => !HIDDEN_HEADER_PATHS.has(path), [path]);
   const showNav = useMemo(

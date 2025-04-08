@@ -5,6 +5,7 @@ import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import PolzzakListItem from '@/components/Polzzak/PolzzakListItem';
 import TimelineSchedule from '@/components/Timeline/TimelineSchedule';
 import { POLZZAK_LIST } from '@/mockData/PolzzakListDummyData';
+import { useHeaderStore } from '@/store/useHeaderStore';
 
 function Schedule() {
   const { id } = useParams();
@@ -16,9 +17,16 @@ function Schedule() {
     (schedule) => schedule.id.slice(3) === id,
   );
 
+  const setContentsTitle = useHeaderStore((state) => state.setContentsTitle);
+
   useEffect(() => {
-    if (!sample) navigate('/not-found');
-  }, [sample, navigate]);
+    if (!sample) {
+      navigate('/not-found');
+      return;
+    }
+
+    setContentsTitle(sample.label);
+  }, [sample, navigate, setContentsTitle]);
 
   if (!sample) return <LoadingSpinner text="잠시만 기다려 주세요~" />;
 
