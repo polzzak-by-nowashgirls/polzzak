@@ -35,7 +35,7 @@ function Input({
     'focus-visible:ring-ring placeholder:text-gray05 focus-visible:ring-[2px] focus-visible:ring-offset-2',
     'aria-invalid:ring-destructive/20 aria-invalid:border-destructive',
     'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-    'border-input fs-14 flex h-11.5 w-[calc(100%-8px)] min-w-0 items-center rounded-md border bg-transparent px-4 py-3 shadow-xs transition-[color,box-shadow] outline-none',
+    'border-input fs-14 flex h-11.5 min-w-0 w-full items-center rounded-md border bg-transparent px-4 py-3 shadow-xs transition-[color,box-shadow] outline-none',
     (type === 'file' || type === 'button') && 'cursor-pointer py-0',
     children && 'pr-14',
     className,
@@ -49,7 +49,7 @@ function Input({
 
   return type === 'file' ? (
     <>
-      <Label hideLabel={hideLabel} htmlFor={labelId} className="mx-1 my-1">
+      <Label hideLabel={hideLabel} htmlFor={labelId} className="m-1">
         {label}
       </Label>
       <Wrapper {...(children ? { className: 'relative' } : {})}>
@@ -74,7 +74,7 @@ function Input({
     </>
   ) : (
     <>
-      <Label hideLabel={hideLabel} htmlFor={labelId} className="mx-1 my-1">
+      <Label hideLabel={hideLabel} htmlFor={labelId} className="m-1">
         {label}
       </Label>
       <Wrapper {...(children ? { className: 'relative' } : {})}>

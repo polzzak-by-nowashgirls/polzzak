@@ -7,7 +7,7 @@ function NotFound() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-4 bg-[url('/images/pattern.png')]">
+    <div className="flex h-full flex-col items-center justify-center gap-4 bg-[url('/images/pattern.png')] px-[24px]">
       <div className="flex flex-col gap-10 pb-12">
         <h1 className="text-primary relative flex items-center justify-center gap-9 text-center text-[80px] font-bold whitespace-nowrap">
           <span>4</span>
@@ -23,7 +23,7 @@ function NotFound() {
           요청하신 페이지를 찾을 수 없습니다.
         </p>
       </div>
-      <div className="flex w-[calc(100%-8px)] flex-col gap-2">
+      <div className="flex w-full flex-col gap-2">
         <Button
           onClick={() => {
             navigate(-1);
