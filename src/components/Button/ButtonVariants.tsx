@@ -30,7 +30,7 @@ export const buttonVariants = cva(
       },
       {
         variant: 'float',
-        class: 'rounded-3xl',
+        class: 'rounded-3xl h-[48px]',
       },
     ],
     defaultVariants: {
