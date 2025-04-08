@@ -6,6 +6,7 @@ import Details from '@/components/Contents/Details';
 import Icon from '@/components/Icon/Icon';
 import UserMenu, { MenuItemTypes } from '@/components/UserMenu/UserMenu';
 import { LIST_ITEM_DUMMY_DATA } from '@/mockData/ListItemDummyData';
+import { useHeaderStore } from '@/store/useHeaderStore';
 
 const userMenu: MenuItemTypes[] = [
   {
@@ -36,11 +37,18 @@ function ViewDetails() {
 
   const item = LIST_ITEM_DUMMY_DATA.find((item) => item.id.toString() === id);
 
+  const setContentsTitle = useHeaderStore((state) => state.setContentsTitle);
+
   useEffect(() => {
     if (!item) {
       navigate('/not-found');
+      return;
     }
-  }, [item, navigate]);
+
+    setContentsTitle(item.title);
+
+    return () => setContentsTitle(null);
+  }, [item, navigate, setContentsTitle]);
 
   return (
     <div className="flex flex-col gap-4">
