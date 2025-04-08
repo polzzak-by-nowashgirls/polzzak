@@ -25,15 +25,15 @@ function Step5() {
   return (
     <>
       <div className="relative">
+        <Input label="닉네임" placeholder="닉네임을 입력해 주세요." />
         <Button
           variant={'tertiary'}
-          className="fs-13 text-gray06 absolute -top-[1.5px] left-11"
+          className="fs-13 text-gray06 absolute top-[5px] left-12 h-5 px-1"
           size="sm"
         >
           랜덤 생성
           <Icon id="replay" className="text-gray05" />
         </Button>
-        <Input label="닉네임" placeholder="닉네임을 입력해 주세요." />
         <Validation status={false} message={message.errorDup} />
       </div>
       <Button onClick={handleMoveLogin}>완료</Button>

@@ -38,7 +38,7 @@ function Step3() {
         />
       </div>
       {confirmBtn && (
-        <div className="flex items-end">
+        <div className="flex items-end gap-2">
           <div className="flex-grow">
             <Input
               label="인증번호 확인"

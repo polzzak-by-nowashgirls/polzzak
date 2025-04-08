@@ -28,8 +28,9 @@ function Search() {
           <Input
             label="폴짝 날짜"
             hideLabel={true}
-            type="text"
-            placeholder="날짜를 선택해 주세요."
+            type="button"
+            value={'날짜를 선택해 주세요.'}
+            onClick={openModal}
           >
             <Button variant={'tertiary'} size="md" onClick={openModal}>
               <Icon id="calendar" className="text-gray05" />

@@ -11,11 +11,11 @@ function NickName() {
         </div>
         <Button
           variant={'tertiary'}
-          className="fs-13 text-gray06 absolute top-[-5px] left-10"
+          className="s-13 text-gray06 absolute top-[5px] left-12 h-5 px-1"
           size="sm"
         >
           랜덤생성
-          <Icon id="replay" className="text-gray07" />
+          <Icon id="replay" className="text-gray05" />
         </Button>
       </div>
       <Button variant={'default'} disabled>
