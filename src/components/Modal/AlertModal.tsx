@@ -78,7 +78,7 @@ function AlertModal({ type, handleButtonClick }: AlertModalProps) {
         ))}
       </div>
       <div
-        className={`mt-6 flex w-full items-center justify-center ${
+        className={`mt-6 flex w-full items-center justify-center gap-1 ${
           type === 'polzzak_add' ? 'flex-col' : 'flex-row'
         }`}
       >
