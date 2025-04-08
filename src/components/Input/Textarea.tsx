@@ -23,7 +23,7 @@ function Textarea({ label, hideLabel, className, ...props }: TextareaProps) {
           'border-input placeholder:text-muted-foreground placeholder:text-gray05 aria-invalid:ring-destructive/20 aria-invalid:border-destructive border-gray03 flex field-sizing-content max-h-[150px] min-h-[150px] w-[calc(100%-8px)] rounded-md border bg-transparent px-4 py-3 shadow-xs transition-[color,box-shadow]',
           'resize-none outline-none disabled:cursor-not-allowed disabled:opacity-50',
           'focus-visible:border-ring focus-visible:ring-ring placeholder:text-gray05 focus-visible:ring-[2px] focus-visible:ring-offset-2',
-          'fs-14 font-regular m-1',
+          'fs-14 font-regular',
           className,
         )}
         id={labelId}
