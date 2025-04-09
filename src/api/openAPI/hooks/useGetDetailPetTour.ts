@@ -1,7 +1,21 @@
 import { useEffect, useState } from 'react';
 
+interface PetTourItemType {
+  acmpyNeedMtr: string;
+  acmpyPsblCpam: string;
+  acmpyTypeCd: string;
+  contentid: string;
+  etcAcmpyInfo: string;
+  petTursmInfo: string;
+  relaAcdntRiskMtr: string;
+  relaFrnshPrdlst: string;
+  relaPosesFclty: string;
+  relaPurcPrdlst: string;
+  relaRntlPrdlst: string;
+}
+
 function useGetDetailPetTour() {
-  const [petTourInfo, setPetTourInfo] = useState(null);
+  const [petTourInfo, setPetTourInfo] = useState<PetTourItemType[]>([]);
 
   useEffect(() => {
     const fetchPetTourInfo = async () => {
@@ -18,10 +32,9 @@ function useGetDetailPetTour() {
         console.error('⚠️ 데이터를 불러오는 중 오류 발생:', err);
       }
     };
+
     fetchPetTourInfo();
   }, []);
-
-  if (!petTourInfo) return;
 
   return petTourInfo;
 }
