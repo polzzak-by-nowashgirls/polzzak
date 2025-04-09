@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react';
+interface areaCodeListTypes {
+  code: string;
+  name: string;
+  rnum: string;
+}
 
 function useGetAreaCode() {
-  const [areaCodeList, setAreaCodeList] = useState(null);
+  const [areaCodeList, setAreaCodeList] = useState<areaCodeListTypes[]>([]);
 
   useEffect(() => {
     const fetchAreaCode = async () => {
@@ -19,8 +24,6 @@ function useGetAreaCode() {
 
     fetchAreaCode();
   }, []);
-
-  if (!areaCodeList) return;
 
   return areaCodeList;
 }

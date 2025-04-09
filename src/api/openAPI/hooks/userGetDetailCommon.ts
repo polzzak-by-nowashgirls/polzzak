@@ -1,7 +1,34 @@
 import { useEffect, useState } from 'react';
 
+interface detailsTypes {
+  overview: string;
+  contentid: string;
+  sigungucode: string;
+  cat1: string;
+  cat2: string;
+  cat3: string;
+  addr1: string;
+  addr2: string;
+  zipcode: string;
+  mapx: string;
+  mapy: string;
+  mlevel: string;
+  cpyrhtDivCd: string;
+  contenttypeid: string;
+  booktour: string;
+  createdtime: string;
+  homepage: string;
+  modifiedtime: string;
+  tel: string;
+  telname: string;
+  title: string;
+  firstimage: string;
+  firstimage2: string;
+  areacode: string;
+}
+
 function useGetDetailCommon(contentId: string) {
-  const [detailsList, setDetails] = useState(null);
+  const [details, setDetails] = useState<detailsTypes[]>([]);
 
   useEffect(() => {
     const fetchDetailCommon = async () => {
@@ -20,9 +47,7 @@ function useGetDetailCommon(contentId: string) {
     fetchDetailCommon();
   }, [contentId]);
 
-  if (!detailsList) return;
-
-  return detailsList;
+  return details;
 }
 
 export { useGetDetailCommon };
