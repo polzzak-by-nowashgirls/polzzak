@@ -18,16 +18,47 @@ function Login() {
   const location = useLocation();
   const showToast = useToast();
 
+  const navigate = useNavigate();
+  const { isOpen, modalType, openModal } = useModalStore();
+
+  // 🕹️ 아이디
+  const [idValue, setIdValue] = useState('');
+  const [idMessage, setIdMessage] = useState('');
+  const [idValid, setIdValid] = useState<boolean | null>(null);
+
+  // 🕹️ 비밀번호
+  const [pwValue, setPwValue] = useState('');
+  const [pwMessage, setPwMessage] = useState('');
+  const [pwValid, setPwValid] = useState<boolean | null>(null);
+
+  // 🕹️ 비밀번호 가시성
+  const [isVisible, setIsVisible] = useState(false);
+  const inputType = isVisible ? 'text' : 'password';
+  const visibleIconId: IconId = isVisible
+    ? 'visibillity_on'
+    : 'visibillity_off';
+
+  // 🕹️ 아이디 저장
+  const [isSavedId, setIsSavedId] = useState(true);
+
+  // 페이지 진입 시 토스트 메시지 출력
   useEffect(() => {
     if (location.state?.toastMessage) {
       showToast(location.state.toastMessage);
     }
   }, [location.state, showToast]);
 
-  // 🕹️ 아이디
-  const [idValue, setIdValue] = useState('');
-  const [idMessage, setIdMessage] = useState('');
-  const [idValid, setIdValid] = useState<boolean | null>(null);
+  // 아이디 저장된 값 불러오기
+  useEffect(() => {
+    const savedId = localStorage.getItem('savedId');
+    if (savedId) {
+      setIdValue(savedId);
+      setIsSavedId(true);
+      setIdValid(true);
+    } else {
+      localStorage.setItem('savedId', '');
+    }
+  }, []);
 
   const onChangeIDInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -42,85 +73,31 @@ function Login() {
     }
   };
 
-  // 🕹️ 비밀번호
-  const [pwValue, setPwValue] = useState('');
-  const [pwMessage, setPwMessage] = useState('');
-  const [pwValid, setPwValid] = useState<boolean | null>(null);
-
   const onChangePWInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setPwValue(value);
 
     const { isValid, message } = validatePassword(value);
     setPwValid(isValid);
-
-    if (!isValid) {
-      setPwMessage(message);
-    } else {
-      setPwMessage('');
-    }
+    setPwMessage(isValid ? '' : message);
   };
-
-  // 🕹️ 가시성 버튼 클릭
-  const [isVisible, setIsVisible] = useState(false);
 
   const onClickVisible = () => {
     setIsVisible((prev) => !prev);
   };
 
-  const inputType = isVisible ? 'text' : 'password';
-  const visibleIconId: IconId = isVisible
-    ? 'visibillity_on'
-    : 'visibillity_off';
+  const onChangeSavedIdToggle = () => {
+    const next = !isSavedId;
+    setIsSavedId(next);
 
-  // 🕹️ 아이디 저장
-  const [isSavedId, setIsSavedId] = useState(true);
-  useEffect(() => {
-    const savedId = localStorage.getItem('savedId');
-    if (savedId) {
-      setIdValue(savedId);
-      setIsSavedId(true);
+    if (next) {
+      localStorage.setItem('savedId', idValue);
+    } else {
+      localStorage.removeItem('savedId');
     }
-  }, []);
-  const onToggleSavedId = () => {
-    setIsSavedId((prev) => {
-      const next = !prev;
-
-      if (next && idValue) {
-        localStorage.setItem('savedId', idValue);
-      } else {
-        localStorage.removeItem('savedId');
-      }
-      return next;
-    });
   };
 
-  // 🕹️ 로그인 버튼 클릭
-  const navigate = useNavigate();
-  const { isOpen, modalType, openModal } = useModalStore();
-
   const onClickLogin = async () => {
-    if (!idValue) {
-      setIdValid(false);
-      setIdMessage('아이디를 입력해주세요.');
-    } else {
-      setIdValid(true);
-      setIdMessage('');
-    }
-
-    if (!pwValue) {
-      setPwValid(false);
-      setPwMessage('비밀번호를 입력해주세요.');
-    } else {
-      setPwValid(true);
-      setPwMessage('');
-    }
-
-    // 둘 다 입력되었을 때만 Supabase 요청
-    if (!idValue || !pwValue) {
-      return;
-    }
-
     const { data, error } = await supabase
       .from('ex_users')
       .select('*')
@@ -128,7 +105,6 @@ function Login() {
       .eq('password', pwValue)
       .single();
 
-    // 🚫 로그인 실패
     if (error || !data) {
       setIdValid(false);
       setPwValid(false);
@@ -136,7 +112,13 @@ function Login() {
       return;
     }
 
-    // ✅ 로그인 성공
+    // ✅ 로그인 성공 후 아이디 저장 조건 처리
+    if (isSavedId) {
+      localStorage.setItem('savedId', idValue);
+    } else {
+      localStorage.removeItem('savedId');
+    }
+
     navigate('/', { replace: true });
   };
 
@@ -158,6 +140,7 @@ function Login() {
           <Input
             type="text"
             label="아이디"
+            value={idValue}
             placeholder="아이디"
             hideLabel={true}
             onChange={onChangeIDInput}
@@ -186,7 +169,7 @@ function Login() {
           <Checkbox
             label="아이디 저장"
             checked={isSavedId}
-            onChange={onToggleSavedId}
+            onCheckedChange={onChangeSavedIdToggle}
           />
           <Link
             to="#"
@@ -195,7 +178,9 @@ function Login() {
             아이디/비밀번호 찾기
           </Link>
         </div>
-        <Button onClick={onClickLogin}>로그인</Button>
+        <Button onClick={onClickLogin} disabled={!idValid || !pwValid}>
+          로그인
+        </Button>
       </fieldset>
       <div className="flex justify-center gap-1">
         <p className="fs-14 font-regular text-gray07">
