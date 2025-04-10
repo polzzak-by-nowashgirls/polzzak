@@ -8,6 +8,7 @@ import Input from '@/components/Input/Input';
 import Validation from '@/components/Input/Validation';
 import RabbitFace from '@/components/RabbitFace/RabbitFace';
 import { useToast } from '@/hooks/useToast';
+import { validatePassword } from '@/lib/validatePassword';
 import { validateId } from '@/lib/validationId';
 
 function Login() {
@@ -41,8 +42,21 @@ function Login() {
 
   // 🕹️ Password
   const [pwValue, setPwValue] = useState('');
+  const [pwMessage, setPwMessage] = useState('');
+  const [pwValid, setPwValid] = useState<boolean | null>(null);
+
   const onChangePWInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPwValue(e.target.value);
+    const value = e.target.value;
+    setPwValue(value);
+
+    const { isValid, message } = validatePassword(value);
+    setPwValid(isValid);
+
+    if (!isValid) {
+      setPwMessage(message);
+    } else {
+      setPwMessage('');
+    }
   };
 
   // 🕹️ Visibillity 버튼 클릭
@@ -57,11 +71,12 @@ function Login() {
     ? 'visibillity_on'
     : 'visibillity_off';
 
-  // 🕹️ 확인
-  console.log(`🧑 : ${idValue},  🔒 : ${pwValue}`);
+  const onClickFindAccount = () => {
+    console.log('아이디/비밀번호 찾기');
+  };
 
   return (
-    <main className="m-auto flex h-full max-w-[420px] flex-col justify-center gap-8 pb-14">
+    <main className="m-auto flex h-full w-full max-w-[420px] flex-col justify-center gap-8 px-6 pb-14">
       <h2>
         <Link
           to="/"
@@ -85,26 +100,39 @@ function Login() {
             <Validation status={idValid} message={idMessage} />
           )}
         </div>
+        <div>
+          <Input
+            type={inputType}
+            label="비밀번호"
+            placeholder="비밀번호"
+            hideLabel={true}
+            onChange={onChangePWInput}
+          >
+            <Button variant="input" onClick={onClickVisible}>
+              <Icon id={visibleIconId} />
+            </Button>
+          </Input>
+          {pwValid !== null && (
+            <Validation status={pwValid} message={pwMessage} />
+          )}
+        </div>
 
-        <Input
-          type={inputType}
-          label="비밀번호"
-          placeholder="비밀번호"
-          hideLabel={true}
-          onChange={onChangePWInput}
-        >
-          <Button variant="input" onClick={onClickVisible}>
-            <Icon id={visibleIconId} />
-          </Button>
-        </Input>
         <div className="flex items-center justify-between gap-2">
           <Checkbox label="아이디 저장" />
-          <Link
+          {/* <Link
             to="#"
             className="fs-14 font-regular text-gray07 h-8 px-1 leading-8"
           >
             아이디/비밀번호 찾기
-          </Link>
+          </Link> */}
+          <Button
+            variant="tertiary"
+            size="md"
+            className="text-gray07 fs-14"
+            onClick={onClickFindAccount}
+          >
+            아이디/비밀번호 찾기
+          </Button>
         </div>
         <Button>로그인</Button>
       </fieldset>
