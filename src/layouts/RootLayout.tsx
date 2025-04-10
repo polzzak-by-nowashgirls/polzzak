@@ -46,7 +46,12 @@ function RootLayout() {
     return HEADER_TITLES[path] || '🐰폴짝🐰';
   }, [path, isRegisterPath, contentsTitle]);
 
-  const showHeader = useMemo(() => !HIDDEN_HEADER_PATHS.has(path), [path]);
+  // const showHeader = useMemo(() => !HIDDEN_HEADER_PATHS.has(path), [path]);
+  const showHeader = useMemo(() => {
+    return ![...HIDDEN_HEADER_PATHS].some((hiddenPath) =>
+      path.startsWith(hiddenPath),
+    );
+  }, [path]);
   const showNav = useMemo(
     () => !(HIDDEN_NAV_PATHS.has(path) || isRegisterPath),
     [path, isRegisterPath],
@@ -72,9 +77,11 @@ function RootLayout() {
       </Helmet>
       {showHeader && <Header title={headerTitle} editHide={editHide} />}
       {showNav && <NavMenu />}
+
       <Suspense>
         <Outlet />
       </Suspense>
+      
     </>
   );
 }

@@ -26,6 +26,8 @@ import { Add, Edit as PolzzakEdit, Schedule } from '@/pages/Polzzak';
 import { StepPage } from '@/pages/Register';
 import SearchResult from '@/pages/Search/SearchResult';
 
+import Modal from './components/Modal/Modal';
+
 export const routes = [
   {
     path: '/',
@@ -58,6 +60,12 @@ export const routes = [
       {
         path: '/map',
         element: <Map />,
+        children: [
+          {
+            path: 'favorite',
+            element: <Modal mode="slide" type="favorite_list" />,
+          },
+        ],
       },
       {
         path: '/polzzak',

@@ -1,97 +1,113 @@
-import { useEffect, useState } from 'react';
+import { id } from 'date-fns/locale';
+import { useState } from 'react';
 
 const REGIONS_DATA = [
-  { id: 0, name: '서울', selected: false },
-  { id: 1, name: '제주', selected: false },
-  { id: 2, name: '경기', selected: false },
-  { id: 3, name: '충남', selected: false },
-  { id: 4, name: '인천', selected: false },
-  { id: 5, name: '대구', selected: false },
-  { id: 6, name: '대전', selected: false },
-  { id: 7, name: '경남', selected: false },
-  { id: 8, name: '부산', selected: false },
-  { id: 9, name: '전북', selected: false },
-  { id: 10, name: '울산', selected: false },
-  { id: 11, name: '광주', selected: false },
-  { id: 12, name: '강원', selected: false },
-  { id: 13, name: '경북', selected: false },
-  { id: 14, name: '전남', selected: false },
-  { id: 15, name: '충북', selected: false },
-  { id: 16, name: '세종', selected: false },
+  { id: 0, name: '서울' },
+  { id: 1, name: '제주' },
+  { id: 2, name: '경기' },
+  { id: 3, name: '충남' },
+  { id: 4, name: '인천' },
+  { id: 5, name: '대구' },
+  { id: 6, name: '대전' },
+  { id: 7, name: '경남' },
+  { id: 8, name: '부산' },
+  { id: 9, name: '전북' },
+  { id: 10, name: '울산' },
+  { id: 11, name: '광주' },
+  { id: 12, name: '강원' },
+  { id: 13, name: '경북' },
+  { id: 14, name: '전남' },
+  { id: 15, name: '충북' },
+  { id: 16, name: '세종' },
 ];
 
 const THEME_DATA = [
-  { id: 0, name: '가족 여행', selected: false },
-  { id: 1, name: '커플 여행', selected: false },
-  { id: 2, name: '친구들과 함께', selected: false },
-  { id: 3, name: '반려동물과 함께', selected: false },
-  { id: 4, name: '맛집', selected: false },
-  { id: 5, name: '축제', selected: false },
-  { id: 6, name: '관광지', selected: false },
+  { id: 0, name: '가족 여행' },
+  { id: 1, name: '커플 여행' },
+  { id: 2, name: '친구들과 함께' },
+  { id: 3, name: '반려동물과 함께' },
+  { id: 4, name: '맛집' },
+  { id: 5, name: '축제' },
+  { id: 6, name: '관광지' },
+];
+
+const MAP_FILTER_DATA = [
+  { id: 0, name: '즐겨찾기' },
+  { id: 1, name: '나의폴짝' },
+  { id: 2, name: '음식점' },
+  { id: 3, name: '축제' },
+  { id: 4, name: '관광지' },
 ];
 
 interface ChipProps {
-  mode: 'region' | 'theme';
+  mode: 'region' | 'theme' | 'map_filter';
   type?: 'default' | 'multiple';
   selectedRegions?: string[];
+  hideLabel?: boolean;
+  onClick?: (name?: string) => void;
 }
 
-function Chip({ mode, type = 'default', selectedRegions = [] }: ChipProps) {
-  const [regions, setRegions] = useState(REGIONS_DATA);
-  const [themes, setThemes] = useState(THEME_DATA);
+function Chip({
+  mode,
+  type = 'default',
+  selectedRegions = [],
+  hideLabel = false,
+  onClick,
+}: ChipProps) {
+  const initialData = (
+    mode === 'region'
+      ? REGIONS_DATA
+      : mode === 'theme'
+        ? THEME_DATA
+        : MAP_FILTER_DATA
+  ).map((item) => ({
+    ...item,
+    selected: selectedRegions.includes(item.name),
+  }));
 
-  useEffect(() => {
-    if (mode === 'region') {
-      setRegions((prevRegions) =>
-        prevRegions.map((region) => ({
-          ...region,
-          selected: selectedRegions.includes(region.name),
-        })),
-      );
-    }
-  }, [selectedRegions, mode]);
+  const [data, setData] = useState(initialData);
 
-  const HandleToggleRegion = (id: number) => {
-    setRegions((prev) =>
-      type === 'multiple'
-        ? prev.map((region) =>
-            region.id === id
-              ? { ...region, selected: !region.selected }
-              : region,
-          )
-        : prev.map((region) => ({ ...region, selected: region.id === id })),
-    );
-  };
-
-  const HandleToggleTheme = (id: number) => {
-    setThemes((prev) =>
-      type === 'multiple'
-        ? prev.map((theme) =>
-            theme.id === id ? { ...theme, selected: !theme.selected } : theme,
-          )
-        : prev.map((theme) => ({ ...theme, selected: theme.id === id })),
+  const handleToggle = (id: number) => {
+    setData((prev) =>
+      prev.map((item) =>
+        type === 'multiple'
+          ? item.id === id
+            ? { ...item, selected: !item.selected }
+            : item
+          : { ...item, selected: item.id === id ? true : false },
+      ),
     );
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-start gap-2 pl-2">
+    <div
+      className={`flex flex-col ${hideLabel ? 'gap-0' : 'gap-4'} ${mode === 'map_filter' && '-mx-2'}`}
+    >
+      <div
+        className={`${hideLabel ? 'hidden' : 'flex items-center justify-start gap-2 pl-2'}`}
+      >
         <h3 className="fs-14 ls lh font-regular text-black">
-          {mode === 'region' ? '지역 선택' : '테마 선택'}
+          {mode === 'region'
+            ? '지역 선택'
+            : mode === 'theme'
+              ? '테마 선택'
+              : '지도 필터'}
         </h3>
         <span className="fs-13 ls lh font-regular text-gray06">
           {type === 'multiple' ? '다중 선택' : '단일 선택'}
         </span>
       </div>
-      <ul className="flex flex-wrap gap-2" role="list">
-        {(mode === 'region' ? regions : themes).map((item) => (
+      <ul
+        className={`flex gap-2 ${hideLabel ? 'sort-scroll flex-nowrap overflow-scroll' : 'flex-wrap'}`}
+        role="list"
+      >
+        {data.map((item) => (
           <li
             key={item.id}
-            onClick={() =>
-              mode === 'region'
-                ? HandleToggleRegion(item.id)
-                : HandleToggleTheme(item.id)
-            }
+            onClick={() => {
+              handleToggle(item.id);
+              onClick?.(item.name);
+            }}
             aria-pressed={item.selected}
             tabIndex={0}
             className={`fs-14 font-regular ls lh cursor-pointer rounded-4xl border px-3.5 py-1.5 whitespace-nowrap transition-all ${
