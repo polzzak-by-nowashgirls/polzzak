@@ -57,6 +57,13 @@ const MODAL_DATA = [
     prevBtn: '신규 폴짝 추가하기',
     nextBtn: '기존 폴짝 추가하기',
   },
+  {
+    id: 6,
+    type: 'login',
+    title: '로그인에 실패하였습니다.',
+    content: ['다시 시도해 주세요.'],
+    nextBtn: '확인',
+  },
 ];
 
 function AlertModal({ type, handleButtonClick }: AlertModalProps) {

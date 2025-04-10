@@ -7,10 +7,12 @@ import Checkbox from '@/components/Checkbox/Checkbox';
 import Icon, { IconId } from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
 import Validation from '@/components/Input/Validation';
+import Modal from '@/components/Modal/Modal';
 import RabbitFace from '@/components/RabbitFace/RabbitFace';
 import { useToast } from '@/hooks/useToast';
 import { validatePassword } from '@/lib/validatePassword';
 import { validateId } from '@/lib/validationId';
+import { useModalStore } from '@/store/useModalStore';
 
 function Login() {
   const location = useLocation();
@@ -93,14 +95,49 @@ function Login() {
     });
   };
 
-  // 🕹️ 아이디/비밀번호 찾기
-  const onClickFindAccount = () => {
-    console.log('아이디/비밀번호 찾기');
-  };
-
   // 🕹️ 로그인 버튼 클릭
-  const onClickLogin = () => {
-    console.log('로그인');
+  const navigate = useNavigate();
+  const { isOpen, modalType, openModal } = useModalStore();
+
+  const onClickLogin = async () => {
+    if (!idValue) {
+      setIdValid(false);
+      setIdMessage('아이디를 입력해주세요.');
+    } else {
+      setIdValid(true);
+      setIdMessage('');
+    }
+
+    if (!pwValue) {
+      setPwValid(false);
+      setPwMessage('비밀번호를 입력해주세요.');
+    } else {
+      setPwValid(true);
+      setPwMessage('');
+    }
+
+    // 둘 다 입력되었을 때만 Supabase 요청
+    if (!idValue || !pwValue) {
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('ex_users')
+      .select('*')
+      .eq('user_id', idValue)
+      .eq('password', pwValue)
+      .single();
+
+    // 🚫 로그인 실패
+    if (error || !data) {
+      setIdValid(false);
+      setPwValid(false);
+      openModal('login');
+      return;
+    }
+
+    // ✅ 로그인 성공
+    navigate('/', { replace: true });
   };
 
   return (
@@ -108,6 +145,7 @@ function Login() {
       <h2>
         <Link
           to="/"
+          aria-label="홈으로 이동"
           className="fs-40 text-primary font-title flex items-center justify-center gap-2 py-3 font-bold whitespace-nowrap"
         >
           <RabbitFace src="/images/rabbit_face.png" alt="토끼 얼굴" size={40} />
@@ -150,20 +188,12 @@ function Login() {
             checked={isSavedId}
             onChange={onToggleSavedId}
           />
-          {/* <Link
+          <Link
             to="#"
             className="fs-14 font-regular text-gray07 h-8 px-1 leading-8"
           >
             아이디/비밀번호 찾기
-          </Link> */}
-          <Button
-            variant="tertiary"
-            size="md"
-            className="text-gray07 fs-14"
-            onClick={onClickFindAccount}
-          >
-            아이디/비밀번호 찾기
-          </Button>
+          </Link>
         </div>
         <Button onClick={onClickLogin}>로그인</Button>
       </fieldset>
@@ -175,6 +205,7 @@ function Login() {
           회원가입
         </Link>
       </div>
+      {isOpen && modalType === 'login' && <Modal mode="alert" type="login" />}
     </main>
   );
 }

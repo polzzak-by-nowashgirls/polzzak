@@ -14,6 +14,7 @@ export function useModalActions() {
     },
     확인: () => {
       navigate('/login');
+      closeModal();
     },
     저장: () => console.log('저장 버튼에 맞는 함수'),
     삭제: () => console.log('삭제 버튼에 맞는 함수'),

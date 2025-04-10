@@ -10,6 +10,7 @@ type ModalType =
   | 'festival'
   | 'tourist'
   | 'logout'
+  | 'login'
   | null;
 
 interface ModalStore {
