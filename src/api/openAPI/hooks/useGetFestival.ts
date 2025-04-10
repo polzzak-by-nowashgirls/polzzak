@@ -16,6 +16,7 @@ function useGetFestival({
   eventStartDate,
 }: GetFestival) {
   const [festivalList, setFestivalList] = useState<FestivalListType[]>([]);
+  const date = beforeMonth(eventStartDate);
 
   useEffect(() => {
     const fetchFestivalList = async () => {
@@ -27,7 +28,7 @@ function useGetFestival({
                 numOfRows,
                 areaCode,
                 pageNo,
-                eventStartDate,
+                date,
               );
 
               return response;
@@ -40,14 +41,14 @@ function useGetFestival({
             numOfRows,
             'none',
             pageNo,
-            eventStartDate,
+            date,
           );
 
           setFestivalList(response);
         }
       } catch (error) {
         console.error(
-          `⚠️ 축제 데이터를 불러오는 중 오류 발생 (areaCode: ${areaCodes}, eventStartDate: ${eventStartDate})`,
+          `⚠️ 축제 데이터를 불러오는 중 오류 발생 (areaCode: ${areaCodes}, eventStartDate: ${date})`,
           error,
         );
       }
@@ -65,7 +66,7 @@ async function fetchFestivalData(
   numOfRows: string,
   areaCode: string,
   pageNo: string,
-  eventStartDate: string,
+  date: string,
 ): Promise<FestivalListType[]> {
   const baseUrl = `${import.meta.env.VITE_OPEN_API_BASE_URL}/searchFestival1?serviceKey=${import.meta.env.VITE_OPEN_API_KEY}`;
 
@@ -75,7 +76,7 @@ async function fetchFestivalData(
     MobileApp: 'polzzak',
     MobileOS: 'ETC',
     _type: 'json',
-    eventStartDate,
+    eventStartDate: date,
   });
 
   if (areaCode !== 'none') {
@@ -88,4 +89,19 @@ async function fetchFestivalData(
 
   const items = data?.response?.body?.items?.item;
   return !items ? [] : Array.isArray(items) ? items : [items];
+}
+
+function beforeMonth(eventStartDate: string) {
+  const year = parseInt(eventStartDate.slice(0, 4), 10);
+  const month = parseInt(eventStartDate.slice(4, 6), 10);
+  const day = parseInt(eventStartDate.slice(6, 8), 10);
+
+  const originalDate = new Date(year, month - 1, day);
+  originalDate.setMonth(originalDate.getMonth() - 6);
+
+  const yyyy = originalDate.getFullYear();
+  const mm = String(originalDate.getMonth() + 1).padStart(2, '0');
+  const dd = String(originalDate.getDate()).padStart(2, '0');
+
+  return `${yyyy}${mm}${dd}`;
 }
