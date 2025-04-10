@@ -4,7 +4,6 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 import Header from '@/components/Header/Header';
 import NavMenu from '@/components/NavMenu/NavMenu';
-import { cn } from '@/lib/utils';
 import { useHeaderStore } from '@/store/useHeaderStore';
 
 // ✅ 상수 분리
@@ -79,22 +78,10 @@ function RootLayout() {
       {showHeader && <Header title={headerTitle} editHide={editHide} />}
       {showNav && <NavMenu />}
 
-      {/* <main
-        className={cn(
-          'flex-1 overflow-auto',
-          path !== '/' && path !== '/map' && 'p-6',
-        )}
-      > */}
-      <main
-        className={cn(
-          'flex-1 overflow-auto',
-          !path.startsWith('/map') && path !== '/' && 'p-6',
-        )}
-      >
-        <Suspense>
-          <Outlet />
-        </Suspense>
-      </main>
+      <Suspense>
+        <Outlet />
+      </Suspense>
+      
     </>
   );
 }
