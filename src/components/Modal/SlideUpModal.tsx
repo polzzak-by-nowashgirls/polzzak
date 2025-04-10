@@ -148,16 +148,16 @@ function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
 
   return (
     <motion.dialog
-      initial={{ y: '100%', opacity: 0 }}
+      initial={{ y: '20%', opacity: 0 }}
       animate={{ y: '0%', opacity: 1 }}
-      exit={{ y: '100%', opacity: 0 }}
+      exit={{ y: '20%', opacity: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
-      className="fixed bottom-0 left-1/2 z-99 flex w-screen -translate-x-1/2 transform flex-col gap-4 rounded-t-2xl bg-white px-8 py-6"
+      className="fixed bottom-0 left-1/2 z-[100] flex w-screen -translate-x-1/2 transform flex-col gap-4 rounded-t-2xl bg-white px-8 py-6"
     >
       <div
         className={`${
           ['favorite_list', 'search_list', 'select'].includes(modalContent.type)
-            ? 'absolute top-0 left-1/2 -translate-x-1/2 transform cursor-grab items-center justify-center'
+            ? 'absolute top-0 left-1/2 -translate-x-1/2 transform cursor-grab items-center justify-center overflow-scroll'
             : 'hidden'
         }`}
       >
