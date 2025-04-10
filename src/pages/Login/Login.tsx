@@ -14,6 +14,8 @@ import { validatePassword } from '@/lib/validatePassword';
 import { validateId } from '@/lib/validationId';
 import { useModalStore } from '@/store/useModalStore';
 
+// ⚠️ 로그인/아웃 상태에 따라 로컬/세션 스토리지에 저장
+
 function Login() {
   const location = useLocation();
   const showToast = useToast();
@@ -40,6 +42,7 @@ function Login() {
 
   // 🕹️ 아이디 저장
   const [isSavedId, setIsSavedId] = useState(true);
+  console.log(isSavedId);
 
   // 페이지 진입 시 토스트 메시지 출력
   useEffect(() => {
@@ -50,13 +53,13 @@ function Login() {
 
   // 아이디 저장된 값 불러오기
   useEffect(() => {
-    const savedId = localStorage.getItem('savedId');
+    const savedId = localStorage.getItem('user');
+
     if (savedId) {
       setIdValue(savedId);
-      setIsSavedId(true);
       setIdValid(true);
     } else {
-      localStorage.setItem('savedId', '');
+      localStorage.setItem('user', '');
     }
   }, []);
 
@@ -67,10 +70,6 @@ function Login() {
     const { isValid, message } = validateId(value);
     setIdValid(isValid);
     setIdMessage(isValid ? '' : message);
-
-    if (isSavedId) {
-      localStorage.setItem('savedId', value);
-    }
   };
 
   const onChangePWInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,14 +86,7 @@ function Login() {
   };
 
   const onChangeSavedIdToggle = () => {
-    const next = !isSavedId;
-    setIsSavedId(next);
-
-    if (next) {
-      localStorage.setItem('savedId', idValue);
-    } else {
-      localStorage.removeItem('savedId');
-    }
+    setIsSavedId((prev) => !prev);
   };
 
   const onClickLogin = async () => {
@@ -112,18 +104,17 @@ function Login() {
       return;
     }
 
-    // ✅ 로그인 성공 후 아이디 저장 조건 처리
     if (isSavedId) {
-      localStorage.setItem('savedId', idValue);
+      localStorage.setItem('user', idValue);
     } else {
-      localStorage.removeItem('savedId');
+      localStorage.setItem('user', '');
     }
 
     navigate('/', { replace: true });
   };
 
   return (
-    <main className="m-auto flex h-full w-full max-w-[420px] flex-col justify-center gap-8 px-6 pb-14">
+    <main className="m-auto flex h-full w-full max-w-[420px] flex-col justify-center gap-6 px-6 pb-20">
       <h2>
         <Link
           to="/"
@@ -171,24 +162,32 @@ function Login() {
             checked={isSavedId}
             onCheckedChange={onChangeSavedIdToggle}
           />
-          <Link
-            to="#"
-            className="fs-14 font-regular text-gray07 h-8 px-1 leading-8"
-          >
-            아이디/비밀번호 찾기
-          </Link>
         </div>
         <Button onClick={onClickLogin} disabled={!idValid || !pwValid}>
           로그인
         </Button>
       </fieldset>
-      <div className="flex justify-center gap-1">
-        <p className="fs-14 font-regular text-gray07">
-          아직 회원이 아니신가요?
-        </p>
-        <Link to="/register" className="fs-14 text-primary px-1 font-semibold">
-          회원가입
+      <div className="fs-14 font-regular text-gray07 flex items-center justify-center gap-1">
+        <Link to="#" className="px-1">
+          아이디 찾기
         </Link>
+        <span aria-hidden={true} className="bg-gray04 h-[11px] w-[1px]"></span>
+        <Link to="#" className="px-1">
+          비밀번호 재설정
+        </Link>
+        <span aria-hidden={true} className="bg-gray04 h-[11px] w-[1px]"></span>
+        <div className="relative">
+          <Link to="/register" className="px-1">
+            회원가입
+          </Link>
+          <span className="heartbeat-ring bg-primary absolute top-8 right-2 rounded-3xl px-3 py-1 whitespace-nowrap text-white">
+            우리 같이 폴짝해요!
+            <span
+              aria-hidden={true}
+              className="bg-primary absolute -top-1 right-4 h-2 w-2 rotate-45"
+            ></span>
+          </span>
+        </div>
       </div>
       {isOpen && modalType === 'login' && <Modal mode="alert" type="login" />}
     </main>
