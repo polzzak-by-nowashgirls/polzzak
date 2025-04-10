@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
+import supabase from '@/api/supabase';
 import Button from '@/components/Button/Button';
 import Checkbox from '@/components/Checkbox/Checkbox';
 import Icon, { IconId } from '@/components/Icon/Icon';
@@ -21,7 +22,7 @@ function Login() {
     }
   }, [location.state, showToast]);
 
-  // 🕹️ Id
+  // 🕹️ 아이디
   const [idValue, setIdValue] = useState('');
   const [idMessage, setIdMessage] = useState('');
   const [idValid, setIdValid] = useState<boolean | null>(null);
@@ -32,15 +33,14 @@ function Login() {
 
     const { isValid, message } = validateId(value);
     setIdValid(isValid);
+    setIdMessage(isValid ? '' : message);
 
-    if (!isValid) {
-      setIdMessage(message); // 🚫 실패 시
-    } else {
-      setIdMessage(''); // ✅ 성공 시
+    if (isSavedId) {
+      localStorage.setItem('savedId', value);
     }
   };
 
-  // 🕹️ Password
+  // 🕹️ 비밀번호
   const [pwValue, setPwValue] = useState('');
   const [pwMessage, setPwMessage] = useState('');
   const [pwValid, setPwValid] = useState<boolean | null>(null);
@@ -59,7 +59,7 @@ function Login() {
     }
   };
 
-  // 🕹️ Visibillity 버튼 클릭
+  // 🕹️ 가시성 버튼 클릭
   const [isVisible, setIsVisible] = useState(false);
 
   const onClickVisible = () => {
@@ -71,8 +71,36 @@ function Login() {
     ? 'visibillity_on'
     : 'visibillity_off';
 
+  // 🕹️ 아이디 저장
+  const [isSavedId, setIsSavedId] = useState(true);
+  useEffect(() => {
+    const savedId = localStorage.getItem('savedId');
+    if (savedId) {
+      setIdValue(savedId);
+      setIsSavedId(true);
+    }
+  }, []);
+  const onToggleSavedId = () => {
+    setIsSavedId((prev) => {
+      const next = !prev;
+
+      if (next && idValue) {
+        localStorage.setItem('savedId', idValue);
+      } else {
+        localStorage.removeItem('savedId');
+      }
+      return next;
+    });
+  };
+
+  // 🕹️ 아이디/비밀번호 찾기
   const onClickFindAccount = () => {
     console.log('아이디/비밀번호 찾기');
+  };
+
+  // 🕹️ 로그인 버튼 클릭
+  const onClickLogin = () => {
+    console.log('로그인');
   };
 
   return (
@@ -116,9 +144,12 @@ function Login() {
             <Validation status={pwValid} message={pwMessage} />
           )}
         </div>
-
         <div className="flex items-center justify-between gap-2">
-          <Checkbox label="아이디 저장" />
+          <Checkbox
+            label="아이디 저장"
+            checked={isSavedId}
+            onChange={onToggleSavedId}
+          />
           {/* <Link
             to="#"
             className="fs-14 font-regular text-gray07 h-8 px-1 leading-8"
@@ -134,7 +165,7 @@ function Login() {
             아이디/비밀번호 찾기
           </Button>
         </div>
-        <Button>로그인</Button>
+        <Button onClick={onClickLogin}>로그인</Button>
       </fieldset>
       <div className="flex justify-center gap-1">
         <p className="fs-14 font-regular text-gray07">
