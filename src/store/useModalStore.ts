@@ -1,6 +1,16 @@
 import { create } from 'zustand';
 
-type ModalType = 'folder_add' | 'folder_delete' | 'folder_edit' | null;
+type ModalType =
+  | 'folder_add'
+  | 'folder_delete'
+  | 'folder_edit'
+  | 'favorite'
+  | 'my_polzzak'
+  | 'restaurant'
+  | 'festival'
+  | 'tourist'
+  | 'logout'
+  | null;
 
 interface ModalStore {
   isOpen: boolean;
