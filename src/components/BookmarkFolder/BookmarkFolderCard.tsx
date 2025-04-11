@@ -117,7 +117,7 @@ function BookmarkFolderCard({
       ) : (
         <p
           className={cn(
-            'fs-14 lh m-1 mt-2 truncate border border-transparent px-2 py-1',
+            'fs-14 lh mt-2 truncate border border-transparent px-2 py-1',
           )}
         >
           {name}

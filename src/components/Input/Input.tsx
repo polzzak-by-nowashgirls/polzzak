@@ -72,6 +72,24 @@ function Input({
         {iconBtn}
       </Wrapper>
     </>
+  ) : type === 'button' ? (
+    <>
+      <Label hideLabel={hideLabel} htmlFor={labelId} className="m-1">
+        {label}
+      </Label>
+      <Wrapper {...(children ? { className: 'relative' } : {})}>
+        <input
+          type="button"
+          data-slot="input"
+          className={`${inputClassName} text-gray05 text-left`}
+          id={labelId}
+          placeholder={placeholder}
+          {...props}
+        />
+
+        {iconBtn}
+      </Wrapper>
+    </>
   ) : (
     <>
       <Label hideLabel={hideLabel} htmlFor={labelId} className="m-1">
@@ -81,7 +99,7 @@ function Input({
         <input
           type={type}
           data-slot="input"
-          className={`${inputClassName} ${type === 'button' && 'text-gray05 text-left'}`}
+          className={inputClassName}
           id={labelId}
           placeholder={placeholder}
           {...props}
