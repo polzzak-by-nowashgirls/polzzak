@@ -8,11 +8,11 @@ interface BookmarkStore {
   folderId: number | null;
   setFolders: (folders: Bookmark[]) => void;
   selectFolder: (id: number | null) => void;
-  addFolder: (folder: Bookmark) => void;
-  deleteFolder: (id: number) => void;
-  modifyFolder: (updated: Bookmark) => void;
-
+  addFolder: (id: number, name: string) => void;
+  deleteFolder: () => void;
+  modifyFolder: (name: string) => void;
   handleAddClick: () => void;
+  handleDeleteClick: (id: number) => void;
   handleModifyClick: (id: number) => void;
 }
 
@@ -23,22 +23,44 @@ export const useBookmarkStore = create<BookmarkStore>((set) => ({
   setFolders: (folders) => set({ folders }),
   selectFolder: (id) => set({ folderId: id }),
 
-  addFolder: (folder) =>
-    set((state) => ({ folders: [...state.folders, folder] })),
+  addFolder: (id, name) =>
+    set((state) => {
+      const newFolder = {
+        id: id,
+        name: name,
+        storage: [],
+      };
 
-  deleteFolder: (id) =>
-    set((state) => ({
-      folders: state.folders.filter((f) => f.id !== id),
-    })),
+      return { folders: [...state.folders, newFolder] };
+    }),
 
-  modifyFolder: (updated) =>
-    set((state) => ({
-      folders: state.folders.map((f) => (f.id === updated.id ? updated : f)),
-    })),
+  deleteFolder: () =>
+    set((state) => {
+      const updated = state.folders.filter((f) => f.id !== state.folderId);
+      console.log('🗑 삭제 후 folders:', updated);
+      return { folders: updated };
+    }),
+
+  modifyFolder: (name) =>
+    set((state) => {
+      const folderId = state.folderId;
+      if (folderId === null) return {};
+
+      return {
+        folders: state.folders.map((f) =>
+          f.id === folderId ? { ...f, name } : f,
+        ),
+      };
+    }),
 
   handleAddClick: () => {
     const { openModal } = useModalStore.getState();
     openModal('folder_add');
+  },
+  handleDeleteClick: (id) => {
+    const { openModal } = useModalStore.getState();
+    set({ folderId: id });
+    openModal('folder_delete');
   },
 
   handleModifyClick: (id) => {

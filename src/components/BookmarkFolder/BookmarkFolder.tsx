@@ -28,6 +28,9 @@ function BookmarkFolder({ data }: BookmarkFolderProps) {
   const handleModifyClick = useBookmarkStore(
     (state) => state.handleModifyClick,
   );
+  const handleDeleteClick = useBookmarkStore(
+    (state) => state.handleDeleteClick,
+  );
 
   const images = storage.map((item) => item.imgUrl);
 
@@ -40,6 +43,7 @@ function BookmarkFolder({ data }: BookmarkFolderProps) {
       <BookmarkFolderCard
         name={name}
         images={images}
+        onClickDelete={() => handleDeleteClick(id)}
         onClickModify={() => handleModifyClick(id)}
       />
     </div>

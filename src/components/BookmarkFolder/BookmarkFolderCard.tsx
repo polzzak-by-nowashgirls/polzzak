@@ -68,18 +68,6 @@ function BookmarkFolderCard({
     );
   };
 
-  const handleDeleteFolder = () => {
-    if (onClickDelete) {
-      onClickDelete();
-    }
-  };
-
-  const handleModifyFolder = () => {
-    if (onClickModify) {
-      onClickModify();
-    }
-  };
-
   return (
     <article
       onClick={onClick}
@@ -99,14 +87,14 @@ function BookmarkFolderCard({
           <Button
             variant={'tertiary'}
             className="text-primary hover:border-primary-hover absolute top-0 right-0 bg-transparent"
-            onClick={handleDeleteFolder}
+            onClick={onClickDelete}
           >
             <Icon id="delete" />
           </Button>
           <Button
             variant={'tertiary'}
             size={'md'}
-            onClick={handleModifyFolder}
+            onClick={onClickModify}
             className={cn(
               'mt-[8px] h-auto w-full justify-start truncate border py-[4px]',
             )}

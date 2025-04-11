@@ -1,12 +1,15 @@
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { BookmarkDummyData } from '@/mockData/ScheduleDummyData';
+import { useBookmarkStore } from '@/store/useBookmarkStore';
 import { useModalStore } from '@/store/useModalStore';
 
 export function useModalActions() {
   const navigate = useNavigate();
   const { closeModal } = useModalStore();
+  const modifyFolder = useBookmarkStore((state) => state.modifyFolder);
+  const addFolder = useBookmarkStore((state) => state.addFolder);
+  const deleteFolder = useBookmarkStore((state) => state.deleteFolder);
   const ref = useRef(3);
 
   const modalActions: Record<string, (inputValue?: string) => void> = {
@@ -23,26 +26,21 @@ export function useModalActions() {
       if (!inputValue) {
         console.log('저장 버튼에 맞는 함수');
       } else {
-        // 임시데이터 추가. DB 연결 필요 + 로더
-        const id = 0;
-        const handleTitle = BookmarkDummyData.filter(
-          (folder) => folder.id === id,
-        );
+        modifyFolder(inputValue);
       }
 
       closeModal();
     },
-    삭제: () => console.log('삭제 버튼에 맞는 함수'),
+    삭제: () => {
+      deleteFolder();
+      closeModal();
+    },
     추가: (inputValue) => {
       if (!inputValue) {
         console.log('추가 버튼에 맞는 함수');
       } else {
         // 임시데이터 추가. DB 연결 필요 + 로더
-        BookmarkDummyData.push({
-          id: ref.current++,
-          name: inputValue,
-          storage: [],
-        });
+        addFolder(ref.current++, inputValue);
       }
 
       closeModal();
