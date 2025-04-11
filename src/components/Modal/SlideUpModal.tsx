@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 import Button from '@/components/Button/Button';
 import Calendar from '@/components/Calendar/Calendar';
@@ -13,9 +14,14 @@ import {
 } from '@/mockData/ScheduleDummyData';
 import { useModalStore } from '@/store/useModalStore';
 
+interface ModalActionParams {
+  buttonText: string;
+  inputValue?: string;
+}
+
 interface SlideUpModal {
   type: string;
-  handleButtonClick: (buttonText: string) => void;
+  handleButtonClick: (args: ModalActionParams) => void;
 }
 
 const MODAL_DATA = [
@@ -39,11 +45,13 @@ const MODAL_DATA = [
     id: 2,
     title: '폴더 추가하기',
     type: 'folder_add',
-    content: (
+    contentComponent: ({ inputValue, setInputValue }) => (
       <Input
         label="폴더 추가하기"
         hideLabel={true}
         placeholder="폴더 이름을 입력해 주세요"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
       />
     ),
     prevBtn: '취소',
@@ -53,11 +61,13 @@ const MODAL_DATA = [
     id: 3,
     title: '폴더 이름 편집하기',
     type: 'folder_edit',
-    content: (
+    contentComponent: ({ inputValue, setInputValue }) => (
       <Input
         label="폴더 이름 편집하기"
         hideLabel={true}
         placeholder="기본 폴더"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
       />
     ),
     prevBtn: '취소',
@@ -144,6 +154,9 @@ const MODAL_DATA = [
 function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
   const { closeModal, setButtonText } = useModalStore();
   const modalContent = MODAL_DATA.find((item) => item.type === type);
+  // 즐겨찾기 폴더 추가
+  const [inputValue, setInputValue] = useState('');
+
   if (!modalContent) return null;
 
   return (
@@ -177,9 +190,9 @@ function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
         </Button>
       </header>
       <div>
-        {modalContent.content
-          ? modalContent.content
-          : modalContent.text &&
+        {modalContent.contentComponent
+          ? modalContent.contentComponent({ inputValue, setInputValue })
+          : modalContent.content ||
             modalContent.text.map((i, index) => (
               <p
                 className="fs-14 ls lh font-regular text-gray07 text-center"
@@ -190,7 +203,7 @@ function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
             ))}
       </div>
       <div
-        className={`flex w-full items-center justify-center ${type === 'calendar' ? 'flex-col' : 'flex-row'}`}
+        className={`flex w-full items-center justify-center gap-1 ${type === 'calendar' ? 'flex-col' : 'flex-row'}`}
       >
         {modalContent.prevBtn && (
           <Button
@@ -198,7 +211,7 @@ function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
             variant={'secondary'}
             onClick={() => {
               setButtonText(modalContent.prevBtn);
-              handleButtonClick(modalContent.prevBtn);
+              handleButtonClick({ buttonText: modalContent.prevBtn });
             }}
           >
             {modalContent.prevBtn}
@@ -207,7 +220,14 @@ function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
         {modalContent.nextBtn && (
           <Button
             className={`${type === 'calendar' ? 'order-first w-full' : 'w-1/2'}`}
-            onClick={() => handleButtonClick(modalContent.nextBtn)}
+            onClick={() =>
+              handleButtonClick({
+                buttonText: modalContent.nextBtn,
+                inputValue: modalContent.contentComponent
+                  ? inputValue
+                  : undefined,
+              })
+            }
           >
             {modalContent.nextBtn}
           </Button>

@@ -1,19 +1,18 @@
-import { useSearchParams } from 'react-router-dom';
-
 import BookmarkFolderList from '@/components/BookmarkFolder/BookmarkFolderList';
 import Modal from '@/components/Modal/Modal';
+import RequireLogin from '@/pages/RequireLogin';
+import { useHeaderStore } from '@/store/useHeaderStore';
 import { useModalStore } from '@/store/useModalStore';
 
 function Bookmark() {
-  // ✅ 새로 고침 시에도 유지하기 위해 searchParams 사용
-  const [searchParams] = useSearchParams();
-
-  const modeParam = searchParams.get('mode');
-  const mode = modeParam === 'edit' ? 'edit' : 'list';
-
+  const { isEditMode } = useHeaderStore();
   const isOpen = useModalStore((state) => state.isOpen);
   const modalType = useModalStore((state) => state.modalType);
   const openModal = useModalStore((state) => state.openModal);
+
+  // 유저
+  // const isAuth = localStorage.getItem('user')
+  const isAuth = true;
 
   const handleAddClick = () => {
     console.log('➕ 폴더 추가 ➕');
@@ -29,13 +28,17 @@ function Bookmark() {
   };
 
   return (
-    <>
-      <BookmarkFolderList
-        mode={mode}
-        onClickAdd={handleAddClick}
-        onClickDelete={handleDeleteClick}
-        onClickModify={handleModifyClick}
-      />
+    <main className="p-6">
+      {isAuth ? (
+        <BookmarkFolderList
+          mode={isEditMode ? 'edit' : 'list'}
+          onClickAdd={handleAddClick}
+          onClickDelete={handleDeleteClick}
+          onClickModify={handleModifyClick}
+        />
+      ) : (
+        <RequireLogin />
+      )}
       {isOpen && modalType === 'folder_add' && (
         <Modal mode="slide" type="folder_add" />
       )}
@@ -45,7 +48,7 @@ function Bookmark() {
       {isOpen && modalType === 'folder_delete' && (
         <Modal mode="slide" type="folder_delete" />
       )}
-    </>
+    </main>
   );
 }
 
