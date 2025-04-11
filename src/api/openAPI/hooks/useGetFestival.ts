@@ -68,7 +68,7 @@ async function fetchFestivalData(
   pageNo: string,
   date: string,
 ): Promise<FestivalListType[]> {
-  const baseUrl = `${import.meta.env.VITE_OPEN_API_BASE_URL}/searchFestival1?serviceKey=${import.meta.env.VITE_OPEN_API_KEY}`;
+  const baseUrl = `/tourapi/${import.meta.env.VITE_OPEN_API_BASE_URL}/searchFestival1?serviceKey=${import.meta.env.VITE_OPEN_API_KEY}`;
 
   const params = new URLSearchParams({
     numOfRows,
