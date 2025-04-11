@@ -61,7 +61,7 @@ const MODAL_DATA = [
     id: 6,
     type: 'login',
     title: '로그인에 실패하였습니다.',
-    content: ['다시 시도해 주세요.'],
+    content: ['아이디 또는 비밀번호를', '확인해 주세요.'],
     nextBtn: '확인',
   },
 ];

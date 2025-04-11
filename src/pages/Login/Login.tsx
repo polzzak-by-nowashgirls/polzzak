@@ -89,6 +89,7 @@ function Login() {
     setIsSavedId((prev) => !prev);
   };
 
+  // ⚠️ supabase auth로 변경 필요
   const onClickLogin = async () => {
     const { data, error } = await supabase
       .from('ex_users')
@@ -135,6 +136,7 @@ function Login() {
             placeholder="아이디"
             hideLabel={true}
             onChange={onChangeIDInput}
+            aria-label="아이디를 입력해 주세요."
           />
           {idValid !== null && (
             <Validation status={idValid} message={idMessage} />
@@ -147,6 +149,7 @@ function Login() {
             placeholder="비밀번호"
             hideLabel={true}
             onChange={onChangePWInput}
+            aria-label="비밀번호를 입력해 주세요."
           >
             <Button variant="input" onClick={onClickVisible}>
               <Icon id={visibleIconId} />
