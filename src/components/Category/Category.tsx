@@ -4,7 +4,7 @@ const CATEGORY_LIST = [
   {
     id: 0,
     name: '즐겨찾기',
-    linkURL: 'favorite',
+    linkURL: 'my/bookmark',
     imageURL: '/images/favorite.png',
   },
   {

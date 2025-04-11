@@ -13,8 +13,7 @@ export interface ListItem {
 export const LIST_ITEM_DUMMY_DATA = [
   {
     id: 0,
-    imgUrl:
-      'https://tong.visitkorea.or.kr/cms/resource/55/3480455_image2_1.jpg',
+    imgUrl: '/images/visual_1.png',
     title: '2025 보름왓 튤립 축제2025 보름왓 튤립 축제2025 보름왓 튤립 축제',
     start_date: '2025.03.22',
     end_date: '2025.04.13',
@@ -25,8 +24,7 @@ export const LIST_ITEM_DUMMY_DATA = [
   },
   {
     id: 1,
-    imgUrl:
-      'https://tong.visitkorea.or.kr/cms/resource/55/3480455_image2_1.jpg',
+    imgUrl: '/images/visual_2.png',
     title: '2025 보름왓 튤립 축제2025 보름왓 튤립 축제2025 보름왓 튤립 축제',
     start_date: '2025.03.22',
     end_date: '2025.04.13',
@@ -37,8 +35,7 @@ export const LIST_ITEM_DUMMY_DATA = [
   },
   {
     id: 2,
-    imgUrl:
-      'https://tong.visitkorea.or.kr/cms/resource/55/3480455_image2_1.jpg',
+    imgUrl: '/images/visual_3.png',
     title: '2025 보름왓 튤립 축제',
     start_date: '2025.03.22',
     end_date: '2025.04.13',
@@ -49,8 +46,7 @@ export const LIST_ITEM_DUMMY_DATA = [
   },
   {
     id: 3,
-    imgUrl:
-      'https://tong.visitkorea.or.kr/cms/resource/55/3480455_image2_1.jpg',
+    imgUrl: '/images/splash.png',
     title: '2025 보름왓 튤립 축제',
     start_date: '2025.03.22',
     end_date: '2025.04.13',
@@ -61,8 +57,7 @@ export const LIST_ITEM_DUMMY_DATA = [
   },
   {
     id: 4,
-    imgUrl:
-      'https://tong.visitkorea.or.kr/cms/resource/55/3480455_image2_1.jpg',
+    imgUrl: '/images/splash.png',
     title: '2025 보름왓 튤립 축제',
     start_date: '2025.03.22',
     end_date: '2025.04.13',
