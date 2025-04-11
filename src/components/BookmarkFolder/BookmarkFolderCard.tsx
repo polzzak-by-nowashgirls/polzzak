@@ -1,12 +1,12 @@
 import Button from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
 import { cn } from '@/lib/utils';
+import { useHeaderStore } from '@/store/useHeaderStore';
 
 interface BookmarkFolderCardProps {
   name: string;
   images?: string[];
   addFolder?: boolean;
-  mode?: 'list' | 'edit';
   onClick?: () => void;
   onClickDelete?: () => void;
   onClickModify?: () => void;
@@ -16,11 +16,11 @@ function BookmarkFolderCard({
   name,
   images = [],
   addFolder = false,
-  mode,
   onClick,
   onClickDelete,
   onClickModify,
 }: BookmarkFolderCardProps) {
+  const { isEditMode } = useHeaderStore();
   const commonImgClass = cn('h-full object-cover object-center aspect-[3/2]');
 
   const renderImages = () => {
@@ -94,7 +94,7 @@ function BookmarkFolderCard({
       >
         {renderImages()}
       </div>
-      {mode === 'edit' ? (
+      {isEditMode && !onClick ? (
         <>
           <Button
             variant={'tertiary'}

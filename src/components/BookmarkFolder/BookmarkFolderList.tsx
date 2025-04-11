@@ -1,34 +1,16 @@
 import AddBookmarkFolder from '@/components/BookmarkFolder/AddBookmarkFolder';
 import BookmarkFolder from '@/components/BookmarkFolder/BookmarkFolder';
-import { Bookmark, BookmarkDummyData } from '@/mockData/ScheduleDummyData';
+import { useBookmarkStore } from '@/store/useBookmarkStore';
 
-interface BookmarkFolderListProps {
-  myBookmark?: Bookmark[];
-  mode: 'list' | 'edit';
-  onClickAdd: () => void;
-  onClickDelete?: () => void;
-  onClickModify?: () => void;
-}
+function BookmarkFolderList() {
+  const folders = useBookmarkStore((state) => state.folders);
 
-function BookmarkFolderList({
-  myBookmark = BookmarkDummyData,
-  mode,
-  onClickAdd,
-  onClickDelete,
-  onClickModify,
-}: BookmarkFolderListProps) {
   return (
     <section className="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-6">
-      {myBookmark.map((folder) => (
-        <BookmarkFolder
-          key={folder.name}
-          data={folder}
-          mode={mode}
-          onClickDelete={onClickDelete}
-          onClickModify={onClickModify}
-        />
+      {folders.map((folder) => (
+        <BookmarkFolder key={folder.name} data={folder} />
       ))}
-      <AddBookmarkFolder onClickAdd={onClickAdd} />
+      <AddBookmarkFolder />
     </section>
   );
 }
