@@ -1,11 +1,9 @@
-import { MutableRefObject } from 'react';
+import { MutableRefObject, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
-import Chip from '@/components/Chip/Chip';
 import Icon from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
-import { useModalStore } from '@/store/useModalStore';
 
 type LatLng = {
   lat: number;
@@ -15,24 +13,73 @@ type LatLng = {
 interface MapHeaderProps {
   mapRef: MutableRefObject<kakao.maps.Map | null>;
   myLocation: LatLng | null;
+  showFoodList: boolean;
+  onFoodBtnClick: () => void;
 }
 
-function MapHeader({ mapRef, myLocation }: MapHeaderProps) {
+function MapHeader({
+  mapRef,
+  myLocation,
+  showFoodList,
+  onFoodBtnClick,
+}: MapHeaderProps) {
   const navigate = useNavigate();
-  const { openModal } = useModalStore();
+  const [activeFilterId, setActiveFilterId] = useState<number | null>(null);
 
-  function handleMapFilter(name?: string) {
-    if (name === '즐겨찾기') {
-      navigate(`/map/favorite`);
-    }
-    openModal('favorite');
-  }
+  const MAP_FILTER = [
+    {
+      id: 1,
+      name: '즐겨찾기',
+      path: '/map/favorite',
+    },
+    {
+      id: 2,
+      name: '나의폴짝',
+      path: '/map/polzzak',
+    },
+    {
+      id: 3,
+      name: '음식점',
+      // path: '/map/food',
+      path: null,
+    },
+    {
+      id: 4,
+      name: '축제',
+      path: '/map/festival',
+    },
+    {
+      id: 5,
+      name: '관광지',
+      path: '/map/tour',
+    },
+  ];
 
-  const handleClick = () => {
-    if (mapRef.current && myLocation) {
-      const center = new kakao.maps.LatLng(myLocation.lat, myLocation.lng);
-      mapRef.current.panTo(center);
+  const handleFilterClick = (filterId: number, path: string | null) => {
+    if (filterId === activeFilterId) {
+      setActiveFilterId(null);
+      if (filterId === 3) onFoodBtnClick();
+      return;
     }
+
+    setActiveFilterId(filterId);
+    if (filterId === 3) {
+      onFoodBtnClick();
+    } else if (path) {
+      navigate(path);
+    }
+  };
+
+  const handleLocationClick = () => {
+    // if (mapRef.current && myLocation) {
+    //   const center = new kakao.maps.LatLng(myLocation.lat, myLocation.lng);
+    //   mapRef.current.panTo(center);
+    // }
+    if (!mapRef.current || !myLocation) return;
+
+    mapRef.current.setCenter(
+      new kakao.maps.LatLng(myLocation.lat, myLocation.lng),
+    );
   };
 
   return (
@@ -49,12 +96,25 @@ function MapHeader({ mapRef, myLocation }: MapHeaderProps) {
           </Button>
         </Input>
       </header>
-      <Chip mode="map_filter" hideLabel={true} onClick={handleMapFilter} />
+
+      <ul className="fixed top-[62px] right-0 left-0 z-10 flex gap-1 py-2">
+        {MAP_FILTER.map(({ id, name, path }) => (
+          <li key={id} className="first-of-type:ml-4">
+            <button
+              className={`fs-14 text-gray07 border-gray07 rounded-4xl border px-3 py-1 whitespace-nowrap ${activeFilterId === id ? 'bg-primary border-primary text-white' : 'bg-white'}`}
+              onClick={() => handleFilterClick(id, path)}
+            >
+              {name}
+            </button>
+          </li>
+        ))}
+      </ul>
+
       <Button
         variant="secondary"
         size="md"
-        className="fixed top-[120px] right-4 z-10 h-10 w-10"
-        onClick={handleClick}
+        className="fixed top-[116px] right-4 z-10 h-10 w-10"
+        onClick={handleLocationClick}
       >
         <Icon id="location" />
       </Button>

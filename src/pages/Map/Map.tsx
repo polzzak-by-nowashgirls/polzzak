@@ -6,6 +6,7 @@ import {
 } from 'react-kakao-maps-sdk';
 import { Outlet } from 'react-router-dom';
 
+import { useGetNearbyFoodList } from '@/api/openAPI/hooks/useGetNearbyFoodList';
 import MapHeader from '@/components/MapHeader/MapHeader';
 import Modal from '@/components/Modal/Modal';
 import { useModalStore } from '@/store/useModalStore';
@@ -26,6 +27,19 @@ function Map() {
 
   // 🚩 내 위치 상태 저장
   const [myLocation, setMyLocation] = useState<LatLng | null>(null);
+
+  // 🍽️ 음식점 리스트 표시 여부 상태
+  const [showFoodList, setShowFoodList] = useState(false);
+
+  // 음식점 버튼 클릭 핸들러
+  const handleFoodBtnClick = () => setShowFoodList((prev) => !prev);
+
+  // 🍽️ 주변 음식점 리스트 가져오기
+  const foodList = useGetNearbyFoodList(
+    myLocation?.lat ?? 0,
+    myLocation?.lng ?? 0,
+    showFoodList, // 사용자가 음식점 버튼을 클릭했을 때만 호출
+  );
 
   const { isOpen } = useModalStore();
 
@@ -55,7 +69,12 @@ function Map() {
 
   return (
     <>
-      <MapHeader mapRef={mapRef} myLocation={myLocation} />
+      <MapHeader
+        mapRef={mapRef}
+        myLocation={myLocation}
+        showFoodList={showFoodList}
+        onFoodBtnClick={handleFoodBtnClick}
+      />
       <MapArea
         ref={mapRef}
         center={myLocation ?? { lat: 33.55635, lng: 126.795841 }}
@@ -63,6 +82,7 @@ function Map() {
         className="relative"
         level={3}
       >
+        {/* 🚩 내 위치 마커 */}
         {myLocation && (
           <MapMarker
             position={myLocation}
@@ -80,6 +100,47 @@ function Map() {
               },
             }}
           ></MapMarker>
+        )}
+
+        {/* 🍽️ 음식점 마커 */}
+        {foodList.map((item, index) => (
+          <MapMarker
+            key={index}
+            position={{ lat: Number(item.mapy), lng: Number(item.mapx) }}
+            image={{
+              src: '/marker/map_marker.svg',
+              size: {
+                width: 24,
+                height: 24,
+              },
+              options: {
+                offset: {
+                  x: 12,
+                  y: 12,
+                },
+              },
+            }}
+          />
+        ))}
+        {showFoodList && foodList.length > 0 && (
+          <ul className="fixed right-4 bottom-0 left-4 z-10 max-h-[40vh] overflow-auto rounded-lg bg-white p-4 shadow-lg">
+            {foodList.map((food) => (
+              <li key={food.contentid} className="mb-4">
+                {food.firstimage ? (
+                  <img src={food.firstimage} alt={food.title} />
+                ) : (
+                  <div className="flex h-[120px] w-full items-center justify-center bg-gray-200 text-sm text-gray-500">
+                    이미지 없음
+                  </div>
+                )}
+                <p className="mt-2 font-bold">{food.title}</p>
+                <p className="text-sm text-gray-600">{food.addr1}</p>
+                {food.tel ? (
+                  <p className="text-sm text-gray-600">{food.tel}</p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
         )}
         <Outlet />
         {isOpen && <Modal mode="slide" type="favorite" />}
