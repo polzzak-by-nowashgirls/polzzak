@@ -1,14 +1,9 @@
 import BookmarkFolderCard from '@/components/BookmarkFolder/BookmarkFolderCard';
 import { cn } from '@/lib/utils';
+import { useBookmarkStore } from '@/store/useBookmarkStore';
 
-type AddBookmarkFolderProps = {
-  onClickAdd: () => void;
-};
-
-function AddBookmarkFolder({ onClickAdd }: AddBookmarkFolderProps) {
-  const handleAddClick = () => {
-    onClickAdd();
-  };
+function AddBookmarkFolder() {
+  const handleAddClick = useBookmarkStore((state) => state.handleAddClick);
 
   return (
     <div

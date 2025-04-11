@@ -1,8 +1,9 @@
 // import { useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
 import Icon, { type IconId } from '@/components/Icon/Icon';
+import { useHeaderStore } from '@/store/useHeaderStore';
 
 interface HeaderProps {
   title: string;
@@ -15,19 +16,8 @@ function Header({ title, subTitle, editHide = false, iconId }: HeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === '/';
-  const [searchParams, setSearchParams] = useSearchParams();
 
-  const mode = searchParams.get('mode') || 'list';
-  const isEditMode = mode === 'edit';
-
-  const toggleEditMode = () => {
-    const newMode = isEditMode ? 'list' : 'edit';
-    setSearchParams((prev) => {
-      const params = new URLSearchParams(prev);
-      params.set('mode', newMode);
-      return params;
-    });
-  };
+  const { isEditMode, toggleEditMode } = useHeaderStore();
 
   return (
     <header

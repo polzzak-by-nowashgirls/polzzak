@@ -18,7 +18,7 @@ interface ModalStore {
   modalType: ModalType;
   buttonText: string;
   setButtonText: (text: string) => void;
-  openModal: (type: ModalType) => void;
+  openModal: (type: ModalType, id?: number | null) => void;
   closeModal: () => void;
 }
 

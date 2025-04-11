@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 
 import BookmarkFolderCard from '@/components/BookmarkFolder/BookmarkFolderCard';
 import { cn } from '@/lib/utils';
+import { useBookmarkStore } from '@/store/useBookmarkStore';
+import { useHeaderStore } from '@/store/useHeaderStore';
 
 interface StorageItem {
   id: number;
@@ -18,22 +20,21 @@ interface BookmarkFolderData {
 
 interface BookmarkFolderProps {
   data: BookmarkFolderData;
-  mode: 'list' | 'edit';
-  onClickDelete?: () => void;
-  onClickModify?: () => void;
 }
 
-function BookmarkFolder({
-  data,
-  mode,
-  onClickDelete,
-  onClickModify,
-}: BookmarkFolderProps) {
+function BookmarkFolder({ data }: BookmarkFolderProps) {
   const { id, name, storage } = data;
+  const { isEditMode } = useHeaderStore();
+  const handleModifyClick = useBookmarkStore(
+    (state) => state.handleModifyClick,
+  );
+  const handleDeleteClick = useBookmarkStore(
+    (state) => state.handleDeleteClick,
+  );
 
   const images = storage.map((item) => item.imgUrl);
 
-  return mode === 'edit' ? (
+  return isEditMode ? (
     <div
       className={cn(
         'focus-visible:ring-ring relative w-full outline-none focus-visible:rounded-md focus-visible:ring-[2px] focus-visible:ring-offset-2',
@@ -42,9 +43,8 @@ function BookmarkFolder({
       <BookmarkFolderCard
         name={name}
         images={images}
-        mode={mode}
-        onClickDelete={onClickDelete}
-        onClickModify={onClickModify}
+        onClickDelete={() => handleDeleteClick(id)}
+        onClickModify={() => handleModifyClick(id)}
       />
     </div>
   ) : (
@@ -54,7 +54,7 @@ function BookmarkFolder({
         'focus-visible:ring-ring relative w-full outline-none focus-visible:rounded-md focus-visible:ring-[2px] focus-visible:ring-offset-2',
       )}
     >
-      <BookmarkFolderCard name={name} images={images} mode={mode} />
+      <BookmarkFolderCard name={name} images={images} />
     </Link>
   );
 }
