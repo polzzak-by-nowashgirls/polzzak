@@ -17,7 +17,6 @@ interface ModalStore {
   isOpen: boolean;
   modalType: ModalType;
   buttonText: string;
-  selectedId: number | null;
   setButtonText: (text: string) => void;
   openModal: (type: ModalType, id?: number | null) => void;
   closeModal: () => void;
@@ -27,9 +26,7 @@ export const useModalStore = create<ModalStore>()((set) => ({
   isOpen: false,
   modalType: null,
   buttonText: '',
-  selectedId: null,
   setButtonText: (text) => set({ buttonText: text }),
-  openModal: (type, id = null) =>
-    set({ isOpen: true, modalType: type, selectedId: id }),
-  closeModal: () => set({ isOpen: false, buttonText: '', selectedId: null }),
+  openModal: (type) => set({ isOpen: true, modalType: type }),
+  closeModal: () => set({ isOpen: false, buttonText: '' }),
 }));
