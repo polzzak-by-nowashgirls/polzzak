@@ -11,9 +11,11 @@ export function useModalActions() {
     '다시 인증하기': closeModal,
     다음: () => {
       navigate('/register/4');
+      closeModal();
     },
     확인: () => {
-      navigate('/login');
+      navigate('/login', { replace: true });
+      closeModal();
     },
     저장: () => console.log('저장 버튼에 맞는 함수'),
     삭제: () => console.log('삭제 버튼에 맞는 함수'),
