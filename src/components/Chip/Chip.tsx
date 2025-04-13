@@ -1,126 +1,117 @@
-import { id } from 'date-fns/locale';
 import { useState } from 'react';
 
+import Button from '@/components/Button/Button';
+import { Label } from '@/components/Label';
+
 const REGIONS_DATA = [
-  { id: 0, name: '서울' },
-  { id: 1, name: '제주' },
-  { id: 2, name: '경기' },
-  { id: 3, name: '충남' },
-  { id: 4, name: '인천' },
-  { id: 5, name: '대구' },
-  { id: 6, name: '대전' },
-  { id: 7, name: '경남' },
-  { id: 8, name: '부산' },
-  { id: 9, name: '전북' },
-  { id: 10, name: '울산' },
-  { id: 11, name: '광주' },
-  { id: 12, name: '강원' },
-  { id: 13, name: '경북' },
-  { id: 14, name: '전남' },
-  { id: 15, name: '충북' },
-  { id: 16, name: '세종' },
+  { id: 0, name: '서울', selected: false },
+  { id: 1, name: '제주', selected: false },
+  { id: 2, name: '경기', selected: false },
+  { id: 3, name: '충남', selected: false },
+  { id: 4, name: '인천', selected: false },
+  { id: 5, name: '대구', selected: false },
+  { id: 6, name: '대전', selected: false },
+  { id: 7, name: '경남', selected: false },
+  { id: 8, name: '부산', selected: false },
+  { id: 9, name: '전북', selected: false },
+  { id: 10, name: '울산', selected: false },
+  { id: 11, name: '광주', selected: false },
+  { id: 12, name: '강원', selected: false },
+  { id: 13, name: '경북', selected: false },
+  { id: 14, name: '전남', selected: false },
+  { id: 15, name: '충북', selected: false },
+  { id: 16, name: '세종', selected: false },
 ];
-
 const THEME_DATA = [
-  { id: 0, name: '가족 여행' },
-  { id: 1, name: '커플 여행' },
-  { id: 2, name: '친구들과 함께' },
-  { id: 3, name: '반려동물과 함께' },
-  { id: 4, name: '맛집' },
-  { id: 5, name: '축제' },
-  { id: 6, name: '관광지' },
+  { id: 0, name: '가족 여행', selected: false },
+  { id: 1, name: '커플 여행', selected: false },
+  { id: 2, name: '친구들과 함께', selected: false },
+  { id: 3, name: '반려동물과 함께', selected: false },
+  { id: 4, name: '맛집', selected: false },
+  { id: 5, name: '축제', selected: false },
+  { id: 6, name: '관광지', selected: false },
+];
+const MAP_FILTER_DATA = [
+  { id: 0, name: '즐겨찾기', selected: false },
+  { id: 1, name: '나의폴짝', selected: false },
+  { id: 2, name: '음식점', selected: false },
+  { id: 3, name: '축제', selected: false },
+  { id: 4, name: '관광지', selected: false },
 ];
 
-const MAP_FILTER_DATA = [
-  { id: 0, name: '즐겨찾기' },
-  { id: 1, name: '나의폴짝' },
-  { id: 2, name: '음식점' },
-  { id: 3, name: '축제' },
-  { id: 4, name: '관광지' },
-];
+interface ClickedChipItem {
+  id: number;
+  name: string;
+  selected: boolean;
+}
 
 interface ChipProps {
   mode: 'region' | 'theme' | 'map_filter';
+  label?: string;
+  subLabel?: string;
   type?: 'default' | 'multiple';
-  selectedRegions?: string[];
-  hideLabel?: boolean;
-  onClick?: (name?: string) => void;
+  onClick?: (clickedChip: ClickedChipItem) => void;
 }
 
-function Chip({
-  mode,
-  type = 'default',
-  selectedRegions = [],
-  hideLabel = false,
-  onClick,
-}: ChipProps) {
-  const initialData = (
-    mode === 'region'
-      ? REGIONS_DATA
-      : mode === 'theme'
-        ? THEME_DATA
-        : MAP_FILTER_DATA
-  ).map((item) => ({
-    ...item,
-    selected: selectedRegions.includes(item.name),
-  }));
+function Chip({ mode, label, subLabel, type = 'default', onClick }: ChipProps) {
+  function getChipData() {
+    const baseMode =
+      mode === 'region'
+        ? REGIONS_DATA
+        : mode === 'theme'
+          ? THEME_DATA
+          : MAP_FILTER_DATA;
 
-  const [data, setData] = useState(initialData);
-
-  const handleToggle = (id: number) => {
-    setData((prev) =>
-      prev.map((item) =>
+    return baseMode.map((item) => ({ ...item, selected: item.selected }));
+  }
+  const [chips, setChips] = useState(getChipData());
+  function handleChips(id: number) {
+    setChips((prev) => {
+      const updatedChips =
         type === 'multiple'
-          ? item.id === id
-            ? { ...item, selected: !item.selected }
-            : item
-          : { ...item, selected: item.id === id ? true : false },
-      ),
-    );
-  };
+          ? prev.map((chip) =>
+              chip.id === id ? { ...chip, selected: !chip.selected } : chip,
+            )
+          : prev.map((chip) =>
+              chip.id === id
+                ? { ...chip, selected: !chip.selected }
+                : { ...chip, selected: false },
+            );
+
+      const clickedChip = updatedChips.find((chip) => chip.id === id);
+      if (onClick && clickedChip) {
+        onClick(clickedChip);
+      }
+
+      return updatedChips;
+    });
+  }
 
   return (
-    <div
-      className={`flex flex-col ${hideLabel ? 'gap-0' : 'gap-4'} ${mode === 'map_filter' && '-mx-2'}`}
-    >
-      <div
-        className={`${hideLabel ? 'hidden' : 'flex items-center justify-start gap-2 pl-2'}`}
-      >
-        <h3 className="fs-14 ls lh font-regular text-black">
-          {mode === 'region'
-            ? '지역 선택'
-            : mode === 'theme'
-              ? '테마 선택'
-              : '지도 필터'}
-        </h3>
-        <span className="fs-13 ls lh font-regular text-gray06">
-          {type === 'multiple' ? '다중 선택' : '단일 선택'}
-        </span>
-      </div>
-      <ul
-        className={`flex gap-2 ${hideLabel ? 'sort-scroll flex-nowrap overflow-scroll' : 'flex-wrap'}`}
-        role="list"
-      >
-        {data.map((item) => (
-          <li
-            key={item.id}
-            onClick={() => {
-              handleToggle(item.id);
-              onClick?.(item.name);
-            }}
-            aria-pressed={item.selected}
-            tabIndex={0}
-            className={`fs-14 font-regular ls lh cursor-pointer rounded-4xl border px-3.5 py-1.5 whitespace-nowrap transition-all ${
-              item.selected
-                ? 'bg-primary border-primary text-white'
-                : 'text-gray07 border-gray07 bg-white'
-            }`}
-          >
-            {item.name}
+    <section className="flex flex-col gap-4">
+      {label && (
+        <div className="flex items-center justify-start gap-2 px-2">
+          <Label className="fs-14 lh ls font-regular text-black">{label}</Label>
+          <Label className="fs-13 text-gray06 lh ls font-regular">
+            {subLabel}
+          </Label>
+        </div>
+      )}
+      <ul className="flex flex-wrap gap-2">
+        {chips.map((chip) => (
+          <li key={chip.id}>
+            <Button
+              type="button"
+              size="md"
+              className={`rounded-4xl border ${chip.selected ? 'bg-primary border-primary text-white' : 'text-gray07 border-gray07 bg-white'}`}
+              onClick={() => handleChips(chip.id)}
+            >
+              {chip.name}
+            </Button>
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   );
 }
 
