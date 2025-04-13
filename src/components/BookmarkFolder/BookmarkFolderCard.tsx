@@ -71,9 +71,23 @@ function BookmarkFolderCard({
   return (
     <article
       onClick={onClick}
-      role={onClick ? 'button' : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      className="outline-none"
+      className={cn(
+        'outline-none',
+        onClick &&
+          'focus-visible:ring-ring focus-visible:rounded-md focus-visible:ring-[2px] focus-visible:ring-offset-2',
+      )}
+      {...(onClick
+        ? {
+            role: 'button',
+            tabIndex: 0,
+            onKeyDown: (e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                onClick();
+              }
+            },
+          }
+        : null)}
     >
       <div
         className={cn(
