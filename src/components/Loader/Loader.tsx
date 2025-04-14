@@ -1,8 +1,6 @@
-import './style.css';
-
 import { useEffect, useState } from 'react';
 
-function LoadingSpinner({ text }: { text: string }) {
+function Loader({ text }: { text: string }) {
   const [visibleCount, setVisibleCount] = useState(0);
 
   useEffect(() => {
@@ -30,7 +28,7 @@ function LoadingSpinner({ text }: { text: string }) {
   }, []);
 
   return (
-    <div className="fixed z-50 flex h-screen w-full flex-wrap items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-9999 flex h-screen w-full items-center justify-center bg-black/50">
       <div className="flex h-[120px] w-[260px] flex-col items-center justify-center gap-5 rounded-lg bg-white">
         <div className="flex h-[33px] gap-4">
           {visibleCount >= 1 && <img src="/images/carrot.svg" alt="" />}
@@ -40,13 +38,8 @@ function LoadingSpinner({ text }: { text: string }) {
         </div>
         <p className="fs-13 font-bold">{text}</p>
       </div>
-
-      <div className="flex h-[120px] w-[260px] flex-col items-center justify-center gap-5 rounded-lg bg-white">
-        <div className="loader"></div>
-        <p className="fs-13 font-bold">{text}</p>
-      </div>
     </div>
   );
 }
 
-export default LoadingSpinner;
+export default Loader;

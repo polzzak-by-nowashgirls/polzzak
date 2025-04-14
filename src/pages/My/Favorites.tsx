@@ -1,18 +1,20 @@
-import BookmarkFolderList from '@/components/BookmarkFolder/BookmarkFolderList';
+import FavoritesList from '@/components/Favorites/FavoritesList';
+import Loader from '@/components/Loader/Loader';
 import Modal from '@/components/Modal/Modal';
 import RequireLogin from '@/pages/RequireLogin';
 import { useModalStore } from '@/store/useModalStore';
 
-function Bookmark() {
+function Favorites() {
   const { isOpen, modalType } = useModalStore();
 
   // 유저
   // const isAuth = localStorage.getItem('user')
   const isAuth = true;
+  const loader = false;
 
   return (
     <main className="p-6">
-      {isAuth ? <BookmarkFolderList /> : <RequireLogin />}
+      {isAuth ? <FavoritesList /> : <RequireLogin />}
       {isOpen && modalType === 'folder_add' && (
         <Modal mode="slide" type="folder_add" />
       )}
@@ -22,8 +24,9 @@ function Bookmark() {
       {isOpen && modalType === 'folder_delete' && (
         <Modal mode="slide" type="folder_delete" />
       )}
+      {loader && <Loader text="기다려주세요." />}
     </main>
   );
 }
 
-export default Bookmark;
+export default Favorites;

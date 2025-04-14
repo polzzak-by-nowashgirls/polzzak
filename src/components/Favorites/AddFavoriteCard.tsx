@@ -1,9 +1,9 @@
-import BookmarkFolderCard from '@/components/BookmarkFolder/BookmarkFolderCard';
+import BookmarkFolderCard from '@/components/Favorites/FavoriteCard';
 import { cn } from '@/lib/utils';
-import { useBookmarkStore } from '@/store/useBookmarkStore';
+import { useFavoritesStore } from '@/store/useFavoritesStore';
 
-function AddBookmarkFolder() {
-  const handleAddClick = useBookmarkStore((state) => state.handleAddClick);
+function AddFavoriteCard() {
+  const handleAddClick = useFavoritesStore((state) => state.handleAddClick);
 
   return (
     <div
@@ -21,4 +21,4 @@ function AddBookmarkFolder() {
   );
 }
 
-export default AddBookmarkFolder;
+export default AddFavoriteCard;

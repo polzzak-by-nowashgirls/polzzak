@@ -1,15 +1,15 @@
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useBookmarkStore } from '@/store/useBookmarkStore';
+import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useModalStore } from '@/store/useModalStore';
 
 export function useModalActions() {
   const navigate = useNavigate();
   const { closeModal } = useModalStore();
-  const modifyFolder = useBookmarkStore((state) => state.modifyFolder);
-  const addFolder = useBookmarkStore((state) => state.addFolder);
-  const deleteFolder = useBookmarkStore((state) => state.deleteFolder);
+  const modifyFolder = useFavoritesStore((state) => state.modifyFolder);
+  const addFolder = useFavoritesStore((state) => state.addFolder);
+  const deleteFolder = useFavoritesStore((state) => state.deleteFolder);
   const ref = useRef(3);
 
   const modalActions: Record<string, (inputValue?: string) => void> = {
