@@ -1,29 +1,47 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import supabase from '@/api/supabase';
 import FavoritesCard from '@/components/Favorites/FavoriteCard';
 import { cn } from '@/lib/utils';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useHeaderStore } from '@/store/useHeaderStore';
 
-interface StorageItem {
-  id: number;
-  title: string;
-  imgUrl: string;
-  // 임시 타입 지정
-}
+function Favorites({ id, name }) {
+  const [images, setImages] = useState([]);
 
-interface FavoritesData {
-  id: number;
-  name: string;
-  storage: StorageItem[];
-}
+  useEffect(() => {
+    const getMyFavorites = async () => {
+      const { data: myFavorites, error: myFavoriteError } = await supabase
+        .from('ex_favorite')
+        .select('content_id')
+        .eq('folder_id', id);
 
-interface FavoritesProps {
-  data: FavoritesData;
-}
+      if (myFavoriteError || !myFavorites) {
+        console.log('❌ 모달 띄우기! ❌ ');
+        return;
+      }
 
-function Favorites({ data }: FavoritesProps) {
-  const { id, name, storage } = data;
+      const contentIds = myFavorites.map((item) => item.content_id);
+
+      const { data: contents, error: contentsError } = await supabase
+        .from('ex_contents')
+        .select('firstimage')
+        .in('contentid', contentIds)
+        .limit(3);
+
+      if (contentsError) {
+        console.log('❌ 콘텐츠 불러오기 실패, 모달 띄우기! ❌ ');
+        return;
+      }
+
+      console.log('🎉 콘텐츠 가져옴:', contents);
+      setImages(contents.map((item) => item.firstimage));
+    };
+
+    getMyFavorites();
+  }, [id]);
+
   const { isEditMode } = useHeaderStore();
   const handleModifyClick = useFavoritesStore(
     (state) => state.handleModifyClick,
@@ -31,8 +49,6 @@ function Favorites({ data }: FavoritesProps) {
   const handleDeleteClick = useFavoritesStore(
     (state) => state.handleDeleteClick,
   );
-
-  const images = storage.map((item) => item.imgUrl);
 
   return isEditMode ? (
     <div
@@ -49,7 +65,7 @@ function Favorites({ data }: FavoritesProps) {
     </div>
   ) : (
     <Link
-      to={`/my/bookmark/${id}`}
+      to={`/my/favorites/${id}`}
       className={cn(
         'focus-visible:ring-ring relative w-full outline-none focus-visible:rounded-md focus-visible:ring-[2px] focus-visible:ring-offset-2',
       )}
