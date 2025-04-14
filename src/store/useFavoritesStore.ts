@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { Bookmark, BookmarkDummyData } from '@/mockData/ScheduleDummyData';
 import { useModalStore } from '@/store/useModalStore';
 
-interface BookmarkStore {
+interface FavoritesStore {
   folders: Bookmark[];
   folderId: number | null;
   setFolders: (folders: Bookmark[]) => void;
@@ -16,7 +16,7 @@ interface BookmarkStore {
   handleModifyClick: (id: number) => void;
 }
 
-export const useBookmarkStore = create<BookmarkStore>((set) => ({
+export const useFavoritesStore = create<FavoritesStore>((set) => ({
   folders: BookmarkDummyData,
   folderId: null,
 

@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 
-import BookmarkFolderCard from '@/components/BookmarkFolder/BookmarkFolderCard';
+import FavoritesCard from '@/components/Favorites/FavoriteCard';
 import { cn } from '@/lib/utils';
-import { useBookmarkStore } from '@/store/useBookmarkStore';
+import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useHeaderStore } from '@/store/useHeaderStore';
 
 interface StorageItem {
@@ -12,23 +12,23 @@ interface StorageItem {
   // 임시 타입 지정
 }
 
-interface BookmarkFolderData {
+interface FavoritesData {
   id: number;
   name: string;
   storage: StorageItem[];
 }
 
-interface BookmarkFolderProps {
-  data: BookmarkFolderData;
+interface FavoritesProps {
+  data: FavoritesData;
 }
 
-function BookmarkFolder({ data }: BookmarkFolderProps) {
+function Favorites({ data }: FavoritesProps) {
   const { id, name, storage } = data;
   const { isEditMode } = useHeaderStore();
-  const handleModifyClick = useBookmarkStore(
+  const handleModifyClick = useFavoritesStore(
     (state) => state.handleModifyClick,
   );
-  const handleDeleteClick = useBookmarkStore(
+  const handleDeleteClick = useFavoritesStore(
     (state) => state.handleDeleteClick,
   );
 
@@ -40,7 +40,7 @@ function BookmarkFolder({ data }: BookmarkFolderProps) {
         'focus-visible:ring-ring relative w-full outline-none focus-visible:rounded-md focus-visible:ring-[2px] focus-visible:ring-offset-2',
       )}
     >
-      <BookmarkFolderCard
+      <FavoritesCard
         name={name}
         images={images}
         onClickDelete={() => handleDeleteClick(id)}
@@ -54,9 +54,9 @@ function BookmarkFolder({ data }: BookmarkFolderProps) {
         'focus-visible:ring-ring relative w-full outline-none focus-visible:rounded-md focus-visible:ring-[2px] focus-visible:ring-offset-2',
       )}
     >
-      <BookmarkFolderCard name={name} images={images} />
+      <FavoritesCard name={name} images={images} />
     </Link>
   );
 }
 
-export default BookmarkFolder;
+export default Favorites;
