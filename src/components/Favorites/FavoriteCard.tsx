@@ -3,7 +3,7 @@ import Icon from '@/components/Icon/Icon';
 import { cn } from '@/lib/utils';
 import { useHeaderStore } from '@/store/useHeaderStore';
 
-interface BookmarkFolderCardProps {
+interface FavoriteCardProps {
   name: string;
   images?: string[];
   addFolder?: boolean;
@@ -12,14 +12,14 @@ interface BookmarkFolderCardProps {
   onClickModify?: () => void;
 }
 
-function BookmarkFolderCard({
+function FavoriteCard({
   name,
   images = [],
   addFolder = false,
   onClick,
   onClickDelete,
   onClickModify,
-}: BookmarkFolderCardProps) {
+}: FavoriteCardProps) {
   const { isEditMode } = useHeaderStore();
   const commonImgClass = cn('h-full object-cover object-center aspect-[3/2]');
 
@@ -129,4 +129,4 @@ function BookmarkFolderCard({
   );
 }
 
-export default BookmarkFolderCard;
+export default FavoriteCard;

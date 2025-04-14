@@ -2,8 +2,8 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import RootLayout from '@/layouts/RootLayout';
 import {
-  Bookmark,
   Contents,
+  Favorites,
   Home,
   Login,
   Map,
@@ -124,8 +124,8 @@ export const routes = [
             ],
           },
           {
-            path: 'bookmark',
-            element: <Bookmark />,
+            path: 'favorites',
+            element: <Favorites />,
           },
         ],
       },
