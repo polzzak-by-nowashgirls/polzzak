@@ -3,7 +3,6 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import RootLayout from '@/layouts/RootLayout';
 import {
   Contents,
-  Favorites,
   Home,
   Login,
   Map,
@@ -22,6 +21,7 @@ import {
   Password,
   PhoneNumber,
 } from '@/pages/My/Edit';
+import { Favorites, FavoritesDetails } from '@/pages/My/Favorites';
 import { Add, Edit as PolzzakEdit, Schedule } from '@/pages/Polzzak';
 import { StepPage } from '@/pages/Register';
 import SearchResult from '@/pages/Search/SearchResult';
@@ -126,6 +126,10 @@ export const routes = [
           {
             path: 'favorites',
             element: <Favorites />,
+          },
+          {
+            path: 'favorites/:id',
+            element: <FavoritesDetails />,
           },
         ],
       },

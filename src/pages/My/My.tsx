@@ -26,7 +26,7 @@ function My() {
     {
       label: '즐겨찾기',
       icon: 'favorite_off',
-      path: '/my/bookmark',
+      path: '/my/favorites',
     },
     {
       label: '폴짝추가',
