@@ -29,4 +29,20 @@ export const useModalStore = create<ModalStore>()((set) => ({
   setButtonText: (text) => set({ buttonText: text }),
   openModal: (type) => set({ isOpen: true, modalType: type }),
   closeModal: () => set({ isOpen: false, buttonText: '' }),
+  // AlertDialog, SlideUpDialog에서는 buttonText 불필요
 }));
+
+interface DialogBtnProps {
+  text: string;
+  onClick?: () => void;
+}
+
+export type DialogProps = {
+  dimd?: boolean;
+  dragIcon?: boolean;
+  header: string;
+  description?: [];
+  button?: DialogBtnProps[];
+  buttonDirection?: 'row' | 'col';
+  children?: React.ReactNode;
+};
