@@ -6,10 +6,10 @@ import {
 } from 'react-kakao-maps-sdk';
 import { Outlet } from 'react-router-dom';
 
-import { useGetNearbyFoodList } from '@/api/openAPI/hooks/useGetNearbyFoodList';
-import MapHeader from '@/components/MapHeader/MapHeader';
-import Modal from '@/components/Modal/Modal';
-import { useModalStore } from '@/store/useModalStore';
+import { useGetNearFestivalList } from '@/api/openAPI/hooks/map/useGetNearFestival';
+import { useGetNearFoodList } from '@/api/openAPI/hooks/map/useGetNearFoodList';
+import MapHeader from '@/components/Map/MapHeader';
+import MapModal from '@/components/Map/MapModal';
 
 type LatLng = {
   lat: number;
@@ -30,18 +30,31 @@ function Map() {
 
   // 🍽️ 음식점 리스트 표시 여부 상태
   const [showFoodList, setShowFoodList] = useState(false);
+  const [showFestivalList, setShowFestivalList] = useState(false);
 
   // 음식점 버튼 클릭 핸들러
-  const handleFoodBtnClick = () => setShowFoodList((prev) => !prev);
+  const handleFoodBtnClick = () => {
+    setShowFoodList((prev) => !prev);
+  };
+
+  // 축제 버튼 클릭 핸들러
+  const handleFestivalBtnClick = () => {
+    setShowFestivalList((prev) => !prev);
+  };
 
   // 🍽️ 주변 음식점 리스트 가져오기
-  const foodList = useGetNearbyFoodList(
+  const foodList = useGetNearFoodList(
     myLocation?.lat ?? 0,
     myLocation?.lng ?? 0,
     showFoodList, // 사용자가 음식점 버튼을 클릭했을 때만 호출
   );
 
-  const { isOpen } = useModalStore();
+  // 🎉 주변 축제/행사/공연 리스트 가져오기
+  const festivalList = useGetNearFestivalList(
+    myLocation?.lat ?? 0,
+    myLocation?.lng ?? 0,
+    showFestivalList,
+  );
 
   useEffect(() => {
     if (!navigator.geolocation) return;
@@ -73,7 +86,9 @@ function Map() {
         mapRef={mapRef}
         myLocation={myLocation}
         showFoodList={showFoodList}
+        showFestivalList={showFestivalList}
         onFoodBtnClick={handleFoodBtnClick}
+        onFestivalBtnClick={handleFestivalBtnClick}
       />
       <MapArea
         ref={mapRef}
@@ -122,28 +137,35 @@ function Map() {
             }}
           />
         ))}
+
+        {/* 🎉 축제/행사/공연 마커 */}
+        {festivalList.map((item, index) => (
+          <MapMarker
+            key={index}
+            position={{ lat: Number(item.mapy), lng: Number(item.mapx) }}
+            image={{
+              src: '/marker/map_marker.svg',
+              size: {
+                width: 24,
+                height: 24,
+              },
+              options: {
+                offset: {
+                  x: 12,
+                  y: 12,
+                },
+              },
+            }}
+          />
+        ))}
+
         {showFoodList && foodList.length > 0 && (
-          <ul className="fixed right-4 bottom-0 left-4 z-10 max-h-[40vh] overflow-auto rounded-lg bg-white p-4 shadow-lg">
-            {foodList.map((food) => (
-              <li key={food.contentid} className="mb-4">
-                {food.firstimage ? (
-                  <img src={food.firstimage} alt={food.title} />
-                ) : (
-                  <div className="flex h-[120px] w-full items-center justify-center bg-gray-200 text-sm text-gray-500">
-                    이미지 없음
-                  </div>
-                )}
-                <p className="mt-2 font-bold">{food.title}</p>
-                <p className="text-sm text-gray-600">{food.addr1}</p>
-                {food.tel ? (
-                  <p className="text-sm text-gray-600">{food.tel}</p>
-                ) : null}
-              </li>
-            ))}
-          </ul>
+          <MapModal title="내 주변 음식점" data={foodList} />
+        )}
+        {showFestivalList && festivalList.length > 0 && (
+          <MapModal title="내 주변 축제" data={festivalList} />
         )}
         <Outlet />
-        {isOpen && <Modal mode="slide" type="favorite" />}
       </MapArea>
     </>
   );
