@@ -8,8 +8,9 @@ import { Outlet } from 'react-router-dom';
 
 import { useGetNearFestivalList } from '@/api/openAPI/hooks/map/useGetNearFestival';
 import { useGetNearFoodList } from '@/api/openAPI/hooks/map/useGetNearFoodList';
+import SlideUpDialog from '@/components/Dialog/SlideUpDialog';
 import MapHeader from '@/components/Map/MapHeader';
-import MapModal from '@/components/Map/MapModal';
+import ModalContent from '@/components/Map/ModalContent';
 
 type LatLng = {
   lat: number;
@@ -76,6 +77,20 @@ function Map() {
     );
   }, []);
 
+  // 🚩 마커
+  const renderMarker = (data: any[], markerSrc: string) =>
+    data.map((item, index) => (
+      <MapMarker
+        key={index}
+        position={{ lat: Number(item.mapy), lng: Number(item.mapx) }}
+        image={{
+          src: markerSrc,
+          size: { width: 24, height: 24 },
+          options: { offset: { x: 12, y: 12 } },
+        }}
+      />
+    ));
+
   if (loading) return <div>🗺️ 지도를 불러오고 있어요!</div>;
   if (error) return <div>😭 지도를 불러오는 데 실패했어요.</div>;
   if (!myLocation) return <div>🚩 내 위치를 불러오고 있어요!</div>;
@@ -92,7 +107,7 @@ function Map() {
       />
       <MapArea
         ref={mapRef}
-        center={myLocation ?? { lat: 33.55635, lng: 126.795841 }}
+        center={myLocation}
         style={{ width: '100%', height: '100%' }}
         className="relative"
         level={3}
@@ -117,53 +132,24 @@ function Map() {
           ></MapMarker>
         )}
 
-        {/* 🍽️ 음식점 마커 */}
-        {foodList.map((item, index) => (
-          <MapMarker
-            key={index}
-            position={{ lat: Number(item.mapy), lng: Number(item.mapx) }}
-            image={{
-              src: '/marker/map_marker.svg',
-              size: {
-                width: 24,
-                height: 24,
-              },
-              options: {
-                offset: {
-                  x: 12,
-                  y: 12,
-                },
-              },
-            }}
-          />
-        ))}
+        {/* 🚩 마커 */}
+        {renderMarker(foodList, '/marker/map_marker.svg')}
+        {renderMarker(festivalList, '/marker/map_marker.svg')}
 
-        {/* 🎉 축제/행사/공연 마커 */}
-        {festivalList.map((item, index) => (
-          <MapMarker
-            key={index}
-            position={{ lat: Number(item.mapy), lng: Number(item.mapx) }}
-            image={{
-              src: '/marker/map_marker.svg',
-              size: {
-                width: 24,
-                height: 24,
-              },
-              options: {
-                offset: {
-                  x: 12,
-                  y: 12,
-                },
-              },
-            }}
-          />
-        ))}
-
+        {/* 다이얼로그 */}
         {showFoodList && foodList.length > 0 && (
-          <MapModal title="내 주변 음식점" data={foodList} />
+          <SlideUpDialog
+            header="내 주변 음식점"
+            dimd={false}
+            className="max-h-[32%] shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+          >
+            <ModalContent data={foodList} />
+          </SlideUpDialog>
         )}
         {showFestivalList && festivalList.length > 0 && (
-          <MapModal title="내 주변 축제" data={festivalList} />
+          <SlideUpDialog header="내 주변 축제/공연/행사" dimd={false}>
+            <ModalContent data={festivalList} />
+          </SlideUpDialog>
         )}
         <Outlet />
       </MapArea>
