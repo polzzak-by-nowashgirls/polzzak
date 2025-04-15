@@ -14,14 +14,16 @@ interface MapHeaderProps {
   mapRef: MutableRefObject<kakao.maps.Map | null>;
   myLocation: LatLng | null;
   showFoodList: boolean;
+  showFestivalList: boolean;
   onFoodBtnClick: () => void;
+  onFestivalBtnClick: () => void;
 }
 
 function MapHeader({
   mapRef,
   myLocation,
-  showFoodList,
   onFoodBtnClick,
+  onFestivalBtnClick,
 }: MapHeaderProps) {
   const navigate = useNavigate();
   const [activeFilterId, setActiveFilterId] = useState<number | null>(null);
@@ -40,8 +42,7 @@ function MapHeader({
     {
       id: 3,
       name: '음식점',
-      // path: '/map/food',
-      path: null,
+      path: '/map/food',
     },
     {
       id: 4,
@@ -59,22 +60,22 @@ function MapHeader({
     if (filterId === activeFilterId) {
       setActiveFilterId(null);
       if (filterId === 3) onFoodBtnClick();
+      if (filterId === 4) onFestivalBtnClick();
       return;
     }
 
     setActiveFilterId(filterId);
+
     if (filterId === 3) {
       onFoodBtnClick();
+    } else if (filterId === 4) {
+      onFestivalBtnClick();
     } else if (path) {
       navigate(path);
     }
   };
 
   const handleLocationClick = () => {
-    // if (mapRef.current && myLocation) {
-    //   const center = new kakao.maps.LatLng(myLocation.lat, myLocation.lng);
-    //   mapRef.current.panTo(center);
-    // }
     if (!mapRef.current || !myLocation) return;
 
     mapRef.current.setCenter(
