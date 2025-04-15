@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-interface NearbyFoodType {
+interface NearFoodType {
   contentid: string;
   title: string;
   addr1: string;
@@ -10,15 +10,13 @@ interface NearbyFoodType {
   tel: string;
 }
 
-function useGetNearbyFoodList(lat: number, lng: number, enabled: boolean) {
-  const [foodList, setFoodList] = useState<NearbyFoodType[]>([]);
-
-  console.log(foodList);
+export function useGetNearFoodList(lat: number, lng: number, enabled: boolean) {
+  const [foodList, setFoodList] = useState<NearFoodType[]>([]);
 
   useEffect(() => {
     if (!enabled || lat === 0 || lng === 0) return;
 
-    const fetchNearbyFood = async () => {
+    const fetchNearFood = async () => {
       try {
         const res = await fetch(
           `/tourapi/${import.meta.env.VITE_OPEN_API_BASE_URL}/locationBasedList1?serviceKey=${import.meta.env.VITE_OPEN_API_KEY}&MobileApp=polzzak&MobileOS=ETC&_type=json&pageNo=1&numOfRows=10&mapX=${lng}&mapY=${lat}&radius=3000&contentTypeId=39`,
@@ -32,11 +30,9 @@ function useGetNearbyFoodList(lat: number, lng: number, enabled: boolean) {
     };
 
     if (lat && lng) {
-      fetchNearbyFood();
+      fetchNearFood();
     }
   }, [lat, lng, enabled]);
 
   return foodList;
 }
-
-export { useGetNearbyFoodList };
