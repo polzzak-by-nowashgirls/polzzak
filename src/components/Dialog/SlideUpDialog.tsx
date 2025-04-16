@@ -3,7 +3,7 @@ import React from 'react';
 
 import Button from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
-import { DialogProps, useModalStore } from '@/store/useModalStore';
+import { DialogProps, useDialogStore } from '@/store/useDialogStore';
 
 function SlideUpDialog({
   dimd = true,
@@ -12,8 +12,9 @@ function SlideUpDialog({
   button,
   buttonDirection = 'row',
   children,
+  className,
 }: DialogProps) {
-  const { closeModal } = useModalStore();
+  const { closeModal } = useDialogStore();
   const Wrapper = dimd ? 'div' : React.Fragment;
   const btnLength = button?.length;
 
@@ -31,7 +32,7 @@ function SlideUpDialog({
         animate={{ y: '0%', opacity: 1 }}
         exit={{ y: '20%', opacity: 0 }}
         transition={{ duration: 0.3, ease: 'easeOut' }}
-        className="fixed bottom-0 left-1/2 z-[100] flex w-screen -translate-x-1/2 transform flex-col gap-4 rounded-t-2xl bg-white px-8 py-6"
+        className={`fixed bottom-0 left-1/2 z-[100] flex w-screen -translate-x-1/2 transform flex-col gap-4 rounded-t-2xl bg-white px-8 py-6 ${className}`}
       >
         <div
           className={`${
@@ -53,7 +54,7 @@ function SlideUpDialog({
             <Icon id="close" />
           </Button>
         </header>
-        <div>{children}</div>
+        <div className="overflow-auto">{children}</div>
         {button && (
           <div
             className={`flex w-full items-center justify-center gap-1 ${buttonDirection === 'row' ? 'flex-row' : 'flex-col'}`}
