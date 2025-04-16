@@ -4,7 +4,7 @@ import {
   MapMarker,
   useKakaoLoader,
 } from 'react-kakao-maps-sdk';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useSearchParams } from 'react-router-dom';
 
 import { useGetNearFestivalList } from '@/api/openAPI/hooks/map/useGetNearFestival';
 import { useGetNearFoodList } from '@/api/openAPI/hooks/map/useGetNearFoodList';
@@ -29,18 +29,40 @@ function Map() {
   // 🚩 내 위치 상태 저장
   const [myLocation, setMyLocation] = useState<LatLng | null>(null);
 
-  // 🍽️ 음식점 리스트 표시 여부 상태
+  const [mapSearchParams, setMapSearchParams] = useSearchParams();
+
+  // 🍽️ 음식점, 축제 리스트 표시 여부 상태
   const [showFoodList, setShowFoodList] = useState(false);
   const [showFestivalList, setShowFestivalList] = useState(false);
 
-  // 음식점 버튼 클릭 핸들러
-  const handleFoodBtnClick = () => {
-    setShowFoodList((prev) => !prev);
+  // 필터링 버튼 클릭 시 category 파라미터 사용
+  const toggleCategoryParams = (targetCategory: string) => {
+    const newParams = new URLSearchParams(mapSearchParams);
+    const current = newParams.get('category');
+
+    // toggle
+    if (current === targetCategory) {
+      newParams.delete('category');
+    } else {
+      newParams.set('category', targetCategory);
+    }
+
+    setMapSearchParams(newParams);
   };
 
-  // 축제 버튼 클릭 핸들러
+  // 상태 동기화
+  useEffect(() => {
+    const category = mapSearchParams.get('category');
+    setShowFoodList(category === 'food');
+    setShowFestivalList(category === 'festival');
+  }, [mapSearchParams]);
+
+  // 📍 필터링 버튼 클릭 핸들러
+  const handleFoodBtnClick = () => {
+    toggleCategoryParams('food');
+  };
   const handleFestivalBtnClick = () => {
-    setShowFestivalList((prev) => !prev);
+    toggleCategoryParams('festival');
   };
 
   // 🍽️ 주변 음식점 리스트 가져오기
