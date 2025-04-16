@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Map as MapArea,
   MapMarker,
@@ -6,7 +6,7 @@ import {
 } from 'react-kakao-maps-sdk';
 import { Outlet, useSearchParams } from 'react-router-dom';
 
-import { useGetNearFestivalList } from '@/api/openAPI/hooks/map/useGetNearFestival';
+import { useGetNearFestivalList } from '@/api/openAPI/hooks/map/useGetNearFestivalList';
 import { useGetNearFoodList } from '@/api/openAPI/hooks/map/useGetNearFoodList';
 import { useGetNearTourList } from '@/api/openAPI/hooks/map/useGetNearTourList';
 import SlideUpDialog from '@/components/Dialog/SlideUpDialog';
@@ -19,7 +19,7 @@ type LatLng = {
 };
 
 function Map() {
-  const [loading, error] = useKakaoLoader({
+  const [mapLoading, mapError] = useKakaoLoader({
     appkey: import.meta.env.VITE_KAKAO_MAP_API_KEY,
     libraries: ['services'],
   });
@@ -32,17 +32,11 @@ function Map() {
 
   const [mapSearchParams, setMapSearchParams] = useSearchParams();
 
-  // 🍽️ 음식점, 축제 리스트 표시 여부 상태
-  const [showFoodList, setShowFoodList] = useState(false);
-  const [showFestivalList, setShowFestivalList] = useState(false);
-  const [showTourList, setShowTourList] = useState(false);
-
-  // 필터링 버튼 클릭 시 category 파라미터 사용
+  // 필터링 버튼 토글 함수
   const toggleCategoryParams = (targetCategory: string) => {
     const newParams = new URLSearchParams(mapSearchParams);
     const current = newParams.get('category');
 
-    // toggle
     if (current === targetCategory) {
       newParams.delete('category');
     } else {
@@ -52,45 +46,30 @@ function Map() {
     setMapSearchParams(newParams);
   };
 
-  // 상태 동기화
-  useEffect(() => {
-    const category = mapSearchParams.get('category');
-    setShowFoodList(category === 'food');
-    setShowFestivalList(category === 'festival');
-    setShowTourList(category === 'tour');
-  }, [mapSearchParams]);
+  // 선택된 필터링 버튼에 따라 리스트 보여주기
+  const activeCategory = useMemo(
+    () => mapSearchParams.get('category'),
+    [mapSearchParams],
+  );
+  const showFoodList = useMemo(
+    () => activeCategory === 'food',
+    [activeCategory],
+  );
+  const showFestivalList = useMemo(
+    () => activeCategory === 'festival',
+    [activeCategory],
+  );
+  const showTourList = useMemo(
+    () => activeCategory === 'tour',
+    [activeCategory],
+  );
 
   // 📍 필터링 버튼 클릭 핸들러
-  const handleFoodBtnClick = () => {
-    toggleCategoryParams('food');
-  };
-  const handleFestivalBtnClick = () => {
-    toggleCategoryParams('festival');
-  };
-  const handleTourBtnClick = () => {
-    toggleCategoryParams('tour');
-  };
+  const handleFoodBtnClick = () => toggleCategoryParams('food');
+  const handleFestivalBtnClick = () => toggleCategoryParams('festival');
+  const handleTourBtnClick = () => toggleCategoryParams('tour');
 
-  // 🍽️ 주변 음식점 리스트 가져오기
-  const foodList = useGetNearFoodList(
-    myLocation?.lat ?? 0,
-    myLocation?.lng ?? 0,
-    showFoodList, // 사용자가 음식점 버튼을 클릭했을 때만 호출
-  );
-
-  // 🎉 주변 축제/행사/공연 리스트 가져오기
-  const festivalList = useGetNearFestivalList(
-    myLocation?.lat ?? 0,
-    myLocation?.lng ?? 0,
-    showFestivalList,
-  );
-  const tourList = useGetNearTourList(
-    myLocation?.lat ?? 0,
-    myLocation?.lng ?? 0,
-    showTourList,
-  );
-
-  // 내 위치 설정
+  // 🚩 내 위치 가져오기
   useEffect(() => {
     if (!navigator.geolocation) return;
 
@@ -101,7 +80,7 @@ function Map() {
         setMyLocation({ lat: latitude, lng: longitude });
       },
       (error) => {
-        console.error('😭 위치 정보를 가져올 수 없어요. : ', error.message);
+        console.error('🚫 위치 정보를 가져올 수 없습니다. : ', error.message);
       },
       {
         enableHighAccuracy: true,
@@ -111,11 +90,30 @@ function Map() {
     );
   }, []);
 
-  // 🚩 마커
+  // 📍 주변 카테고리 데이터 가져오기
+  const foodList = useGetNearFoodList(
+    myLocation?.lat ?? 0,
+    myLocation?.lng ?? 0,
+    showFoodList,
+  );
+
+  const festivalList = useGetNearFestivalList(
+    myLocation?.lat ?? 0,
+    myLocation?.lng ?? 0,
+    showFestivalList,
+  );
+
+  const tourList = useGetNearTourList(
+    myLocation?.lat ?? 0,
+    myLocation?.lng ?? 0,
+    showTourList,
+  );
+
+  // 🚩 마커 렌더링 함수
   const renderMarker = (data: any[], markerSrc: string) =>
-    data.map((item, index) => (
+    data.map((item) => (
       <MapMarker
-        key={index}
+        key={item.contentid}
         position={{ lat: Number(item.mapy), lng: Number(item.mapx) }}
         image={{
           src: markerSrc,
@@ -125,11 +123,9 @@ function Map() {
       />
     ));
 
-  if (loading) return <div>🗺️ 지도를 불러오고 있어요!</div>;
-  if (error) return <div>😭 지도를 불러오는 데 실패했어요.</div>;
+  if (mapLoading) return <div>🗺️ 지도를 불러오고 있어요!</div>;
+  if (mapError) return <div>😭 지도를 불러오는 데 실패했어요.</div>;
   if (!myLocation) return <div>🚩 내 위치를 불러오고 있어요!</div>;
-
-  console.log(tourList);
 
   return (
     <>
