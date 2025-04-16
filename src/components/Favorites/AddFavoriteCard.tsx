@@ -1,10 +1,7 @@
 import FavoriteCard from '@/components/Favorites/FavoriteCard';
 import { cn } from '@/lib/utils';
-import { useFavoritesStore } from '@/store/useFavoritesStore';
 
-function AddFavoriteCard() {
-  const handleAddClick = useFavoritesStore((state) => state.handleAddClick);
-
+function AddFavoriteCard({ onClick }) {
   return (
     <div
       className={cn(
@@ -15,7 +12,7 @@ function AddFavoriteCard() {
         name="폴더 추가하기"
         images={[]}
         addFolder={true}
-        onClick={handleAddClick}
+        onClick={onClick}
       />
     </div>
   );

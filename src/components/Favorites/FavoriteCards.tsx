@@ -7,8 +7,13 @@ import { cn } from '@/lib/utils';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useHeaderStore } from '@/store/useHeaderStore';
 
-function Favorites({ id, name }) {
+function FavoritesCards({ id, name, onClickDelete, onClickModify }) {
   const [images, setImages] = useState([]);
+  const { setSelectFolder } = useFavoritesStore();
+
+  const saveFolderId = () => {
+    setSelectFolder({ id: id, name: name });
+  };
 
   useEffect(() => {
     const getMyFavorites = async () => {
@@ -35,7 +40,6 @@ function Favorites({ id, name }) {
         return;
       }
 
-      console.log('🎉 콘텐츠 가져옴:', contents);
       setImages(contents.map((item) => item.firstimage));
     };
 
@@ -43,12 +47,6 @@ function Favorites({ id, name }) {
   }, [id]);
 
   const { isEditMode } = useHeaderStore();
-  const handleModifyClick = useFavoritesStore(
-    (state) => state.handleModifyClick,
-  );
-  const handleDeleteClick = useFavoritesStore(
-    (state) => state.handleDeleteClick,
-  );
 
   return isEditMode ? (
     <div
@@ -59,13 +57,20 @@ function Favorites({ id, name }) {
       <FavoritesCard
         name={name}
         images={images}
-        onClickDelete={() => handleDeleteClick(id)}
-        onClickModify={() => handleModifyClick(id)}
+        onClickDelete={() => {
+          setSelectFolder({ id: id, name: name });
+          onClickDelete?.();
+        }}
+        onClickModify={() => {
+          setSelectFolder({ id: id, name: name });
+          onClickModify?.();
+        }}
       />
     </div>
   ) : (
     <Link
       to={`/my/favorites/${id}`}
+      onClick={saveFolderId}
       className={cn(
         'focus-visible:ring-ring relative w-full outline-none focus-visible:rounded-md focus-visible:ring-[2px] focus-visible:ring-offset-2',
       )}
@@ -75,4 +80,4 @@ function Favorites({ id, name }) {
   );
 }
 
-export default Favorites;
+export default FavoritesCards;

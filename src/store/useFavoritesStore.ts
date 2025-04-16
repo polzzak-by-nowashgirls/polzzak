@@ -1,71 +1,95 @@
 import { create } from 'zustand';
 
-import { Bookmark, BookmarkDummyData } from '@/mockData/ScheduleDummyData';
-import { useModalStore } from '@/store/useModalStore';
+import supabase from '@/api/supabase';
 
-interface FavoritesStore {
-  folders: Bookmark[];
-  folderId: number | null;
-  setFolders: (folders: Bookmark[]) => void;
-  selectFolder: (id: number | null) => void;
-  addFolder: (id: number, name: string) => void;
-  deleteFolder: () => void;
-  modifyFolder: (name: string) => void;
-  handleAddClick: () => void;
-  handleDeleteClick: (id: number) => void;
-  handleModifyClick: (id: number) => void;
+interface Folder {
+  folder_id: string;
+  folder_name: string;
 }
 
-export const useFavoritesStore = create<FavoritesStore>((set) => ({
-  folders: BookmarkDummyData,
+interface FavoritesStore {
+  folders: Folder[];
+  folderId: string | null;
+  folderName: string;
+  getFolders: (userId: string) => Promise<void>;
+  setSelectFolder: (folder: { id?: string; name?: string }) => void;
+  addFolder: (userId: string, name: string) => Promise<void>;
+  deleteFolder: () => void;
+  editFolder: (name: string) => void;
+}
+
+export const useFavoritesStore = create<FavoritesStore>((set, get) => ({
+  folders: [],
   folderId: null,
+  folderName: '',
 
-  setFolders: (folders) => set({ folders }),
-  selectFolder: (id) => set({ folderId: id }),
+  // DB연결
+  getFolders: async (userId) => {
+    const { data, error } = await supabase
+      .from('ex_favorite_folders')
+      .select('folder_id, folder_name')
+      .eq('user_id', userId);
 
-  addFolder: (id, name) =>
-    set((state) => {
-      const newFolder = {
-        id: id,
-        name: name,
-        storage: [],
-      };
+    if (error) {
+      console.log('모달 띄우기! 데이터를 못 가져옴요 ㅅㄱ');
+      return;
+    }
 
-      return { folders: [...state.folders, newFolder] };
-    }),
+    set({ folders: data });
+  },
+
+  setSelectFolder: ({ id, name }) => set({ folderId: id, folderName: name }),
+
+  addFolder: async (userId, name) => {
+    if (!userId) return;
+
+    const folders = get().folders;
+    const newId = newFolderId(userId, folders);
+
+    const { error } = await supabase
+      .from('ex_favorite_folders')
+      .insert([{ folder_id: newId, folder_name: name }]);
+
+    if (error) {
+      console.log('❌ Supabase 폴더 추가 실패:, error');
+      return;
+    }
+
+    set({ folders: [...folders, { folder_id: newId, folder_name: name }] });
+  },
 
   deleteFolder: () =>
     set((state) => {
-      const updated = state.folders.filter((f) => f.id !== state.folderId);
+      const updated = state.folders.filter(
+        (f) => f.folder_id !== state.folderId,
+      );
       console.log('🗑 삭제 후 folders:', updated);
       return { folders: updated };
     }),
 
-  modifyFolder: (name) =>
+  editFolder: (name) =>
     set((state) => {
       const folderId = state.folderId;
       if (folderId === null) return {};
-
       return {
         folders: state.folders.map((f) =>
-          f.id === folderId ? { ...f, name } : f,
+          f.folder_id === folderId ? { ...f, folder_name: name } : f,
         ),
+        folderName: name,
       };
     }),
-
-  handleAddClick: () => {
-    const { openModal } = useModalStore.getState();
-    openModal('folder_add');
-  },
-  handleDeleteClick: (id) => {
-    const { openModal } = useModalStore.getState();
-    set({ folderId: id });
-    openModal('folder_delete');
-  },
-
-  handleModifyClick: (id) => {
-    const { openModal } = useModalStore.getState();
-    set({ folderId: id });
-    openModal('folder_edit');
-  },
 }));
+
+// 폴더 id 생성 함수
+function newFolderId(userId: string, folders: Folder[]): string {
+  const userFolders = folders.filter((f) =>
+    f.folder_id.startsWith(`${userId}_`),
+  );
+
+  const numArr = userFolders
+    .map((f) => parseInt(f.folder_id.split('_')[1], 10))
+    .filter((n) => !isNaN(n));
+
+  const maxNum = numArr.length > 0 ? Math.max(...numArr) : -1;
+  return `${userId}_${maxNum + 1}`;
+}

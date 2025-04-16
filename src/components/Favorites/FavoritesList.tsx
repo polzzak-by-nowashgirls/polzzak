@@ -1,42 +1,19 @@
-import { useEffect, useState } from 'react';
-
-import supabase from '@/api/supabase';
 import AddFavoriteCard from '@/components/Favorites/AddFavoriteCard';
-import Favorites from '@/components/Favorites/Favorites';
+import FavoritesCards from '@/components/Favorites/FavoriteCards';
 
-function FavoritesList() {
-  const [folders, setFolders] = useState([]);
-  const isAuthId =
-    localStorage.getItem('user_id') || sessionStorage.getItem('user_id');
-
-  useEffect(() => {
-    const getMyFavorites = async () => {
-      const { data, error } = await supabase
-        .from('ex_favorite_folders')
-        .select('folder_id, folder_name')
-        .eq('user_id', isAuthId);
-
-      if (error) {
-        console.log('모달 띄우기! 데이터를 못 가져옴요 ㅅㄱ');
-        return;
-      }
-
-      setFolders(data);
-    };
-
-    getMyFavorites();
-  }, [isAuthId]);
-
+function FavoritesList({ folders, onClick, onClickDelete, onClickModify }) {
   return (
     <section className="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-6">
       {folders.map((folder) => (
-        <Favorites
+        <FavoritesCards
           key={folder.folder_id}
           id={folder.folder_id}
-          name={folder.name}
+          name={folder.folder_name}
+          onClickDelete={onClickDelete}
+          onClickModify={onClickModify}
         />
       ))}
-      <AddFavoriteCard />
+      <AddFavoriteCard onClick={onClick} />
     </section>
   );
 }
