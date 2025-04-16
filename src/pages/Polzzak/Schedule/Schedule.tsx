@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
+import Loader from '@/components/Loader/Loader';
 import PolzzakListItem from '@/components/Polzzak/PolzzakListItem';
 import TimelineSchedule from '@/components/Timeline/TimelineSchedule';
 import { POLZZAK_LIST } from '@/mockData/PolzzakListDummyData';
@@ -28,7 +28,7 @@ function Schedule() {
     setContentsTitle(sample.label);
   }, [sample, navigate, setContentsTitle]);
 
-  if (!sample) return <LoadingSpinner text="잠시만 기다려 주세요~" />;
+  if (!sample) return <Loader text="잠시만 기다려 주세요~" />;
 
   return (
     <div className="flex flex-col gap-4">
