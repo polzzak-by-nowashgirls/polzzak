@@ -8,6 +8,7 @@ import { Outlet, useSearchParams } from 'react-router-dom';
 
 import { useGetNearFestivalList } from '@/api/openAPI/hooks/map/useGetNearFestival';
 import { useGetNearFoodList } from '@/api/openAPI/hooks/map/useGetNearFoodList';
+import { useGetNearTourList } from '@/api/openAPI/hooks/map/useGetNearTourList';
 import SlideUpDialog from '@/components/Dialog/SlideUpDialog';
 import MapHeader from '@/components/Map/MapHeader';
 import ModalContent from '@/components/Map/ModalContent';
@@ -34,6 +35,7 @@ function Map() {
   // 🍽️ 음식점, 축제 리스트 표시 여부 상태
   const [showFoodList, setShowFoodList] = useState(false);
   const [showFestivalList, setShowFestivalList] = useState(false);
+  const [showTourList, setShowTourList] = useState(false);
 
   // 필터링 버튼 클릭 시 category 파라미터 사용
   const toggleCategoryParams = (targetCategory: string) => {
@@ -55,6 +57,7 @@ function Map() {
     const category = mapSearchParams.get('category');
     setShowFoodList(category === 'food');
     setShowFestivalList(category === 'festival');
+    setShowTourList(category === 'tour');
   }, [mapSearchParams]);
 
   // 📍 필터링 버튼 클릭 핸들러
@@ -63,6 +66,9 @@ function Map() {
   };
   const handleFestivalBtnClick = () => {
     toggleCategoryParams('festival');
+  };
+  const handleTourBtnClick = () => {
+    toggleCategoryParams('tour');
   };
 
   // 🍽️ 주변 음식점 리스트 가져오기
@@ -78,7 +84,13 @@ function Map() {
     myLocation?.lng ?? 0,
     showFestivalList,
   );
+  const tourList = useGetNearTourList(
+    myLocation?.lat ?? 0,
+    myLocation?.lng ?? 0,
+    showTourList,
+  );
 
+  // 내 위치 설정
   useEffect(() => {
     if (!navigator.geolocation) return;
 
@@ -117,15 +129,16 @@ function Map() {
   if (error) return <div>😭 지도를 불러오는 데 실패했어요.</div>;
   if (!myLocation) return <div>🚩 내 위치를 불러오고 있어요!</div>;
 
+  console.log(tourList);
+
   return (
     <>
       <MapHeader
         mapRef={mapRef}
         myLocation={myLocation}
-        showFoodList={showFoodList}
-        showFestivalList={showFestivalList}
         onFoodBtnClick={handleFoodBtnClick}
         onFestivalBtnClick={handleFestivalBtnClick}
+        onTourBtnClick={handleTourBtnClick}
       />
       <MapArea
         ref={mapRef}
@@ -157,20 +170,37 @@ function Map() {
         {/* 🚩 마커 */}
         {renderMarker(foodList, '/marker/map_marker.svg')}
         {renderMarker(festivalList, '/marker/map_marker.svg')}
+        {renderMarker(tourList, '/marker/map_marker.svg')}
 
         {/* 다이얼로그 */}
         {showFoodList && foodList.length > 0 && (
           <SlideUpDialog
             header="내 주변 음식점"
             dimd={false}
-            className="max-h-[32%] shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+            dragIcon={true}
+            className="max-h-[60%] shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
           >
             <ModalContent data={foodList} />
           </SlideUpDialog>
         )}
         {showFestivalList && festivalList.length > 0 && (
-          <SlideUpDialog header="내 주변 축제/공연/행사" dimd={false}>
+          <SlideUpDialog
+            header="내 주변 축제/공연/행사"
+            dimd={false}
+            dragIcon={true}
+            className="max-h-[60%] shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+          >
             <ModalContent data={festivalList} />
+          </SlideUpDialog>
+        )}
+        {showTourList && tourList.length > 0 && (
+          <SlideUpDialog
+            header="내 주변 관광지"
+            dimd={false}
+            dragIcon={true}
+            className="max-h-[60%] shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+          >
+            <ModalContent data={tourList} />
           </SlideUpDialog>
         )}
         <Outlet />

@@ -13,10 +13,9 @@ type LatLng = {
 interface MapHeaderProps {
   mapRef: MutableRefObject<kakao.maps.Map | null>;
   myLocation: LatLng | null;
-  showFoodList: boolean;
-  showFestivalList: boolean;
   onFoodBtnClick: () => void;
   onFestivalBtnClick: () => void;
+  onTourBtnClick: () => void;
 }
 
 function MapHeader({
@@ -24,6 +23,7 @@ function MapHeader({
   myLocation,
   onFoodBtnClick,
   onFestivalBtnClick,
+  onTourBtnClick,
 }: MapHeaderProps) {
   const navigate = useNavigate();
   const [activeFilterId, setActiveFilterId] = useState<number | null>(null);
@@ -61,6 +61,7 @@ function MapHeader({
       setActiveFilterId(null);
       if (filterId === 3) onFoodBtnClick();
       if (filterId === 4) onFestivalBtnClick();
+      if (filterId === 5) onTourBtnClick();
       return;
     }
 
@@ -70,6 +71,8 @@ function MapHeader({
       onFoodBtnClick();
     } else if (filterId === 4) {
       onFestivalBtnClick();
+    } else if (filterId === 5) {
+      onTourBtnClick();
     } else if (path) {
       navigate(path);
     }
