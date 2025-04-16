@@ -10,7 +10,9 @@ function FavoritesList({ folders, onClick, onClickDelete, onClickModify }) {
           id={folder.folder_id}
           name={folder.folder_name}
           onClickDelete={onClickDelete}
-          onClickModify={onClickModify}
+          onClickModify={() =>
+            onClickModify(folder.folder_id, folder.folder_name)
+          }
         />
       ))}
       <AddFavoriteCard onClick={onClick} />
