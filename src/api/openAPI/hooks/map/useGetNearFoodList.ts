@@ -1,38 +1,12 @@
-import { useEffect, useState } from 'react';
-
-interface NearFoodType {
-  contentid: string;
-  title: string;
-  addr1: string;
-  mapx: string;
-  mapy: string;
-  firstimage: string;
-  tel: string;
-}
+import { useGetNearData } from './useGetNearData';
 
 export function useGetNearFoodList(lat: number, lng: number, enabled: boolean) {
-  const [foodList, setFoodList] = useState<NearFoodType[]>([]);
-
-  useEffect(() => {
-    if (!enabled || lat === 0 || lng === 0) return;
-
-    const fetchNearFood = async () => {
-      try {
-        const res = await fetch(
-          `/tourapi/${import.meta.env.VITE_OPEN_API_BASE_URL}/locationBasedList1?serviceKey=${import.meta.env.VITE_OPEN_API_KEY}&MobileApp=polzzak&MobileOS=ETC&_type=json&pageNo=1&numOfRows=10&mapX=${lng}&mapY=${lat}&radius=3000&contentTypeId=39`,
-        );
-        const data = await res.json();
-        const items = data?.response?.body?.items?.item ?? [];
-        setFoodList(items);
-      } catch (err) {
-        console.error('음식점 데이터를 불러오는 중 오류 발생:', err);
-      }
-    };
-
-    if (lat && lng) {
-      fetchNearFood();
-    }
-  }, [lat, lng, enabled]);
-
-  return foodList;
+  return useGetNearData({
+    contentTypeId: '39',
+    radius: 3000,
+    errorMessage: '🚫 음식점 데이터를 불러오는 중 오류가 발생했습니다.',
+    enabled,
+    lat,
+    lng,
+  });
 }
