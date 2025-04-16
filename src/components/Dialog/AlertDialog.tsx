@@ -2,7 +2,7 @@ import React from 'react';
 
 import Button from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
-import { DialogProps, useModalStore } from '@/store/useModalStore';
+import { DialogProps, useDialogStore } from '@/store/useDialogStore';
 
 function AlertDialog({
   dimd = true,
@@ -11,7 +11,7 @@ function AlertDialog({
   button,
   buttonDirection = 'row',
 }: DialogProps) {
-  const { closeModal } = useModalStore();
+  const { closeModal } = useDialogStore();
   const Wrapper = dimd ? 'div' : React.Fragment;
   const btnLength = button?.length;
 
