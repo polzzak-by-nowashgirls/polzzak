@@ -20,7 +20,7 @@ function FavoriteCard({
   onClickDelete,
   onClickModify,
 }: FavoriteCardProps) {
-  const { isEditMode } = useHeaderStore();
+  const isEditMode = useHeaderStore((state) => state.isEditMode);
   const commonImgClass = cn('h-full object-cover object-center aspect-[3/2]');
 
   const renderImages = () => {

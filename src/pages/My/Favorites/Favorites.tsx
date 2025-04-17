@@ -4,6 +4,7 @@ import SlideUpDialog from '@/components/Dialog/SlideUpDialog';
 import FavoritesList from '@/components/Favorites/FavoritesList';
 import Input from '@/components/Input/Input';
 import Loader from '@/components/Loader/Loader';
+import { useToast } from '@/hooks/useToast';
 import RequireLogin from '@/pages/RequireLogin';
 import { useDialogStore } from '@/store/useDialogStore';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
@@ -18,13 +19,15 @@ function Favorites() {
   const { isOpen, openModal, closeModal } = useDialogStore();
   const {
     folders,
+    folderId,
     getFolders,
     folderName,
     setSelectFolder,
     addFolder,
     editFolder,
+    deleteFolder,
   } = useFavoritesStore();
-  console.log(folders);
+  const showToast = useToast();
 
   // 유저
   const isAuth = localStorage.getItem('user') || sessionStorage.getItem('user');
@@ -33,8 +36,8 @@ function Favorites() {
 
   useEffect(() => {
     if (!isAuthPrimaryId) return;
-    getFolders(isAuthPrimaryId);
-  }, [isAuthPrimaryId, getFolders]);
+    getFolders(isAuthPrimaryId, showToast);
+  }, [isAuthPrimaryId, getFolders, showToast]);
 
   useEffect(() => {
     if (isOpen && (dialogType === 'add' || dialogType === 'edit')) {
@@ -55,7 +58,8 @@ function Favorites() {
     setDialogType('edit');
     openModal();
   };
-  const handleDeleteClick = () => {
+  const handleDeleteClick = (id: string, name: string) => {
+    setSelectFolder({ id, name });
     setDialogType('delete');
     openModal();
   };
@@ -71,7 +75,7 @@ function Favorites() {
           inputRef.current?.focus();
           return;
         }
-        addFolder(isAuth, isAuthPrimaryId, folderName);
+        addFolder(isAuth, isAuthPrimaryId, folderName.trim(), showToast);
         closeModal();
         setDialogType(null);
       },
@@ -89,7 +93,7 @@ function Favorites() {
           return;
         }
 
-        editFolder(folderName);
+        editFolder(folderName.trim(), showToast);
         closeModal();
         setDialogType(null);
       },
@@ -102,7 +106,10 @@ function Favorites() {
     {
       text: '삭제',
       onClick: () => {
-        console.log('삭제!');
+        if (!folderId) return;
+
+        deleteFolder(showToast);
+        setDialogType(null);
       },
     },
   ];
@@ -120,7 +127,7 @@ function Favorites() {
           <Input
             label="폴더 추가"
             hideLabel={true}
-            onChange={(e) => setSelectFolder({ name: e.target.value.trim() })}
+            onChange={(e) => setSelectFolder({ name: e.target.value })}
             placeholder="폴더 이름을 입력해 주세요."
             ref={inputRef}
           />
@@ -132,7 +139,7 @@ function Favorites() {
             label="폴더명 편집"
             hideLabel={true}
             value={folderName}
-            onChange={(e) => setSelectFolder({ name: e.target.value.trim() })}
+            onChange={(e) => setSelectFolder({ name: e.target.value })}
             placeholder="폴더 이름을 입력해 주세요."
             ref={inputRef}
           />

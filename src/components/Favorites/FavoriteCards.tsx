@@ -4,10 +4,25 @@ import { Link } from 'react-router-dom';
 import supabase from '@/api/supabase';
 import FavoritesCard from '@/components/Favorites/FavoriteCard';
 import { cn } from '@/lib/utils';
+import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useHeaderStore } from '@/store/useHeaderStore';
 
-function FavoritesCards({ id, name, onClickDelete, onClickModify }) {
-  const [images, setImages] = useState([]);
+interface FavoritesCardsProps {
+  id: string;
+  name: string;
+  onClickDelete?: () => void;
+  onClickModify?: () => void;
+}
+
+function FavoritesCards({
+  id,
+  name,
+  onClickDelete,
+  onClickModify,
+}: FavoritesCardsProps) {
+  const [images, setImages] = useState<string[]>([]);
+  const [linkId, setlinkId] = useState(0);
+  const setSlectFolder = useFavoritesStore((state) => state.setSelectFolder);
 
   useEffect(() => {
     const getMyFavorites = async () => {
@@ -38,6 +53,9 @@ function FavoritesCards({ id, name, onClickDelete, onClickModify }) {
     };
 
     getMyFavorites();
+
+    const splitId = parseInt(id.split('_')[1], 10);
+    setlinkId(splitId);
   }, [id]);
 
   const { isEditMode } = useHeaderStore();
@@ -57,7 +75,10 @@ function FavoritesCards({ id, name, onClickDelete, onClickModify }) {
     </div>
   ) : (
     <Link
-      to={`/my/favorites/${id}`}
+      to={`/my/favorites/${linkId}`}
+      onClick={() => {
+        setSlectFolder({ id: id, name: name });
+      }}
       className={cn(
         'focus-visible:ring-ring relative w-full outline-none focus-visible:rounded-md focus-visible:ring-[2px] focus-visible:ring-offset-2',
       )}

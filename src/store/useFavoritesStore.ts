@@ -12,15 +12,22 @@ interface FavoritesStore {
   folders: Folder[];
   folderId: string | null;
   folderName: string;
-  getFolders: (userId: string) => Promise<void>;
   setSelectFolder: (folder: { id?: string; name?: string }) => void;
+  getFolders: (
+    userId: string,
+    showToast: (msg: string, pos?: string) => void,
+  ) => Promise<void>;
   addFolder: (
     userId: string,
     userPrimaryId: string,
     name: string,
+    showToast: (msg: string, pos?: string) => void,
   ) => Promise<void>;
-  editFolder: (name: string) => void;
-  deleteFolder: () => void;
+  editFolder: (
+    name: string,
+    showToast: (msg: string, pos?: string) => void,
+  ) => void;
+  deleteFolder: (showToast: (msg: string, pos?: string) => void) => void;
 }
 
 export const useFavoritesStore = create<FavoritesStore>((set, get) => ({
@@ -28,7 +35,12 @@ export const useFavoritesStore = create<FavoritesStore>((set, get) => ({
   folderId: null,
   folderName: '',
 
-  // DB연결
+  setSelectFolder: ({ id, name }) =>
+    set((state) => ({
+      folderId: id ?? state.folderId,
+      folderName: name ?? state.folderName,
+    })),
+
   getFolders: async (userId) => {
     const { data, error } = await supabase
       .from('ex_favorite_folders')
@@ -36,20 +48,14 @@ export const useFavoritesStore = create<FavoritesStore>((set, get) => ({
       .eq('user_id', userId);
 
     if (error) {
-      console.log('모달 띄우기! 데이터를 못 가져옴요 ㅅㄱ');
+      console.log('❌ 즐겨찾기 리스트 가져오기 실패 : ', error);
       return;
     }
 
     set({ folders: data });
   },
 
-  setSelectFolder: ({ id, name }) =>
-    set((state) => ({
-      folderId: id ?? state.folderId,
-      folderName: name ?? state.folderName,
-    })),
-
-  addFolder: async (userId, userPrimaryId, name) => {
+  addFolder: async (userId, userPrimaryId, name, showToast) => {
     if (!userId) return;
 
     const folders = get().folders;
@@ -62,7 +68,8 @@ export const useFavoritesStore = create<FavoritesStore>((set, get) => ({
       ]);
 
     if (error) {
-      console.log('❌ Supabase 폴더 추가 실패:', error);
+      console.log('❌ 폴더 추가 실패:', error);
+      showToast('잠시 후 다시 시도해 주세요.', 'bottom-[64px]');
       return;
     }
 
@@ -74,17 +81,10 @@ export const useFavoritesStore = create<FavoritesStore>((set, get) => ({
     });
   },
 
-  editFolder: async (name) => {
-    console.log('문제 1 : ', name);
-
+  editFolder: async (name, showToast) => {
     const folderId = get().folderId;
-    console.log('문제 2 : ', folderId);
     const userId = get().folders.find((f) => f.folder_id === folderId)?.user_id;
-    console.log('문제 3 : ', userId);
-
     if (!folderId || !userId) return;
-
-    console.log('✏️ Supabase 수정 요청:', folderId, name);
 
     const { error } = await supabase
       .from('ex_favorite_folders')
@@ -92,31 +92,41 @@ export const useFavoritesStore = create<FavoritesStore>((set, get) => ({
       .eq('folder_id', folderId);
 
     if (error) {
-      console.log('❌ Supabase 폴더명 수정 실패:', error);
+      console.log('❌ 폴더명 수정 실패:', error);
+      showToast('잠시 후 다시 시도해 주세요.', 'bottom-[64px]');
       return;
     }
 
-    const { data, error: fetchError } = await supabase
-      .from('ex_favorite_folders')
-      .select('folder_id, user_id, folder_name')
-      .eq('user_id', userId);
-
-    if (fetchError) {
-      console.log('❌ 수정 후 목록 다시 불러오기 실패:', fetchError);
-      return;
-    }
-
-    set({ folders: data, folderName: name });
+    set((state) => ({
+      folders: state.folders.map((f) =>
+        f.folder_id === folderId ? { ...f, folder_name: name } : f,
+      ),
+      folderName: name,
+    }));
   },
 
-  deleteFolder: () =>
+  deleteFolder: async (showToast) => {
+    const folderId = get().folderId;
+    if (!folderId) return;
+
+    const { error } = await supabase
+      .from('ex_favorite_folders')
+      .delete()
+      .eq('folder_id', folderId);
+
+    if (error) {
+      console.log('❌ 폴더 삭제 실패:', error);
+      showToast('잠시 후 다시 시도해 주세요.', 'bottom-[64px]');
+      return;
+    }
+
     set((state) => {
-      const updated = state.folders.filter(
+      const deleted = state.folders.filter(
         (f) => f.folder_id !== state.folderId,
       );
-      console.log('🗑 삭제 후 folders:', updated);
-      return { folders: updated };
-    }),
+      return { folders: deleted, folderId: null, folderName: '' };
+    });
+  },
 }));
 
 /* 폴더 id 생성 함수 */
