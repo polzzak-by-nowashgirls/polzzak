@@ -1,5 +1,5 @@
-import { MutableRefObject, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { MutableRefObject, useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
@@ -26,6 +26,7 @@ function MapHeader({
   onTourBtnClick,
 }: MapHeaderProps) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [activeFilterId, setActiveFilterId] = useState<number | null>(null);
 
   const MAP_FILTER = [
@@ -55,6 +56,17 @@ function MapHeader({
       path: '/map/tour',
     },
   ];
+
+  useEffect(() => {
+    const category = searchParams.get('category');
+    const filterMap: { [key: string]: number } = {
+      food: 3,
+      festival: 4,
+      tour: 5,
+    };
+
+    setActiveFilterId(category ? (filterMap[category] ?? null) : null);
+  }, [searchParams]);
 
   const handleFilterClick = (filterId: number, path: string | null) => {
     if (filterId === activeFilterId) {
