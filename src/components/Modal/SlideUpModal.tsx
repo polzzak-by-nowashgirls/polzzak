@@ -193,7 +193,7 @@ function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
         {modalContent.contentComponent
           ? modalContent.contentComponent({ inputValue, setInputValue })
           : modalContent.content ||
-            modalContent.text.map((i, index) => (
+            modalContent.text?.map((i, index) => (
               <p
                 className="fs-14 ls lh font-regular text-gray07 text-center"
                 key={index}
