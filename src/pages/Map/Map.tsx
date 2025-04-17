@@ -9,6 +9,7 @@ import { Outlet, useSearchParams } from 'react-router-dom';
 import { useGetNearFestivalList } from '@/api/openAPI/hooks/map/useGetNearFestivalList';
 import { useGetNearFoodList } from '@/api/openAPI/hooks/map/useGetNearFoodList';
 import { useGetNearTourList } from '@/api/openAPI/hooks/map/useGetNearTourList';
+import Button from '@/components/Button/Button';
 import SlideUpDialog from '@/components/Dialog/SlideUpDialog';
 import MapHeader from '@/components/Map/MapHeader';
 import ModalContent from '@/components/Map/ModalContent';
@@ -29,8 +30,20 @@ function Map() {
 
   // 🚩 내 위치 상태 저장
   const [myLocation, setMyLocation] = useState<LatLng | null>(null);
-
+  const [mapCenter, setMapCenter] = useState<LatLng | null>(null);
+  const [showReSearchButton, setShowReSearchButton] = useState(false);
   const [mapSearchParams, setMapSearchParams] = useSearchParams();
+
+  // 필터링 여부
+  const activeCategory = useMemo(
+    () => mapSearchParams.get('category'),
+    [mapSearchParams],
+  );
+  const isFiltered = useMemo(() => !!activeCategory, [activeCategory]);
+
+  const showFoodList = activeCategory === 'food';
+  const showFestivalList = activeCategory === 'festival';
+  const showTourList = activeCategory === 'tour';
 
   // 필터링 버튼 토글 함수
   const toggleCategoryParams = (targetCategory: string) => {
@@ -46,38 +59,38 @@ function Map() {
     setMapSearchParams(newParams);
   };
 
-  // 선택된 필터링 버튼에 따라 리스트 보여주기
-  const activeCategory = useMemo(
-    () => mapSearchParams.get('category'),
-    [mapSearchParams],
-  );
-  const showFoodList = useMemo(
-    () => activeCategory === 'food',
-    [activeCategory],
-  );
-  const showFestivalList = useMemo(
-    () => activeCategory === 'festival',
-    [activeCategory],
-  );
-  const showTourList = useMemo(
-    () => activeCategory === 'tour',
-    [activeCategory],
-  );
-
   // 📍 필터링 버튼 클릭 핸들러
   const handleFoodBtnClick = () => toggleCategoryParams('food');
   const handleFestivalBtnClick = () => toggleCategoryParams('festival');
   const handleTourBtnClick = () => toggleCategoryParams('tour');
 
-  // 🚩 내 위치 가져오기
+  // ✅ 중심 좌표 기준 데이터 fetch
+  const foodList = useGetNearFoodList(
+    mapCenter?.lat ?? 0,
+    mapCenter?.lng ?? 0,
+    showFoodList,
+  );
+  const festivalList = useGetNearFestivalList(
+    mapCenter?.lat ?? 0,
+    mapCenter?.lng ?? 0,
+    showFestivalList,
+  );
+  const tourList = useGetNearTourList(
+    mapCenter?.lat ?? 0,
+    mapCenter?.lng ?? 0,
+    showTourList,
+  );
+
+  // 🧭 내 위치 초기화
   useEffect(() => {
     if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        console.log('내 위치:', latitude, longitude);
-        setMyLocation({ lat: latitude, lng: longitude });
+        const newLocation = { lat: latitude, lng: longitude };
+        setMyLocation(newLocation);
+        setMapCenter(newLocation);
       },
       (error) => {
         console.error('🚫 위치 정보를 가져올 수 없습니다. : ', error.message);
@@ -90,24 +103,33 @@ function Map() {
     );
   }, []);
 
-  // 📍 주변 카테고리 데이터 가져오기
-  const foodList = useGetNearFoodList(
-    myLocation?.lat ?? 0,
-    myLocation?.lng ?? 0,
-    showFoodList,
-  );
+  // 🗺️ 지도 이동 감지
+  const handleCenterChanged = () => {
+    const map = mapRef.current;
+    if (!map || !mapCenter) return;
 
-  const festivalList = useGetNearFestivalList(
-    myLocation?.lat ?? 0,
-    myLocation?.lng ?? 0,
-    showFestivalList,
-  );
+    const center = map.getCenter();
+    const newCenter = { lat: center.getLat(), lng: center.getLng() };
 
-  const tourList = useGetNearTourList(
-    myLocation?.lat ?? 0,
-    myLocation?.lng ?? 0,
-    showTourList,
-  );
+    const moved =
+      Math.abs(mapCenter.lat - newCenter.lat) > 0.001 ||
+      Math.abs(mapCenter.lng - newCenter.lng) > 0.001;
+
+    // 🔘 필터링된 상태에서만 버튼 보여주기
+    setShowReSearchButton(isFiltered && moved);
+  };
+
+  // 📍 현재 위치에서 재검색 클릭
+  const handleReSearchClick = () => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const center = map.getCenter();
+    const newCenter = { lat: center.getLat(), lng: center.getLng() };
+
+    setMapCenter(newCenter);
+    setShowReSearchButton(false);
+  };
 
   // 🚩 마커 렌더링 함수
   const renderMarker = (data: any[], markerSrc: string) =>
@@ -117,15 +139,16 @@ function Map() {
         position={{ lat: Number(item.mapy), lng: Number(item.mapx) }}
         image={{
           src: markerSrc,
-          size: { width: 24, height: 24 },
-          options: { offset: { x: 12, y: 12 } },
+          size: { width: 32, height: 32 },
+          options: { offset: { x: 16, y: 16 } },
         }}
       />
     ));
 
   if (mapLoading) return <div>🗺️ 지도를 불러오고 있어요!</div>;
   if (mapError) return <div>😭 지도를 불러오는 데 실패했어요.</div>;
-  if (!myLocation) return <div>🚩 내 위치를 불러오고 있어요!</div>;
+  if (!myLocation || !mapCenter)
+    return <div>🚩 내 위치를 불러오고 있어요!</div>;
 
   return (
     <>
@@ -138,40 +161,32 @@ function Map() {
       />
       <MapArea
         ref={mapRef}
-        center={myLocation}
+        center={mapCenter}
+        onCenterChanged={handleCenterChanged}
         style={{ width: '100%', height: '100%' }}
         className="relative"
         level={3}
       >
         {/* 🚩 내 위치 마커 */}
-        {myLocation && (
-          <MapMarker
-            position={myLocation}
-            image={{
-              src: '/marker/my_location.svg',
-              size: {
-                width: 24,
-                height: 24,
-              },
-              options: {
-                offset: {
-                  x: 12,
-                  y: 12,
-                },
-              },
-            }}
-          ></MapMarker>
-        )}
+        <MapMarker
+          position={myLocation}
+          image={{
+            src: '/marker/my_location.svg',
+            size: { width: 24, height: 24 },
+            options: { offset: { x: 12, y: 12 } },
+          }}
+        />
 
         {/* 🚩 마커 */}
-        {renderMarker(foodList, '/marker/map_marker.svg')}
-        {renderMarker(festivalList, '/marker/map_marker.svg')}
-        {renderMarker(tourList, '/marker/map_marker.svg')}
+        {showFoodList && renderMarker(foodList, '/marker/map_marker_food.svg')}
+        {showFestivalList &&
+          renderMarker(festivalList, '/marker/map_marker_festival.svg')}
+        {showTourList && renderMarker(tourList, '/marker/map_marker_tour.svg')}
 
         {/* 다이얼로그 */}
         {showFoodList && foodList.length > 0 && (
           <SlideUpDialog
-            header="내 주변 음식점"
+            header="근처 음식점"
             dimd={false}
             dragIcon={true}
             className="max-h-[60%] shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
@@ -181,7 +196,7 @@ function Map() {
         )}
         {showFestivalList && festivalList.length > 0 && (
           <SlideUpDialog
-            header="내 주변 축제/공연/행사"
+            header="근처 축제/공연/행사"
             dimd={false}
             dragIcon={true}
             className="max-h-[60%] shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
@@ -191,13 +206,23 @@ function Map() {
         )}
         {showTourList && tourList.length > 0 && (
           <SlideUpDialog
-            header="내 주변 관광지"
+            header="근처 관광지"
             dimd={false}
             dragIcon={true}
             className="max-h-[60%] shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
           >
             <ModalContent data={tourList} />
           </SlideUpDialog>
+        )}
+
+        {/* 📌 현재 위치에서 재검색 버튼 */}
+        {showReSearchButton && (
+          <Button
+            className="absolute top-28 left-1/2 z-20 h-[40px] -translate-x-1/2 rounded-full px-4 font-normal shadow-md"
+            onClick={handleReSearchClick}
+          >
+            현재 위치에서 재검색
+          </Button>
         )}
         <Outlet />
       </MapArea>
