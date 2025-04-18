@@ -1,8 +1,15 @@
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { updateNickname } from '@/api/supabase/hooks/updateNickname';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useModalStore } from '@/store/useModalStore';
+import { useRegisterStore } from '@/store/useRegisterStore';
+
+interface ModalActionParams {
+  buttonText: string;
+  inputValue?: string;
+}
 
 export function useModalActions() {
   const navigate = useNavigate();
@@ -11,18 +18,23 @@ export function useModalActions() {
   const addFolder = useFavoritesStore((state) => state.addFolder);
   const deleteFolder = useFavoritesStore((state) => state.deleteFolder);
   const ref = useRef(3);
+  const { nickname } = useRegisterStore();
 
   const modalActions: Record<string, (inputValue?: string) => void> = {
     취소: closeModal,
     '다시 인증하기': closeModal,
     다음: () => {
-      navigate('/register/4');
       closeModal();
     },
-    확인: () => {
-      navigate('/login', { replace: true });
-      closeModal();
+    확인: async () => {
+      const result = await updateNickname(nickname);
+      if (result) {
+        navigate('/login', { replace: true });
+      } else {
+        console.error('닉네임 저장 실패 또는 이미 존재합니다.');
+      }
     },
+
     저장: (inputValue) => {
       if (!inputValue) {
         console.log('저장 버튼에 맞는 함수');
@@ -69,16 +81,11 @@ export function useModalActions() {
   const handleButtonClick = ({ buttonText, inputValue }: ModalActionParams) => {
     const action = modalActions[buttonText];
     if (action) {
-      action(inputValue);
+      action();
     } else {
       console.warn(`"${buttonText}"에 대한 동작이 정의되지 않았습니다.`);
     }
   };
 
   return { handleButtonClick };
-}
-
-interface ModalActionParams {
-  buttonText: string;
-  inputValue?: string;
 }
