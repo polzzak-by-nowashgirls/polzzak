@@ -2,6 +2,8 @@ import { create } from 'zustand';
 
 type ModalType =
   | 'register'
+  | 'certify_success'
+  | 'certify_fail'
   | 'folder_add'
   | 'folder_delete'
   | 'folder_edit'
