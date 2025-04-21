@@ -12,12 +12,7 @@ function NotFound() {
         <h1 className="text-primary relative flex items-center justify-center gap-9 text-center text-[80px] font-bold whitespace-nowrap">
           <span>4</span>
           <span>4</span>
-          <RabbitFace
-            src="/images/rabbit_face.png"
-            alt="토끼 얼굴"
-            size={64}
-            className="absolute"
-          />
+          <RabbitFace size={64} className="absolute" />
         </h1>
         <p className="fs-16 font-semibold">
           요청하신 페이지를 찾을 수 없습니다.
