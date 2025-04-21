@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import supabase from '@/api/supabase';
 import FavoritesCard from '@/components/Favorites/FavoriteCard';
+import { useToast } from '@/hooks/useToast';
 import { cn } from '@/lib/utils';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useHeaderStore } from '@/store/useHeaderStore';
@@ -23,6 +24,7 @@ function FavoritesCards({
   const [images, setImages] = useState<string[]>([]);
   const [linkId, setlinkId] = useState(0);
   const setSlectFolder = useFavoritesStore((state) => state.setSelectFolder);
+  const showToast = useToast();
 
   useEffect(() => {
     const getMyFavorites = async () => {
@@ -32,7 +34,12 @@ function FavoritesCards({
         .eq('folder_id', id);
 
       if (myFavoriteError || !myFavorites) {
-        console.log('❌ 모달 띄우기! ❌ ');
+        showToast(
+          '데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
+          'top-[64px]',
+          5000,
+        );
+        console.log('❌ 폴더명 불러오기 실패 : ', myFavoriteError);
         return;
       }
 
@@ -42,21 +49,28 @@ function FavoritesCards({
         .from('ex_contents')
         .select('firstimage')
         .in('contentid', contentIds)
+        .not('firstimage', 'is', null)
         .limit(3);
 
       if (contentsError) {
-        console.log('❌ 콘텐츠 불러오기 실패, 모달 띄우기! ❌ ');
+        showToast(
+          '데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
+          'top-[64px]',
+          5000,
+        );
+        console.log('❌ 콘텐츠 불러오기 실패 : ', contentsError);
         return;
       }
 
-      setImages(contents.map((item) => item.firstimage));
+      const imgFiltered = contents.filter((item) => item.firstimage !== '');
+      setImages(imgFiltered.map((item) => item.firstimage));
     };
 
     getMyFavorites();
 
     const splitId = parseInt(id.split('_')[1], 10);
     setlinkId(splitId);
-  }, [id]);
+  }, [id, showToast]);
 
   const { isEditMode } = useHeaderStore();
 
