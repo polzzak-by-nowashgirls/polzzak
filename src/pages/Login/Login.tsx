@@ -105,10 +105,14 @@ function Login() {
       return;
     }
 
+    /* 잠시 변경해놨어요! 나중에 수정해야해요! */
     if (isSavedId) {
       localStorage.setItem('user', idValue);
+      localStorage.setItem('user_id', data.id);
     } else {
-      localStorage.setItem('user', '');
+      // localStorage.setItem('user', '');
+      sessionStorage.setItem('user', idValue);
+      sessionStorage.setItem('user_id', data.id);
     }
 
     navigate('/', { replace: true });
