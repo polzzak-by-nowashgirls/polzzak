@@ -17,7 +17,6 @@ interface MapHeaderProps {
   onFestivalBtnClick: () => void;
   onTourBtnClick: () => void;
 }
-
 function MapHeader({
   mapRef,
   myLocation,
@@ -27,66 +26,51 @@ function MapHeader({
 }: MapHeaderProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [activeFilterId, setActiveFilterId] = useState<number | null>(null);
 
   const MAP_FILTER = [
-    {
-      id: 1,
-      name: '즐겨찾기',
-      path: '/map/favorite',
-    },
-    {
-      id: 2,
-      name: '나의폴짝',
-      path: '/map/polzzak',
-    },
-    {
-      id: 3,
-      name: '음식점',
-      path: '/map/food',
-    },
-    {
-      id: 4,
-      name: '축제',
-      path: '/map/festival',
-    },
-    {
-      id: 5,
-      name: '관광지',
-      path: '/map/tour',
-    },
+    { key: 'favorite', name: '즐겨찾기' },
+    { key: 'polzzak', name: '나의폴짝' },
+    { key: 'food', name: '음식점' },
+    { key: 'festival', name: '축제' },
+    { key: 'tour', name: '관광지' },
+    { key: 'leports', name: '레포츠' },
+    { key: 'shopping', name: '쇼핑' },
+    { key: 'hotels', name: '숙박' },
+    { key: 'cultural', name: '문화시설' },
   ];
 
+  // key 기준으로 상태 관리
+  const [activeFilterKey, setActiveFilterKey] = useState<string | null>(null);
+
+  // URL 쿼리 파라미터와 연결
   useEffect(() => {
     const category = searchParams.get('category');
-    const filterMap: { [key: string]: number } = {
-      food: 3,
-      festival: 4,
-      tour: 5,
-    };
-
-    setActiveFilterId(category ? (filterMap[category] ?? null) : null);
+    setActiveFilterKey(category);
   }, [searchParams]);
 
-  const handleFilterClick = (filterId: number, path: string | null) => {
-    if (filterId === activeFilterId) {
-      setActiveFilterId(null);
-      if (filterId === 3) onFoodBtnClick();
-      if (filterId === 4) onFestivalBtnClick();
-      if (filterId === 5) onTourBtnClick();
-      return;
+  const handleFilterClick = (filterKey: string) => {
+    const current = new URLSearchParams(searchParams);
+
+    const isActive = filterKey === activeFilterKey;
+
+    if (isActive) {
+      setActiveFilterKey(null);
+      current.delete('category');
+    } else {
+      setActiveFilterKey(filterKey);
+      current.set('category', filterKey);
     }
 
-    setActiveFilterId(filterId);
+    navigate({
+      pathname: '/map',
+      search: current.toString(),
+    });
 
-    if (filterId === 3) {
-      onFoodBtnClick();
-    } else if (filterId === 4) {
-      onFestivalBtnClick();
-    } else if (filterId === 5) {
-      onTourBtnClick();
-    } else if (path) {
-      navigate(path);
+    // 콜백 실행
+    if (!isActive) {
+      if (filterKey === 'food') onFoodBtnClick();
+      else if (filterKey === 'festival') onFestivalBtnClick();
+      else if (filterKey === 'tour') onTourBtnClick();
     }
   };
 
@@ -114,11 +98,11 @@ function MapHeader({
       </header>
 
       <ul className="fixed top-[62px] right-0 left-0 z-10 flex gap-1 py-2">
-        {MAP_FILTER.map(({ id, name, path }) => (
-          <li key={id} className="first-of-type:ml-4">
+        {MAP_FILTER.map(({ key, name }) => (
+          <li key={key} className="first-of-type:ml-4">
             <button
-              className={`fs-14 text-gray07 border-gray07 rounded-4xl border px-3 py-1 whitespace-nowrap ${activeFilterId === id ? 'bg-primary border-primary text-white' : 'bg-white'}`}
-              onClick={() => handleFilterClick(id, path)}
+              className={`fs-14 text-gray07 border-gray07 rounded-4xl border px-3 py-1 whitespace-nowrap ${activeFilterKey === key ? 'bg-primary border-primary text-white' : 'bg-white'}`}
+              onClick={() => handleFilterClick(key)}
             >
               {name}
             </button>
