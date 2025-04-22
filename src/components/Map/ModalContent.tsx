@@ -1,19 +1,19 @@
 import { Link } from 'react-router-dom';
 
-interface DataProps {
-  [key: string]: any;
-}
+import { DetailCommonDataProps } from '@/types/detailCommonDataProps';
 
 interface ModalContentProps {
-  data: DataProps[];
+  data: DetailCommonDataProps[];
 }
 
 export default function ModalContent({ data }: ModalContentProps) {
+  console.log(data);
+
   return (
     <ul className="flex flex-col">
       {data.map((item, index) => (
         <li key={index} className="border-gray03 border-b-[1px] text-black">
-          <Link to={`/map/food/${item.contentid}`} className="flex gap-4 py-4">
+          <Link to={`/contents/${item.contentid}`} className="flex gap-4 py-4">
             <figure className="bg-primary/10 flex aspect-video flex-2/6 items-center">
               {item.firstimage ? (
                 <img
