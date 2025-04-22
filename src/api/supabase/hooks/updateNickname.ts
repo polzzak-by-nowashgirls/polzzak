@@ -20,7 +20,7 @@ export async function updateNickname(inputNickname: string) {
     return false;
   }
 
-  if (USER_DATA.nickname === '') {
+  if (USER_DATA.nickname === null) {
     const { error: updateError } = await supabase
       .from('ex_users')
       .update({ nickname: inputNickname })
@@ -38,5 +38,5 @@ export async function updateNickname(inputNickname: string) {
     return true;
   }
 
-  return false; // 이미 닉네임이 존재하면 false
+  return false;
 }
