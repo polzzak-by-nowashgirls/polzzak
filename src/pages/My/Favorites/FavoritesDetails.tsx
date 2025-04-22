@@ -3,14 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import supabase from '@/api/supabase';
 import ListItem from '@/components/ListItem/ListItem';
-import { ListItemProps } from '@/components/ListItem/ListItem';
 import { useToast } from '@/hooks/useToast';
 import RequireLogin from '@/pages/RequireLogin';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useHeaderStore } from '@/store/useHeaderStore';
 
 function FavoritesDetails() {
-  const [itemList, setItemList] = useState<ListItemProps[]>([]);
+  const [itemList, setItemList] = useState<string[] | null>(null);
   const { id } = useParams();
   const navigate = useNavigate();
   const showToast = useToast();
@@ -76,9 +75,7 @@ function FavoritesDetails() {
     const fetchFavoriteList = async () => {
       const { data, error } = await supabase
         .from('ex_favorite')
-        .select(
-          'ex_contents (contentid, firstimage, title, eventstartdate, eventenddate, region, district, likes, reviews)',
-        )
+        .select('content_id')
         .eq('folder_id', folderId);
 
       if (error) {
@@ -91,11 +88,9 @@ function FavoritesDetails() {
         return;
       }
 
-      const myContents = (data ?? [])
-        .flatMap((item) => item.ex_contents || [])
-        .filter(Boolean);
+      const contentsIds = data.flatMap((item) => item.content_id);
 
-      setItemList(myContents);
+      setItemList(contentsIds);
     };
 
     fetchFavoriteList();
@@ -107,7 +102,7 @@ function FavoritesDetails() {
 
   return (
     <main className="p-6">
-      <ListItem data={itemList} />
+      <ListItem contentIdArr={itemList} />
     </main>
   );
 }
