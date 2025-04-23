@@ -28,6 +28,7 @@ export function useModalActions() {
       if (result) {
         navigate('/login', { replace: true });
         localStorage.removeItem('ex_users');
+        closeModal();
       } else {
         console.error('닉네임 저장 실패 또는 이미 존재합니다.');
       }
@@ -42,6 +43,9 @@ export function useModalActions() {
       navigate('/login', {
         state: { toastMessage: '로그아웃이 완료되었습니다.' },
       });
+      // > 아이디 저장일 경우, 아닌 경우로 나누어서 수정
+      localStorage.clear();
+      sessionStorage.clear();
       closeModal();
     },
     탈퇴: () => {

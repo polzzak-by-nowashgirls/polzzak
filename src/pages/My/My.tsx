@@ -1,20 +1,28 @@
+import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import Modal from '@/components/Modal/Modal';
 import MenuItem from '@/components/My/MenuItem';
 import Profile from '@/components/Profile/Profile';
 import UserMenu, { MenuItemTypes } from '@/components/UserMenu/UserMenu';
-import { USER_INFO } from '@/mockData';
 import { useModalStore } from '@/store/useModalStore';
+import { useUserStore } from '@/store/useUserStore';
 
 function My() {
   const { openModal } = useModalStore();
+  const { user, fetchUserInfo, isLoading, error } = useUserStore();
   const location = useLocation();
 
   const isMyPage = location.pathname === '/my';
   const handleLogoutClick = () => {
-    openModal();
+    openModal('logout');
   };
+
+  useEffect(() => {
+    if (isMyPage) {
+      fetchUserInfo();
+    }
+  }, [isMyPage, fetchUserInfo]);
 
   const menus = [
     { label: '공지사항', href: '/notice' },
@@ -50,11 +58,21 @@ function My() {
   ];
 
   return (
-    <section className="flex h-full w-full flex-col">
+    <main className="flex h-full w-full flex-1 flex-col overflow-auto p-6">
       <h1 className="sr-only">마이페이지</h1>
       {isMyPage ? (
         <div className="flex flex-col gap-6">
-          <Profile userInfo={USER_INFO} />
+          {isLoading ? (
+            <div className="text-center">
+              사용자 정보를 불러오는 중입니다...
+            </div>
+          ) : error ? (
+            <div className="text-center text-red-500">{error}</div>
+          ) : user ? (
+            <Profile userInfo={user} />
+          ) : (
+            <div className="text-center">사용자 정보를 불러올 수 없습니다.</div>
+          )}
           <UserMenu menus={userMenus} />
           <MenuItem menus={menus} />
           <Modal mode="alert" type="logout" />
@@ -62,7 +80,7 @@ function My() {
       ) : (
         <Outlet />
       )}
-    </section>
+    </main>
   );
 }
 
