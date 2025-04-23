@@ -12,16 +12,17 @@ import { formatDate, getTripDays, Schedule } from '@/lib/dateUtils';
 interface SelectMenuProps {
   data: Schedule | 'email';
   className?: string;
+  onSelectedEmail?: (email: string) => void;
 }
 
-function SelectMenu({ data, className }: SelectMenuProps) {
+function SelectMenu({ data, className, onSelectedEmail }: SelectMenuProps) {
   const [daySelected, setDaySelected] = useState('Day1');
 
   const emailArr = ['naver.com', 'gmail.com', '직접 입력'];
 
   if (data === 'email') {
     return (
-      <Select>
+      <Select onValueChange={(value) => onSelectedEmail?.(value)}>
         <SelectTrigger className={className}>
           <SelectValue placeholder="이메일 선택" />
         </SelectTrigger>
