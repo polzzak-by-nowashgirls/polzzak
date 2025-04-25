@@ -4,11 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import Button from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
-
-type LatLng = {
-  lat: number;
-  lng: number;
-};
+import { LatLng } from '@/types/LatLng';
 
 interface MapHeaderProps {
   mapRef: MutableRefObject<kakao.maps.Map | null>;
@@ -16,6 +12,10 @@ interface MapHeaderProps {
   onFoodBtnClick: () => void;
   onFestivalBtnClick: () => void;
   onTourBtnClick: () => void;
+  onLeportsBtnClick: () => void;
+  onShoppingBtnClick: () => void;
+  onHotelsBtnClick: () => void;
+  onCulturalBtnClick: () => void;
 }
 function MapHeader({
   mapRef,
@@ -23,6 +23,10 @@ function MapHeader({
   onFoodBtnClick,
   onFestivalBtnClick,
   onTourBtnClick,
+  onLeportsBtnClick,
+  onShoppingBtnClick,
+  onHotelsBtnClick,
+  onCulturalBtnClick,
 }: MapHeaderProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -71,6 +75,10 @@ function MapHeader({
       if (filterKey === 'food') onFoodBtnClick();
       else if (filterKey === 'festival') onFestivalBtnClick();
       else if (filterKey === 'tour') onTourBtnClick();
+      else if (filterKey === 'leports') onLeportsBtnClick();
+      else if (filterKey === 'shopping') onShoppingBtnClick();
+      else if (filterKey === 'hotels') onHotelsBtnClick();
+      else if (filterKey === 'cultural') onCulturalBtnClick();
     }
   };
 

@@ -6,18 +6,21 @@ import {
 } from 'react-kakao-maps-sdk';
 import { Outlet, useSearchParams } from 'react-router-dom';
 
-import { useGetNearFestivalList } from '@/api/openAPI/hooks/map/useGetNearFestivalList';
-import { useGetNearFoodList } from '@/api/openAPI/hooks/map/useGetNearFoodList';
-import { useGetNearTourList } from '@/api/openAPI/hooks/map/useGetNearTourList';
+import {
+  useGetNearCulturalList,
+  useGetNearFestivalList,
+  useGetNearFoodList,
+  useGetNearHotelsList,
+  useGetNearLeportsList,
+  useGetNearShoppingList,
+  useGetNearTourList,
+} from '@/api/openAPI/hooks/map/useGetNearCategoryList';
 import Button from '@/components/Button/Button';
 import SlideUpDialog from '@/components/Dialog/SlideUpDialog';
 import MapHeader from '@/components/Map/MapHeader';
 import ModalContent from '@/components/Map/ModalContent';
-
-type LatLng = {
-  lat: number;
-  lng: number;
-};
+import { DetailCommonDataProps } from '@/types/detailCommonDataProps';
+import { LatLng } from '@/types/LatLng';
 
 function Map() {
   const [mapLoading, mapError] = useKakaoLoader({
@@ -44,6 +47,10 @@ function Map() {
   const showFoodList = activeCategory === 'food';
   const showFestivalList = activeCategory === 'festival';
   const showTourList = activeCategory === 'tour';
+  const showLeportsList = activeCategory === 'leports';
+  const showShoppingList = activeCategory === 'shopping';
+  const showHotelsList = activeCategory === 'hotels';
+  const showCulturalList = activeCategory === 'cultural';
 
   // 필터링 버튼 토글 함수
   const toggleCategoryParams = (targetCategory: string) => {
@@ -63,6 +70,10 @@ function Map() {
   const handleFoodBtnClick = () => toggleCategoryParams('food');
   const handleFestivalBtnClick = () => toggleCategoryParams('festival');
   const handleTourBtnClick = () => toggleCategoryParams('tour');
+  const handleLeportsBtnClick = () => toggleCategoryParams('leports');
+  const handleShoppingBtnClick = () => toggleCategoryParams('shopping');
+  const handleHotelsBtnClick = () => toggleCategoryParams('hotels');
+  const handleCulturalBtnClick = () => toggleCategoryParams('cultural');
 
   // ✅ 중심 좌표 기준 데이터 fetch
   const foodList = useGetNearFoodList(
@@ -80,6 +91,26 @@ function Map() {
     mapCenter?.lng ?? 0,
     showTourList,
   );
+  const leportsList = useGetNearLeportsList(
+    mapCenter?.lat ?? 0,
+    mapCenter?.lng ?? 0,
+    showLeportsList,
+  );
+  const shoppingList = useGetNearShoppingList(
+    mapCenter?.lat ?? 0,
+    mapCenter?.lng ?? 0,
+    showShoppingList,
+  );
+  const hotelsList = useGetNearHotelsList(
+    mapCenter?.lat ?? 0,
+    mapCenter?.lng ?? 0,
+    showHotelsList,
+  );
+  const culturalList = useGetNearCulturalList(
+    mapCenter?.lat ?? 0,
+    mapCenter?.lng ?? 0,
+    showCulturalList,
+  );
 
   // 🧭 내 위치 초기화
   useEffect(() => {
@@ -88,9 +119,9 @@ function Map() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        const newLocation = { lat: latitude, lng: longitude };
-        setMyLocation(newLocation);
-        setMapCenter(newLocation);
+        const currentLocation = { lat: latitude, lng: longitude };
+        setMyLocation(currentLocation);
+        setMapCenter(currentLocation);
       },
       (error) => {
         console.error('🚫 위치 정보를 가져올 수 없습니다. : ', error.message);
@@ -132,7 +163,7 @@ function Map() {
   };
 
   // 🚩 마커 렌더링 함수
-  const renderMarker = (data: any[], markerSrc: string) =>
+  const renderMarker = (data: DetailCommonDataProps[], markerSrc: string) =>
     data.map((item) => (
       <MapMarker
         key={item.contentid}
@@ -158,6 +189,10 @@ function Map() {
         onFoodBtnClick={handleFoodBtnClick}
         onFestivalBtnClick={handleFestivalBtnClick}
         onTourBtnClick={handleTourBtnClick}
+        onLeportsBtnClick={handleLeportsBtnClick}
+        onShoppingBtnClick={handleShoppingBtnClick}
+        onHotelsBtnClick={handleHotelsBtnClick}
+        onCulturalBtnClick={handleCulturalBtnClick}
       />
       <MapArea
         ref={mapRef}
@@ -189,17 +224,19 @@ function Map() {
             header="근처 음식점"
             dimd={false}
             dragIcon={true}
-            className="max-h-[60%] shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+            className="shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
           >
             <ModalContent data={foodList} />
           </SlideUpDialog>
         )}
+
+        {/* 다이얼로그 */}
         {showFestivalList && festivalList.length > 0 && (
           <SlideUpDialog
             header="근처 축제/공연/행사"
             dimd={false}
             dragIcon={true}
-            className="max-h-[60%] shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+            className="shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
           >
             <ModalContent data={festivalList} />
           </SlideUpDialog>
@@ -209,9 +246,49 @@ function Map() {
             header="근처 관광지"
             dimd={false}
             dragIcon={true}
-            className="max-h-[60%] shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+            className="shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
           >
             <ModalContent data={tourList} />
+          </SlideUpDialog>
+        )}
+        {showLeportsList && leportsList.length > 0 && (
+          <SlideUpDialog
+            header="근처 레포츠"
+            dimd={false}
+            dragIcon={true}
+            className="shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+          >
+            <ModalContent data={leportsList} />
+          </SlideUpDialog>
+        )}
+        {showShoppingList && shoppingList.length > 0 && (
+          <SlideUpDialog
+            header="근처 쇼핑"
+            dimd={false}
+            dragIcon={true}
+            className="shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+          >
+            <ModalContent data={shoppingList} />
+          </SlideUpDialog>
+        )}
+        {showHotelsList && hotelsList.length > 0 && (
+          <SlideUpDialog
+            header="근처 쇼핑"
+            dimd={false}
+            dragIcon={true}
+            className="shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+          >
+            <ModalContent data={hotelsList} />
+          </SlideUpDialog>
+        )}
+        {showCulturalList && culturalList.length > 0 && (
+          <SlideUpDialog
+            header="근처 쇼핑"
+            dimd={false}
+            dragIcon={true}
+            className="shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+          >
+            <ModalContent data={culturalList} />
           </SlideUpDialog>
         )}
 
