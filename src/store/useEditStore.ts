@@ -1,13 +1,6 @@
 import { create } from 'zustand';
 
 interface EditStore {
-  isVisible: boolean;
-  setIsVisible: (isVisible: boolean) => void;
-  validationStatus: { status: boolean; message: string };
-  setValidationStatus: (validationStatus: {
-    status: boolean;
-    message: string;
-  }) => void;
   phoneNumber: string;
   setPhoneNumber: (phoneNumber: string) => void;
   authNumber: string;
@@ -21,8 +14,6 @@ interface EditStore {
 }
 
 export const useEditStore = create<EditStore>()((set) => ({
-  isVisible: false,
-  setIsVisible: (isVisible) => set({ isVisible }),
   phoneNumber: '',
   setPhoneNumber: (phoneNumber) => set({ phoneNumber }),
   authNumber: '',
