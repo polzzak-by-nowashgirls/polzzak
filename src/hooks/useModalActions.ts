@@ -1,50 +1,41 @@
-import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useFavoritesStore } from '@/store/useFavoritesStore';
+import { updateNickname } from '@/api/supabase/hooks/updateNickname';
+import { useUserUpdate } from '@/hooks/register/useUserUpdate';
 import { useModalStore } from '@/store/useModalStore';
+import { useRegisterStore } from '@/store/useRegisterStore';
 
 export function useModalActions() {
   const navigate = useNavigate();
   const { closeModal } = useModalStore();
-  const modifyFolder = useFavoritesStore((state) => state.modifyFolder);
-  const addFolder = useFavoritesStore((state) => state.addFolder);
-  const deleteFolder = useFavoritesStore((state) => state.deleteFolder);
-  const ref = useRef(3);
+  const { phoneNumber, nickname } = useRegisterStore();
+  const { userUpdate } = useUserUpdate(phoneNumber);
 
   const modalActions: Record<string, (inputValue?: string) => void> = {
-    취소: closeModal,
-    '다시 인증하기': closeModal,
+    취소: () => {
+      closeModal();
+    },
+    '다시 인증하기': () => {
+      closeModal();
+    },
     다음: () => {
+      userUpdate();
       navigate('/register/4');
-    },
-    확인: () => {
-      navigate('/login');
       closeModal();
     },
-    저장: (inputValue) => {
-      if (!inputValue) {
-        console.log('저장 버튼에 맞는 함수');
+    확인: async () => {
+      const result = await updateNickname(nickname);
+      if (result) {
+        navigate('/login', { replace: true });
+        localStorage.removeItem('ex_users');
       } else {
-        modifyFolder(inputValue);
+        console.error('닉네임 저장 실패 또는 이미 존재합니다.');
       }
+    },
 
-      closeModal();
-    },
-    삭제: () => {
-      deleteFolder();
-      closeModal();
-    },
-    추가: (inputValue) => {
-      if (!inputValue) {
-        console.log('추가 버튼에 맞는 함수');
-      } else {
-        // 임시데이터 추가. DB 연결 필요 + 로더
-        addFolder(ref.current++, inputValue);
-      }
-
-      closeModal();
-    },
+    저장: () => console.log('저장 버튼에 맞는 함수'),
+    삭제: () => console.log('삭제 버튼에 맞는 함수'),
+    추가: () => console.log('추가 버튼에 맞는 함수'),
     초기화: () => console.log('초기화 버튼에 맞는 함수'),
     변경: () => console.log('변경 버튼에 맞는 함수'),
     로그아웃: () => {
@@ -65,19 +56,14 @@ export function useModalActions() {
       console.log('기존 폴짝 추가하기 버튼에 맞는 함수'),
   };
 
-  const handleButtonClick = ({ buttonText, inputValue }: ModalActionParams) => {
+  const handleButtonClick = (buttonText: string) => {
     const action = modalActions[buttonText];
     if (action) {
-      action(inputValue);
+      action();
     } else {
       console.warn(`"${buttonText}"에 대한 동작이 정의되지 않았습니다.`);
     }
   };
 
   return { handleButtonClick };
-}
-
-interface ModalActionParams {
-  buttonText: string;
-  inputValue?: string;
 }
