@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 
-import { DetailCommonDataProps } from '@/types/detailCommonDataProps';
+import { DetailCommonDataType } from '@/types/detailCommonDataType';
 
 interface ModalContentProps {
-  data: DetailCommonDataProps[];
+  data: DetailCommonDataType[];
 }
 
 export default function ModalContent({ data }: ModalContentProps) {

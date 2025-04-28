@@ -9,60 +9,49 @@ import { LatLng } from '@/types/LatLng';
 interface MapHeaderProps {
   mapRef: MutableRefObject<kakao.maps.Map | null>;
   myLocation: LatLng | null;
-  onFoodBtnClick: () => void;
-  onFestivalBtnClick: () => void;
-  onTourBtnClick: () => void;
-  onLeportsBtnClick: () => void;
-  onShoppingBtnClick: () => void;
-  onHotelsBtnClick: () => void;
-  onCulturalBtnClick: () => void;
+  isLoggedIn: boolean;
+  onCategoryBtnClick: () => void;
 }
 function MapHeader({
   mapRef,
   myLocation,
-  onFoodBtnClick,
-  onFestivalBtnClick,
-  onTourBtnClick,
-  onLeportsBtnClick,
-  onShoppingBtnClick,
-  onHotelsBtnClick,
-  onCulturalBtnClick,
+  isLoggedIn,
+  onCategoryBtnClick,
 }: MapHeaderProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const MAP_FILTER = [
-    { key: 'favorite', name: '즐겨찾기' },
-    { key: 'polzzak', name: '나의폴짝' },
-    { key: 'food', name: '음식점' },
-    { key: 'festival', name: '축제' },
-    { key: 'tour', name: '관광지' },
-    { key: 'leports', name: '레포츠' },
-    { key: 'shopping', name: '쇼핑' },
-    { key: 'hotels', name: '숙박' },
-    { key: 'cultural', name: '문화시설' },
+    { contentTypeId: '', category: 'favorite', label: '즐겨찾기' },
+    { contentTypeId: '', category: 'polzzak', label: '나의폴짝' },
+    { contentTypeId: '39', category: 'food', label: '음식점' },
+    { contentTypeId: '15', category: 'festival', label: '축제' },
+    { contentTypeId: '12', category: 'tour', label: '관광지' },
+    { contentTypeId: '28', category: 'leports', label: '레포츠' },
+    { contentTypeId: '38', category: 'shopping', label: '쇼핑' },
+    { contentTypeId: '32', category: 'hotels', label: '숙박' },
+    { contentTypeId: '14', category: 'cultural', label: '문화시설' },
   ];
 
-  // key 기준으로 상태 관리
-  const [activeFilterKey, setActiveFilterKey] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
-  // URL 쿼리 파라미터와 연결
+  // ✅ category만 의존성으로 추출
+  const category = searchParams.get('category');
+
   useEffect(() => {
-    const category = searchParams.get('category');
-    setActiveFilterKey(category);
-  }, [searchParams]);
+    setActiveFilter(category);
+  }, [category]);
 
-  const handleFilterClick = (filterKey: string) => {
+  const handleFilterClick = (category: string) => {
     const current = new URLSearchParams(searchParams);
-
-    const isActive = filterKey === activeFilterKey;
+    const isActive = category === activeFilter;
 
     if (isActive) {
-      setActiveFilterKey(null);
+      setActiveFilter(null);
       current.delete('category');
     } else {
-      setActiveFilterKey(filterKey);
-      current.set('category', filterKey);
+      setActiveFilter(category);
+      current.set('category', category);
     }
 
     navigate({
@@ -70,15 +59,8 @@ function MapHeader({
       search: current.toString(),
     });
 
-    // 콜백 실행
     if (!isActive) {
-      if (filterKey === 'food') onFoodBtnClick();
-      else if (filterKey === 'festival') onFestivalBtnClick();
-      else if (filterKey === 'tour') onTourBtnClick();
-      else if (filterKey === 'leports') onLeportsBtnClick();
-      else if (filterKey === 'shopping') onShoppingBtnClick();
-      else if (filterKey === 'hotels') onHotelsBtnClick();
-      else if (filterKey === 'cultural') onCulturalBtnClick();
+      onCategoryBtnClick();
     }
   };
 
@@ -106,13 +88,16 @@ function MapHeader({
       </header>
 
       <ul className="fixed top-[62px] right-0 left-0 z-10 flex gap-1 py-2">
-        {MAP_FILTER.map(({ key, name }) => (
-          <li key={key} className="first-of-type:ml-4">
+        {MAP_FILTER.filter(
+          ({ category }) =>
+            isLoggedIn || (category !== 'favorite' && category !== 'polzzak'),
+        ).map(({ category, label }) => (
+          <li key={category} className="first-of-type:ml-4">
             <button
-              className={`fs-14 text-gray07 border-gray07 rounded-4xl border px-3 py-1 whitespace-nowrap ${activeFilterKey === key ? 'bg-primary border-primary text-white' : 'bg-white'}`}
-              onClick={() => handleFilterClick(key)}
+              className={`fs-14 text-gray07 border-gray07 rounded-4xl border px-3 py-1 whitespace-nowrap ${activeFilter === category ? 'bg-primary border-primary text-white' : 'bg-white'}`}
+              onClick={() => handleFilterClick(category)}
             >
-              {name}
+              {label}
             </button>
           </li>
         ))}
