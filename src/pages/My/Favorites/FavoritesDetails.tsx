@@ -2,14 +2,16 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import supabase from '@/api/supabase';
-import ListItem from '@/components/ListItem/ListItem';
+import ListItemCardById from '@/components/ListItem/ListItemCardById';
 import { useToast } from '@/hooks/useToast';
 import RequireLogin from '@/pages/RequireLogin';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useHeaderStore } from '@/store/useHeaderStore';
 
 function FavoritesDetails() {
-  const [itemList, setItemList] = useState<string[] | null>(null);
+  const [itemList, setItemList] = useState<
+    { contentid: string; contenttypeid: string }[] | null
+  >(null);
   const { id } = useParams();
   const navigate = useNavigate();
   const showToast = useToast();
@@ -29,30 +31,29 @@ function FavoritesDetails() {
     }
 
     const checkFolderIndex = async () => {
+      const folderIndex = parseInt(`${id}`, 10);
+      if (isNaN(folderIndex) || folderIndex < 0) {
+        navigate('/not-found');
+        return;
+      }
+
+      const getFolderId = `${isAuth}_${folderIndex}`;
       const { data, error } = await supabase
         .from('ex_favorite_folders')
         .select('folder_id, folder_name')
-        .eq('user_id', isAuthPrimaryId);
+        .eq('folder_id', getFolderId);
 
-      if (error || !data) {
+      if (error || !data || !data[0].folder_id || !data[0].folder_name) {
         navigate('/not-found');
         return;
       }
-
-      const folderIndex = parseInt(`${id}`, 10);
-      if (isNaN(folderIndex) || folderIndex < 0 || folderIndex >= data.length) {
-        navigate('/not-found');
-        return;
-      }
-
-      const targetFolder = data[folderIndex];
 
       setSelectFolder({
-        id: targetFolder.folder_id,
-        name: targetFolder.folder_name,
+        id: data[0].folder_id,
+        name: data[0].folder_name,
       });
 
-      setContentsTitle(targetFolder.folder_name);
+      setContentsTitle(data[0].folder_name);
     };
 
     checkFolderIndex();
@@ -62,7 +63,7 @@ function FavoritesDetails() {
     id,
     folderId,
     folderName,
-    isAuthPrimaryId,
+    isAuth,
     navigate,
     setContentsTitle,
     setSelectFolder,
@@ -75,7 +76,7 @@ function FavoritesDetails() {
     const fetchFavoriteList = async () => {
       const { data, error } = await supabase
         .from('ex_favorite')
-        .select('content_id')
+        .select('ex_contents(contentid, contenttypeid)')
         .eq('folder_id', folderId);
 
       if (error) {
@@ -88,9 +89,21 @@ function FavoritesDetails() {
         return;
       }
 
-      const contentsIds = data.flatMap((item) => item.content_id);
+      type DataType = {
+        ex_contents: {
+          contentid: string;
+          contenttypeid: string;
+        };
+      };
 
-      setItemList(contentsIds);
+      const getData = data as unknown as DataType[];
+
+      const contentsData = getData.map((item) => ({
+        contentid: item.ex_contents.contentid,
+        contenttypeid: item.ex_contents.contenttypeid,
+      }));
+
+      setItemList(contentsData);
     };
 
     fetchFavoriteList();
@@ -102,7 +115,15 @@ function FavoritesDetails() {
 
   return (
     <main className="p-6">
-      <ListItem contentIdArr={itemList} />
+      <ul className="flex flex-col gap-6">
+        {itemList?.map((item, idx) => (
+          <ListItemCardById
+            key={idx}
+            contentId={item.contentid}
+            contentTypeId={item.contenttypeid}
+          />
+        ))}
+      </ul>
     </main>
   );
 }
