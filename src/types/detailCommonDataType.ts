@@ -1,4 +1,13 @@
-export interface DetailCommonDataProps {
+export interface NearItemType extends DetailCommonDataType {
+  addr1: string;
+  addr2?: string;
+  mapx: string;
+  mapy: string;
+  firstimage?: string | null;
+  tel?: string | null;
+}
+
+export interface DetailCommonDataType {
   addr1?: string;
   addr2?: string;
   areacode?: string;
@@ -11,13 +20,13 @@ export interface DetailCommonDataProps {
   cpyrhtDivCd?: string;
   createdtime?: string;
   dist?: string;
-  firstimage?: string;
+  firstimage?: string | null;
   firstimage2?: string;
   mapx?: string;
   mapy?: string;
   mlevel?: string;
   modifiedtime?: string;
   sigungucode?: string;
-  tel?: string;
+  tel?: string | null;
   title?: string;
 }
