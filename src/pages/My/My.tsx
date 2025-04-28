@@ -5,24 +5,22 @@ import Modal from '@/components/Modal/Modal';
 import MenuItem from '@/components/My/MenuItem';
 import Profile from '@/components/Profile/Profile';
 import UserMenu, { MenuItemTypes } from '@/components/UserMenu/UserMenu';
+import RequireLogin from '@/pages/RequireLogin';
 import { useModalStore } from '@/store/useModalStore';
 import { useUserStore } from '@/store/useUserStore';
 
 function My() {
+  const location = useLocation();
+  const isMyPage = location.pathname === '/my';
+  const CURRENT_USER =
+    sessionStorage.getItem('user') || localStorage.getItem('user');
+
   const { openModal } = useModalStore();
   const { user, fetchUserInfo, isLoading, error } = useUserStore();
-  const location = useLocation();
 
-  const isMyPage = location.pathname === '/my';
   const handleLogoutClick = () => {
     openModal('logout');
   };
-
-  useEffect(() => {
-    if (isMyPage) {
-      fetchUserInfo();
-    }
-  }, [isMyPage, fetchUserInfo]);
 
   const menus = [
     { label: '공지사항', href: '/notice' },
@@ -57,10 +55,18 @@ function My() {
     },
   ];
 
+  useEffect(() => {
+    if (isMyPage) {
+      fetchUserInfo();
+    }
+  }, [isMyPage, fetchUserInfo]);
+
   return (
     <main className="flex h-full w-full flex-1 flex-col overflow-auto p-6">
       <h1 className="sr-only">마이페이지</h1>
-      {isMyPage ? (
+      {!CURRENT_USER ? (
+        <RequireLogin />
+      ) : isMyPage ? (
         <div className="flex flex-col gap-6">
           {isLoading ? (
             <div className="text-center">
