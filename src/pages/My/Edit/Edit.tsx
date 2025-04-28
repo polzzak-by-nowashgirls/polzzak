@@ -19,7 +19,7 @@ function Edit() {
   const isEditPage = location.pathname === '/my/edit';
 
   const handleDeleteButton = () => {
-    openModal();
+    openModal('delete');
   };
 
   return (
