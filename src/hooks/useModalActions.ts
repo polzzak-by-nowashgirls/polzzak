@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
+import supabase from '@/api/supabase';
 import { updateNickname } from '@/api/supabase/hooks/updateNickname';
 import { useUserUpdate } from '@/hooks/register/useUserUpdate';
 import { useModalStore } from '@/store/useModalStore';
@@ -48,10 +49,22 @@ export function useModalActions() {
       sessionStorage.clear();
       closeModal();
     },
-    탈퇴: () => {
+    탈퇴: async () => {
+      const LOGINED_USER =
+        localStorage.getItem('user') || sessionStorage.getItem('user');
+      const { error } = await supabase
+        .from('ex_users')
+        .delete()
+        .eq('user_id', LOGINED_USER);
+
       navigate('/login', {
         state: { toastMessage: '회원 탈퇴가 완료되었습니다.' },
       });
+      localStorage.clear();
+      sessionStorage.clear();
+      if (error) {
+        console.error('회원 탈퇴를 할 수 없습니다. ', error);
+      }
       closeModal();
     },
     '신규 폴짝 추가하기': () =>
