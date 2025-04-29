@@ -14,6 +14,7 @@ type ModalType =
   | 'tourist'
   | 'logout'
   | 'login'
+  | 'delete'
   | null;
 
 interface ModalStore {

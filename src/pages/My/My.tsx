@@ -1,19 +1,25 @@
+import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import Modal from '@/components/Modal/Modal';
 import MenuItem from '@/components/My/MenuItem';
 import Profile from '@/components/Profile/Profile';
 import UserMenu, { MenuItemTypes } from '@/components/UserMenu/UserMenu';
-import { USER_INFO } from '@/mockData';
+import RequireLogin from '@/pages/RequireLogin';
 import { useModalStore } from '@/store/useModalStore';
+import { useUserStore } from '@/store/useUserStore';
 
 function My() {
-  const { openModal } = useModalStore();
   const location = useLocation();
-
   const isMyPage = location.pathname === '/my';
+  const CURRENT_USER =
+    sessionStorage.getItem('user') || localStorage.getItem('user');
+
+  const { openModal } = useModalStore();
+  const { user, fetchUserInfo, isLoading, error } = useUserStore();
+
   const handleLogoutClick = () => {
-    openModal();
+    openModal('logout');
   };
 
   const menus = [
@@ -49,12 +55,30 @@ function My() {
     },
   ];
 
+  useEffect(() => {
+    if (isMyPage) {
+      fetchUserInfo();
+    }
+  }, [isMyPage, fetchUserInfo]);
+
   return (
-    <section className="flex h-full w-full flex-col">
+    <main className="flex h-full w-full flex-1 flex-col overflow-auto p-6">
       <h1 className="sr-only">마이페이지</h1>
-      {isMyPage ? (
+      {!CURRENT_USER ? (
+        <RequireLogin />
+      ) : isMyPage ? (
         <div className="flex flex-col gap-6">
-          <Profile userInfo={USER_INFO} />
+          {isLoading ? (
+            <div className="text-center">
+              사용자 정보를 불러오는 중입니다...
+            </div>
+          ) : error ? (
+            <div className="text-center text-red-500">{error}</div>
+          ) : user ? (
+            <Profile userInfo={user} />
+          ) : (
+            <div className="text-center">사용자 정보를 불러올 수 없습니다.</div>
+          )}
           <UserMenu menus={userMenus} />
           <MenuItem menus={menus} />
           <Modal mode="alert" type="logout" />
@@ -62,7 +86,7 @@ function My() {
       ) : (
         <Outlet />
       )}
-    </section>
+    </main>
   );
 }
 
