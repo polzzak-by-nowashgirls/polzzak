@@ -4,12 +4,47 @@ import Icon from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
 import Modal from '@/components/Modal/Modal';
 import { useModalStore } from '@/store/useModalStore';
+import { useSearchStore } from '@/store/useSearchStore';
+
+interface ClickedChipItem {
+  id: number;
+  name: string;
+  selected: boolean;
+}
 
 function Search() {
   const { openModal } = useModalStore();
+  const { keyword, setKeyWord, region, setRegion, theme, setTheme } =
+    useSearchStore();
+
+  const openCalendar = () => {
+    openModal('calendar');
+  };
+  const handleKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setKeyWord(e.target.value);
+  };
+  const handleRegion = (clickedChip: ClickedChipItem) => {
+    if (clickedChip.selected) {
+      setRegion(clickedChip.name);
+    } else {
+      setRegion('');
+    }
+  };
+  const handleTheme = (clickedChip: ClickedChipItem) => {
+    setTheme((prev) => {
+      if (clickedChip.selected) {
+        return [...prev, clickedChip.name];
+      } else {
+        return prev.filter((item) => item !== clickedChip.name);
+      }
+    });
+  };
+  const handleSearchButton = () => {
+    console.log(keyword, region, theme);
+  };
 
   return (
-    <section className="flex h-full w-full flex-col justify-between">
+    <main className="flex h-full w-full flex-1 flex-col overflow-auto p-6">
       <h1 className="sr-only">검색</h1>
       <div className="flex flex-1 flex-col gap-4">
         <div>
@@ -18,6 +53,8 @@ function Search() {
             hideLabel={true}
             type="text"
             placeholder="검색어를 입력해 주세요."
+            value={keyword}
+            onChange={handleKeyword}
           >
             <Button variant={'tertiary'} size="md">
               <Icon id="search" className="text-gray05" />
@@ -30,19 +67,35 @@ function Search() {
             hideLabel={true}
             type="button"
             value={'날짜를 선택해 주세요.'}
-            onClick={openModal}
+            onClick={openCalendar}
           >
-            <Button variant={'tertiary'} size="md" onClick={openModal}>
+            <Button variant={'tertiary'} size="md" onClick={openCalendar}>
               <Icon id="calendar" className="text-gray05" />
             </Button>
           </Input>
         </div>
-        <Chip mode="region" />
-        <Chip mode="theme" type="multiple" />
+        <Chip
+          mode="region"
+          label="지역 선택"
+          subLabel="단일 선택"
+          onClick={handleRegion}
+        />
+        <Chip
+          mode="theme"
+          type="multiple"
+          label="주제 선택"
+          subLabel="다중 선택"
+          onClick={handleTheme}
+        />
       </div>
-      <Button>검색</Button>
+      <Button
+        disabled={!keyword && !region && theme.length === 0}
+        onClick={handleSearchButton}
+      >
+        검색
+      </Button>
       <Modal mode="slide" type="calendar" />
-    </section>
+    </main>
   );
 }
 
