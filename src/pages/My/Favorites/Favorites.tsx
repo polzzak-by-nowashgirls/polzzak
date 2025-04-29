@@ -115,7 +115,7 @@ function Favorites() {
   ];
 
   return (
-    <main className="p-6">
+    <section>
       <FavoritesList
         folders={folders}
         onClick={handleAddClick}
@@ -156,7 +156,7 @@ function Favorites() {
       )}
 
       {loader && <Loader text="기다려주세요." />}
-    </main>
+    </section>
   );
 }
 
