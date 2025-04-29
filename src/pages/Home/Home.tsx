@@ -5,13 +5,13 @@ import { THEMES_ITEM_DUMMY_DATA } from '@/mockData/ListItemDummyData';
 
 function Home() {
   return (
-    <div className="flex flex-col gap-6 pb-8">
+    <main className="flex h-full w-full flex-1 flex-col gap-6 overflow-auto pb-8">
       <CarouselVisual />
       <Category />
       <CarouselThemes data={THEMES_ITEM_DUMMY_DATA[0]} />
       <CarouselThemes data={THEMES_ITEM_DUMMY_DATA[1]} />
       <CarouselThemes data={THEMES_ITEM_DUMMY_DATA[2]} />
-    </div>
+    </main>
   );
 }
 
