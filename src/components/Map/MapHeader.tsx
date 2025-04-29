@@ -2,24 +2,22 @@ import { MutableRefObject, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
-import Icon from '@/components/Icon/Icon';
+import Icon, { IconId } from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
+import { useDialogStore } from '@/store/useDialogStore';
 import { LatLng } from '@/types/LatLng';
 
 interface MapHeaderProps {
   mapRef: MutableRefObject<kakao.maps.Map | null>;
   myLocation: LatLng | null;
   isLoggedIn: boolean;
-  onCategoryBtnClick: () => void;
 }
-function MapHeader({
-  mapRef,
-  myLocation,
-  isLoggedIn,
-  onCategoryBtnClick,
-}: MapHeaderProps) {
+
+function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  // console.log(dialogOpen);
 
   const MAP_FILTER = [
     { contentTypeId: '', category: 'favorite', label: '즐겨찾기' },
@@ -34,14 +32,29 @@ function MapHeader({
   ];
 
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-
-  // ✅ category만 의존성으로 추출
+  const { isOpen, closeModal } = useDialogStore();
   const category = searchParams.get('category');
 
   useEffect(() => {
     setActiveFilter(category);
   }, [category]);
 
+  // ✅ 모달 닫혔을 경우
+  useEffect(() => {
+    if (!isOpen) {
+      setActiveFilter(null);
+
+      const current = new URLSearchParams(searchParams);
+      current.delete('category');
+
+      navigate({
+        pathname: '/map',
+        search: current.toString(),
+      });
+    }
+  }, [isOpen]);
+
+  // ✅ 필터링 버튼 클릭 시
   const handleFilterClick = (category: string) => {
     const current = new URLSearchParams(searchParams);
     const isActive = category === activeFilter;
@@ -49,6 +62,7 @@ function MapHeader({
     if (isActive) {
       setActiveFilter(null);
       current.delete('category');
+      closeModal();
     } else {
       setActiveFilter(category);
       current.set('category', category);
@@ -58,10 +72,6 @@ function MapHeader({
       pathname: '/map',
       search: current.toString(),
     });
-
-    if (!isActive) {
-      onCategoryBtnClick();
-    }
   };
 
   const handleLocationClick = () => {
@@ -94,9 +104,14 @@ function MapHeader({
         ).map(({ category, label }) => (
           <li key={category} className="first-of-type:ml-4">
             <button
-              className={`fs-14 text-gray07 border-gray07 rounded-4xl border px-3 py-1 whitespace-nowrap ${activeFilter === category ? 'bg-primary border-primary text-white' : 'bg-white'}`}
+              className={`fs-14 text-gray07 border-gray03 flex items-center gap-1 rounded-4xl border px-3 py-1 whitespace-nowrap ${activeFilter === category ? 'bg-primary border-primary text-white' : 'bg-white'}`}
               onClick={() => handleFilterClick(category)}
             >
+              <Icon
+                id={category as IconId}
+                size={16}
+                className={`${activeFilter === category ? 'text-white' : 'text-gray05'}`}
+              />
               {label}
             </button>
           </li>
