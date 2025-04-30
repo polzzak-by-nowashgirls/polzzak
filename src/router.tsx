@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
+import Modal from '@/components/Modal/Modal';
 import RootLayout from '@/layouts/RootLayout';
 import {
   Contents,
@@ -25,8 +26,6 @@ import { Favorites, FavoritesDetails } from '@/pages/My/Favorites';
 import { Add, Edit as PolzzakEdit, Schedule } from '@/pages/Polzzak';
 import { StepPage } from '@/pages/Register';
 import SearchResult from '@/pages/Search/SearchResult';
-
-import Modal from './components/Modal/Modal';
 
 export const routes = [
   {
