@@ -1,3 +1,6 @@
+import { useNavigate } from 'react-router-dom';
+
+import { fetchSearchList } from '@/api/openAPI/utils/fetchSearchList';
 import Button from '@/components/Button/Button';
 import Chip from '@/components/Chip/Chip';
 import Icon from '@/components/Icon/Icon';
@@ -13,9 +16,17 @@ interface ClickedChipItem {
 }
 
 function Search() {
+  const navigate = useNavigate();
   const { openModal } = useModalStore();
-  const { keyword, setKeyWord, region, setRegion, theme, setTheme } =
-    useSearchStore();
+  const {
+    keyword,
+    setKeyWord,
+    region,
+    setRegion,
+    theme,
+    setTheme,
+    setSearchResults,
+  } = useSearchStore();
 
   const openCalendar = () => {
     openModal('calendar');
@@ -39,8 +50,13 @@ function Search() {
       }
     });
   };
-  const handleSearchButton = () => {
-    console.log(keyword, region, theme);
+  const handleSearchButton = async () => {
+    if (!keyword && !region && theme.length === 0) return;
+
+    const searchResults = await fetchSearchList({ keyword, region, theme });
+    setSearchResults(searchResults);
+    console.log(searchResults);
+    navigate(`/search/result`);
   };
 
   return (
