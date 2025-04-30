@@ -1,7 +1,9 @@
 import axios from 'axios';
+import qs from 'qs';
 
 export const client = axios.create({
   baseURL: `/tourapi${import.meta.env.VITE_OPEN_API_BASE_URL}`,
+  paramsSerializer: (params) => qs.stringify(params, { encode: false }),
 });
 
 client.interceptors.request.use((config) => {
@@ -9,8 +11,8 @@ client.interceptors.request.use((config) => {
     return config;
   }
 
-  config.url = `${config.url}?serviceKey=${import.meta.env.VITE_OPEN_API_KEY}`;
   config.params = {
+    serviceKey: import.meta.env.VITE_OPEN_API_KEY,
     ...(config.params || {}),
     MobileApp: 'polzzak',
     MobileOS: 'ETC',

@@ -114,7 +114,7 @@ function FavoritesDetails() {
   }
 
   return (
-    <main className="p-6">
+    <section>
       <ul className="flex flex-col gap-6">
         {itemList?.map((item, idx) => (
           <ListItemCardById
@@ -124,7 +124,7 @@ function FavoritesDetails() {
           />
         ))}
       </ul>
-    </main>
+    </section>
   );
 }
 
