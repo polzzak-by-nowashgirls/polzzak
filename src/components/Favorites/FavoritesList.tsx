@@ -34,30 +34,35 @@ function FavoritesList({
     if (folders.length < 0) return;
 
     const fetchAllImages = async () => {
+      const imageResults = await Promise.all(
+        folders.map(async (folder) => {
+          const { data, error } = await supabase
+            .from('ex_favorite')
+            .select('content_id')
+            .eq('folder_id', folder.folder_id)
+            .limit(5);
+
+          if (error || !data) {
+            showToast(
+              '데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
+              'top-[64px]',
+              5000,
+            );
+            console.error('❌ 폴더 데이터 불러오기 실패:', error);
+            return { folderId: folder.folder_id, images: [] };
+          }
+
+          const contentIds = data.map((item) => item.content_id);
+          const images = await fetchImage(contentIds);
+
+          return { folderId: folder.folder_id, images };
+        }),
+      );
+
       const allImages: Record<string, string[]> = {};
-
-      for (const folder of folders) {
-        const { data, error } = await supabase
-          .from('ex_favorite')
-          .select('content_id')
-          .eq('folder_id', folder.folder_id);
-
-        if (error || !data) {
-          showToast(
-            '데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
-            'top-[64px]',
-            5000,
-          );
-          console.error('❌ 폴더 데이터 불러오기 실패:', error);
-          continue;
-        }
-
-        const contentIds = data.map((item) => item.content_id);
-        const images = await fetchImage(contentIds);
-        const filteredImages = images.filter(Boolean).slice(0, 3);
-
-        allImages[folder.folder_id] = filteredImages;
-      }
+      imageResults.forEach(({ folderId, images }) => {
+        allImages[folderId] = images;
+      });
 
       setFolderImages(allImages);
     };
