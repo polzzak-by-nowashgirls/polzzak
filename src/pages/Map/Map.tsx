@@ -20,6 +20,7 @@ import Button from '@/components/Button/Button';
 import SlideUpDialog from '@/components/Dialog/SlideUpDialog';
 import MapHeader from '@/components/Map/MapHeader';
 import ModalContent from '@/components/Map/ModalContent';
+import { useAuthStore } from '@/store/useAuthStore';
 import { useDialogStore } from '@/store/useDialogStore';
 import { DetailCommonDataType } from '@/types/detailCommonDataType';
 import { LatLng } from '@/types/LatLng';
@@ -29,7 +30,7 @@ function Map() {
     appkey: import.meta.env.VITE_KAKAO_MAP_API_KEY,
     libraries: ['services'],
   });
-
+  const { isAuthenticated } = useAuthStore();
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [myLocation, setMyLocation] = useState<LatLng | null>(null);
   const [mapCenter, setMapCenter] = useState<LatLng | null>(null);
@@ -247,7 +248,11 @@ function Map() {
 
   return (
     <>
-      <MapHeader mapRef={mapRef} myLocation={myLocation} isLoggedIn={false} />
+      <MapHeader
+        mapRef={mapRef}
+        myLocation={myLocation}
+        isLoggedIn={isAuthenticated}
+      />
       <MapArea
         ref={mapRef}
         center={mapCenter}
