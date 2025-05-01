@@ -35,8 +35,10 @@ function Map() {
   const [mapCenter, setMapCenter] = useState<LatLng | null>(null);
   const [showReSearchButton, setShowReSearchButton] = useState(false);
   const { isOpen, openModal } = useDialogStore();
-  // 데이터 상태
-  const [dataList, setDataList] = useState<NearItemType[]>([]);
+  const [dataList, setDataList] = useState<NearItemType[]>([]); // 데이터 상태
+  const [searchParams] = useSearchParams();
+  const category = searchParams.get('category');
+  const isFiltered = category !== null && category.trim() !== '';
 
   // 위치 정보 가져오기 및 지도 초기화
   useEffect(() => {
@@ -73,8 +75,7 @@ function Map() {
       Math.abs(mapCenter.lng - newCenter.lng) > 0.001;
 
     // 🔘 필터링된 상태에서만 버튼 보여주기
-    // setShowReSearchButton(isFiltered && moved);
-    setShowReSearchButton(moved);
+    setShowReSearchButton(isFiltered && moved);
   };
 
   // 📍 현재 위치에서 재검색 클릭
@@ -88,9 +89,6 @@ function Map() {
     setMapCenter(newCenter);
     setShowReSearchButton(false);
   };
-
-  const [searchParams] = useSearchParams();
-  const category = searchParams.get('category');
 
   const foodList = useGetNearFoodList(
     mapCenter?.lat ?? 0,

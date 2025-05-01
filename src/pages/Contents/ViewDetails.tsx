@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
+import { useGetDetailCommon } from '@/api/openAPI';
 import Button from '@/components/Button/Button';
 import Details from '@/components/Contents/Details';
 import Icon from '@/components/Icon/Icon';
 import UserMenu, { MenuItemTypes } from '@/components/UserMenu/UserMenu';
-import { LIST_ITEM_DUMMY_DATA } from '@/mockData/ListItemDummyData';
 import { useHeaderStore } from '@/store/useHeaderStore';
 
 const userMenu: MenuItemTypes[] = [
@@ -33,41 +33,76 @@ const userMenu: MenuItemTypes[] = [
 
 function ViewDetails() {
   const { id } = useParams();
-  const navigate = useNavigate();
-
-  const item = LIST_ITEM_DUMMY_DATA.find((item) => item.id.toString() === id);
-
+  const data = useGetDetailCommon(id as string);
   const setContentsTitle = useHeaderStore((state) => state.setContentsTitle);
+  console.log(data);
+  console.log(data.length);
 
+  // 헤더 타이틀 변경
   useEffect(() => {
-    if (!item) {
-      navigate('/not-found');
-      return;
+    if (data.length > 0) {
+      setContentsTitle(data[0].title);
     }
+    return () => {
+      setContentsTitle(null); // 페이지를 벗어날 때 초기화
+    };
+  }, [data, setContentsTitle]);
 
-    setContentsTitle(item.title);
+  let contentSection;
 
-    return () => setContentsTitle(null);
-  }, [item, navigate, setContentsTitle]);
+  if (data.length === 0) {
+    contentSection = <div className="text-center">로딩 중...</div>;
+  } else if (
+    ['39', '32', '14', '28'].includes(data[0].contenttypeid.toString())
+  ) {
+    contentSection = (
+      <Details type="guide" data={data[0]}>
+        이용 안내
+      </Details>
+    );
+  } else if (['15', '12'].includes(data[0].contenttypeid)) {
+    contentSection = (
+      <div className="flex flex-col gap-6">
+        <Details type="guide" data={data[0]}>
+          이용 안내
+        </Details>
+        <Details type="detail" data={data[0]}>
+          행사 소개
+        </Details>
+        <Details type="detail" data={data[0]}>
+          행사 내용
+        </Details>
+      </div>
+    );
+  } else {
+    contentSection = null; // 혹은 다른 fallback
+  }
 
   return (
-    <div className="flex flex-col gap-4">
-      {item && (
-        <img src={item.imgUrl} alt={item.title} className="rounded-2xl" />
+    <>
+      {data.length > 0 ? (
+        data[0].firstimage ? (
+          <img
+            src={data[0].firstimage}
+            alt={data[0].title}
+            className="aspect-video w-full rounded-2xl"
+          />
+        ) : (
+          <img
+            src="/images/rabbit_face.png"
+            alt="이미지 준비 중입니다."
+            className="m-auto aspect-square h-12"
+          />
+        )
+      ) : (
+        <div className="text-center">로딩 중...</div>
       )}
-
-      <section>
-        <UserMenu menus={userMenu} />
-      </section>
-      <div className="flex flex-col gap-6">
-        <Details type="guide">이용 안내</Details>
-        <Details type="detail">행사 소개</Details>
-        <Details type="detail">행사 내용</Details>
-      </div>
+      <UserMenu menus={userMenu} />
+      {contentSection}
       <Button variant={'float'}>
         <Icon id="arrow_top" />
       </Button>
-    </div>
+    </>
   );
 }
 
