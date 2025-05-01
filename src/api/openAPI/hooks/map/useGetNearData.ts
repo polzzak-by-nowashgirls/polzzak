@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 
-interface NearItemType {
+export interface NearItemType {
   contentid: string;
   title: string;
   addr1: string;
+  addr2?: string;
   mapx: string;
   mapy: string;
-  firstimage: string;
-  tel: string;
+  firstimage?: string | null;
+  tel?: string | null;
 }
 
 interface UseGetNearDataOptions {

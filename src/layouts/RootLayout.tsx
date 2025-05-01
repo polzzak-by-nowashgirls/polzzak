@@ -1,9 +1,11 @@
-import { Suspense, useMemo } from 'react';
+import { Suspense, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Outlet, useLocation } from 'react-router-dom';
 
+import supabase from '@/api/supabase';
 import Header from '@/components/Header/Header';
 import NavMenu from '@/components/NavMenu/NavMenu';
+import { useAuthStore } from '@/store/useAuthStore';
 import { useHeaderStore } from '@/store/useHeaderStore';
 
 // ✅ 상수 분리
@@ -33,6 +35,39 @@ const HIDDEN_NAV_PATHS = new Set([
 const HIDDEN_HEADER_PATHS = new Set(['/map', '/splash']);
 
 function RootLayout() {
+  // 앱 시작 시, 세션 복원 처리
+  useEffect(() => {
+    const getSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const user = session?.user ?? null;
+
+      useAuthStore.setState({
+        session,
+        user,
+        isAuthenticated: !!session,
+      });
+    };
+
+    getSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      useAuthStore.setState({
+        session,
+        user: session?.user ?? null,
+        isAuthenticated: !!session,
+      });
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
   const location = useLocation();
   const path = location.pathname;
   const isRegisterPath = path.startsWith('/register');
@@ -46,7 +81,6 @@ function RootLayout() {
     return HEADER_TITLES[path] || '🐰폴짝🐰';
   }, [path, isRegisterPath, contentsTitle]);
 
-  // const showHeader = useMemo(() => !HIDDEN_HEADER_PATHS.has(path), [path]);
   const showHeader = useMemo(() => {
     return ![...HIDDEN_HEADER_PATHS].some((hiddenPath) =>
       path.startsWith(hiddenPath),

@@ -13,7 +13,7 @@ function Icon({ id, size = 24, className }: IconProps) {
       className={className}
       aria-hidden={true}
     >
-      <use href={`/sprite.svg#${id}`} />
+      <use href={`/icons/sprite.svg#${id}`} />
     </svg>
   );
 }
@@ -59,4 +59,12 @@ export type IconId =
   | 'share'
   | 'time'
   | 'visibillity_on'
-  | 'visibillity_off';
+  | 'visibillity_off'
+  | 'polzzak'
+  | 'food'
+  | 'festival'
+  | 'tour'
+  | 'leports'
+  | 'shopping'
+  | 'hotels'
+  | 'cultural';
