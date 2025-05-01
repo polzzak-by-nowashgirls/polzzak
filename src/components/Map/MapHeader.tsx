@@ -108,7 +108,11 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
               onClick={() => handleFilterClick(category)}
             >
               <Icon
-                id={category as IconId}
+                id={
+                  (category === 'favorite'
+                    ? 'favorite_off'
+                    : category) as IconId
+                }
                 size={16}
                 className={`${activeFilter === category ? 'text-white' : 'text-gray05'}`}
               />
