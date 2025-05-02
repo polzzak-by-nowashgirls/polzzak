@@ -12,6 +12,7 @@ import {
   Polzzak,
   Register,
   ResetPassword,
+  ResetPasswordCallback,
   Search,
   SearchResult,
   Splash,
@@ -44,6 +45,10 @@ export const routes = [
           { index: true, element: <Login /> },
           { path: 'find-id', element: <FindId /> },
           { path: 'reset-password', element: <ResetPassword /> },
+          {
+            path: 'reset-password-callback',
+            element: <ResetPasswordCallback />,
+          },
         ],
       },
       {

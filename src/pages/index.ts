@@ -3,6 +3,7 @@ export { default as Home } from './Home/Home';
 export { default as FindId } from './Login/FindId';
 export { default as Login } from './Login/Login';
 export { default as ResetPassword } from './Login/ResetPassword';
+export { default as ResetPasswordCallback } from './Login/ResetPasswordCallback';
 export { default as Map } from './Map/Map';
 export { default as Favorites } from './My/Favorites/Favorites';
 export { default as My } from './My/My';
