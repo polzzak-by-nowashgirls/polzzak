@@ -2,6 +2,7 @@ import { DateRange } from 'react-day-picker';
 import { create } from 'zustand';
 
 interface PolzzakStore {
+  polzzakId: string | null;
   name: string | null;
   dateRange: DateRange | null;
   region: string[] | null;
@@ -9,6 +10,7 @@ interface PolzzakStore {
   fileName: string | null;
   imageUrl: string | null;
 
+  setPolzzakId: (polzzakId: string) => void;
   setName: (name: string) => void;
   setDateRange: (date: DateRange | undefined) => void;
   setRegion: (regionUpdate: (prev: string[] | null) => string[]) => void;
@@ -19,6 +21,7 @@ interface PolzzakStore {
 }
 
 export const usePolzzakStore = create<PolzzakStore>()((set) => ({
+  polzzakId: null,
   name: null,
   dateRange: null,
   region: null,
@@ -26,6 +29,7 @@ export const usePolzzakStore = create<PolzzakStore>()((set) => ({
   fileName: null,
   imageUrl: null,
 
+  setPolzzakId: (polzzakId) => set({ polzzakId }),
   setName: (name) => set({ name }),
   setDateRange: (date) => set({ dateRange: date ?? null }),
   setRegion: (regionUpdate) =>
