@@ -11,6 +11,7 @@ import SlideUpDialog from '@/components/Dialog/SlideUpDialog';
 import Icon from '@/components/Icon/Icon';
 import { ImageCropper } from '@/components/Input/ImageCropper';
 import Input from '@/components/Input/Input';
+import Validation from '@/components/Input/Validation';
 import Loader from '@/components/Loader/Loader';
 import { useToast } from '@/hooks/useToast';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -23,13 +24,11 @@ function Add() {
   const [isSaving, setIsSaving] = useState(false);
   const { isOpen, openModal, closeModal } = useDialogStore();
   const {
-    polzzakId,
     name,
     thumbnail,
     dateRange,
     region,
     imageUrl,
-    setPolzzakId,
     setName,
     setDateRange,
     setRegion,
@@ -105,69 +104,87 @@ function Add() {
 
   const saveAddPolzzak = async () => {
     setIsSaving(true);
+    /* 폴짝 이름 저장 */
+    const { data, error } = await supabase
+      .from('ex_polzzak')
+      .insert([
+        {
+          user_id: userId,
+          name: name || null,
+          startDate:
+            dateRange?.from &&
+            format(dateRange.from, 'yyyy-MM-dd', { locale: ko }),
+          endDate: dateRange?.to
+            ? format(dateRange.to, 'yyyy-MM-dd', { locale: ko })
+            : null,
+          thumbnail: thumbnail || null,
+        },
+      ])
+      .select();
+
+    if (error) {
+      errToast();
+      console.error('데이터 저장 실패 : ', error);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      errToast();
+      console.error('데이터 저장 실패 : ', { data, error });
+      return;
+    }
+
+    const polzzakId = data[0].id;
     try {
-      /* 폴짝 이름 저장 */
-      if (name) {
-        const { data, error } = await supabase
-          .from('ex_polzzak')
+      /* 폴짝 날짜 저장 */
+      // 날짜 single
+      if (dateRange?.from) {
+        const { error: oneScheduleErr } = await supabase
+          .from('ex_polzzak_schedule')
           .insert([
             {
-              user_id: userId,
-              name: name,
-              startDate: dateRange?.from || null,
-              endDate: dateRange?.to || null,
-              thumbnail: thumbnail,
-            },
-          ])
-          .select();
-
-        if (error) {
-          errToast();
-          console.error('데이터 저장 실패 : ', error);
-          return;
-        }
-
-        if (!data || data.length === 0) {
-          errToast();
-          console.error('데이터 저장 실패 : ', { data, error });
-          return;
-        }
-        setPolzzakId(data[0].id);
-      }
-
-      /* 폴짝 날짜 저장 */
-      if (dateRange?.from && dateRange?.to) {
-        const getDateRangeArray = (start: Date, end: Date) => {
-          const result = [];
-          const current = new Date(start);
-          while (current <= end) {
-            result.push(new Date(current));
-            current.setDate(current.getDate() + 1);
-          }
-          return result;
-        };
-
-        const dateList = getDateRangeArray(
-          new Date(dateRange.from),
-          new Date(dateRange.to),
-        );
-
-        const { error: scheduleErr } = await supabase
-          .from('ex_polzzak_schedule')
-          .insert(
-            dateList.map((date) => ({
               polzzak_id: polzzakId,
-              date: date.toISOString().slice(0, 10),
-              place: null,
-              time: null,
-              memo: null,
-            })),
+              date: format(dateRange.from, 'yyyy-MM-dd', { locale: ko }),
+            },
+          ]);
+
+        if (oneScheduleErr) {
+          errToast();
+          console.error('데이터 저장 실패 : ', oneScheduleErr);
+          return;
+        }
+
+        // 날짜 range
+        if (dateRange?.to) {
+          const getDateRangeArray = (start: Date, end: Date) => {
+            const result = [];
+            const current = new Date(start);
+            while (current <= end) {
+              result.push(new Date(current));
+              current.setDate(current.getDate() + 1);
+            }
+            return result;
+          };
+
+          const dateList = getDateRangeArray(
+            new Date(dateRange.from),
+            new Date(dateRange.to),
           );
 
-        if (scheduleErr) {
-          errToast();
-          console.error('데이터 저장 실패 : ', scheduleErr);
-          return;
+          const { error: scheduleErr } = await supabase
+            .from('ex_polzzak_schedule')
+            .insert(
+              dateList.map((date) => ({
+                polzzak_id: polzzakId,
+                date: format(date, 'yyyy-MM-dd', { locale: ko }),
+              })),
+            );
+
+          if (scheduleErr) {
+            errToast();
+            console.error('데이터 저장 실패 : ', scheduleErr);
+            return;
+          }
         }
       }
 
@@ -189,11 +206,11 @@ function Add() {
         }
       }
 
-      navigate('/polzzak/1', { replace: true });
-      // navigate(`/polzzak/${polzzakId}`, { replace: true });
+      navigate(`/polzzak/${polzzakId}`, { replace: true });
       console.log('서버에 저장 완료!');
     } catch (err) {
       errToast();
+      await supabase.from('ex_polzzak').delete().eq('id', polzzakId);
       console.error('데이터 저장 실패 : ', err);
     } finally {
       setIsSaving(false);
@@ -233,6 +250,7 @@ function Add() {
               <Icon id="calendar" className="text-gray05" />
             </Button>
           </Input>
+          <Validation status={false} message="필수 입력 항목입니다." />
         </div>
         <div>
           <Chip
@@ -241,7 +259,6 @@ function Add() {
             subLabel="다중 선택 가능합니다."
             type="multiple"
             onClick={(selectChip) => {
-              console.log(selectChip);
               setRegion((prev) => {
                 if (!prev) return [selectChip.name];
 
@@ -301,12 +318,7 @@ function Add() {
           </figure>
         )}
       </div>
-      <Button
-        disabled={
-          !name && !dateRange?.from && (!region || region?.length === 0)
-        }
-        onClick={saveAddPolzzak}
-      >
+      <Button disabled={!dateRange?.from} onClick={saveAddPolzzak}>
         폴짝 추가하기
       </Button>
       {isOpen && (
