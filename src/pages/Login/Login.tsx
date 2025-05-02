@@ -47,26 +47,44 @@ function Login() {
 
   const pwInputRef = useRef<HTMLInputElement>(null);
 
-  // 페이지 진입 시 토스트 메시지 출력
+  // 1. 페이지 진입 시 foundId 적용
   useEffect(() => {
+    if (location.state?.foundId) {
+      setIdValue(location.state.foundId);
+      setIdValid(true);
+    }
+  }, [location.state?.foundId]);
+
+  // 2. 페이지 진입 시 토스트 메시지 출력
+  useEffect(() => {
+    console.log('location.state', location.state);
+
     if (location.state?.toastMessage) {
       showToast(location.state.toastMessage);
     }
+
+    if (location.state?.foundId) {
+      setIdValue(location.state.foundId);
+      setIdValid(true);
+      return;
+    }
   }, [location.state, showToast]);
 
-  // 로컬 스토리지 아이디 값 불러오기
+  // 3. 로컬 스토리지 아이디 값 불러오기
   useEffect(() => {
-    if (isSavedId) {
-      const savedId = localStorage.getItem('user');
-      if (savedId) {
-        setIdValue(savedId);
-        setIdValid(true);
+    if (!location.state?.foundId) {
+      if (isSavedId) {
+        const savedId = localStorage.getItem('user');
+        if (savedId) {
+          setIdValue(savedId);
+          setIdValid(true);
+        }
+      } else {
+        setIdValue('');
+        setIdValid(null);
       }
-    } else {
-      setIdValue('');
-      setIdValid(null);
     }
-  }, [isSavedId]);
+  }, [isSavedId, location.state?.foundId]);
 
   const onChangeIDInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

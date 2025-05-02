@@ -12,6 +12,8 @@ import { useHeaderStore } from '@/store/useHeaderStore';
 const HEADER_TITLES: Record<string, string> = {
   '/': '🐰폴짝🐰',
   '/login': '로그인',
+  '/login/find-id': '아이디 찾기',
+  '/login/reset-password': '비밀번호 재설정',
   '/search': '검색',
   '/map': '지도',
   '/polzzak': '폴짝',
