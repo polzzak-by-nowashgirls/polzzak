@@ -21,7 +21,7 @@ export type DialogProps = {
   dimd?: boolean;
   dragIcon?: boolean;
   header: string;
-  description?: [];
+  description?: string[];
   button?: DialogBtnProps[];
   buttonDirection?: 'row' | 'col';
   children?: React.ReactNode;
