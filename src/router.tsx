@@ -1,8 +1,9 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 
 import RootLayout from '@/layouts/RootLayout';
 import {
   Contents,
+  FindId,
   Home,
   Login,
   Map,
@@ -10,7 +11,10 @@ import {
   NotFound,
   Polzzak,
   Register,
+  ResetPassword,
+  ResetPasswordCallback,
   Search,
+  SearchResult,
   Splash,
 } from '@/pages';
 import ViewDetails from '@/pages/Contents/ViewDetails';
@@ -24,9 +28,6 @@ import {
 import { Favorites, FavoritesDetails } from '@/pages/My/Favorites';
 import { Add, Edit as PolzzakEdit, Schedule } from '@/pages/Polzzak';
 import { StepPage } from '@/pages/Register';
-import SearchResult from '@/pages/Search/SearchResult';
-
-import Modal from './components/Modal/Modal';
 
 export const routes = [
   {
@@ -39,7 +40,16 @@ export const routes = [
       },
       {
         path: '/login',
-        element: <Login />,
+        element: <Outlet />,
+        children: [
+          { index: true, element: <Login /> },
+          { path: 'find-id', element: <FindId /> },
+          { path: 'reset-password', element: <ResetPassword /> },
+          {
+            path: 'reset-password-callback',
+            element: <ResetPasswordCallback />,
+          },
+        ],
       },
       {
         path: '/register',
@@ -60,12 +70,6 @@ export const routes = [
       {
         path: '/map',
         element: <Map />,
-        children: [
-          {
-            path: 'favorite',
-            element: <Modal mode="slide" type="favorite_list" />,
-          },
-        ],
       },
       {
         path: '/polzzak',
