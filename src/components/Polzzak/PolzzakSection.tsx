@@ -5,9 +5,11 @@ import PolzzakListItem from './PolzzakListItem';
 function PolzzakSection({
   title,
   items,
+  refetch,
 }: {
   title: string[];
   items: ListItemType[];
+  refetch: () => Promise<void>;
 }) {
   const getParticle = (str: string) =>
     (str.charCodeAt(str.length - 1) - 0xac00) % 28 !== 0 ? '이' : '가';
@@ -32,7 +34,13 @@ function PolzzakSection({
               {getParticle(title[1])} 비어있습니다.
             </li>
           ) : (
-            items.map((item) => <PolzzakListItem key={item.name} item={item} />)
+            items.map((item) => (
+              <PolzzakListItem
+                key={item.name}
+                item={item}
+                onDeleted={refetch}
+              />
+            ))
           )}
         </ul>
       </section>

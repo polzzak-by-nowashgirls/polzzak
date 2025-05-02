@@ -1,7 +1,13 @@
 import PolzzakSection from '@/components/Polzzak/PolzzakSection';
 import { ListItemType } from '@/pages/Polzzak/Polzzak';
 
-function PolzzakList({ data }: { data: ListItemType[] }) {
+function PolzzakList({
+  data,
+  refetch,
+}: {
+  data: ListItemType[];
+  refetch: () => Promise<void>;
+}) {
   const section: [string[], ListItemType[]][] = [
     [['/images/rabbit_face.png', '폴짝 중'], []],
     [['/images/backpack.png', '폴짝 준비'], []],
@@ -31,7 +37,12 @@ function PolzzakList({ data }: { data: ListItemType[] }) {
   return (
     <div className="flex flex-col gap-6">
       {section.map((i, idx) => (
-        <PolzzakSection key={`${i[0][2]}${idx}`} title={i[0]} items={i[1]} />
+        <PolzzakSection
+          key={`${i[0][2]}${idx}`}
+          title={i[0]}
+          items={i[1]}
+          refetch={refetch}
+        />
       ))}
     </div>
   );

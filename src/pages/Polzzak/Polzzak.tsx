@@ -33,25 +33,26 @@ function Polzzak() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const userId = getUserId?.id;
 
+  const fetchMyPolzzak = async () => {
+    const { data, error } = await supabase
+      .from('ex_polzzak')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (error) {
+      showToast('잠시 후 다시 시도해 주세요.', 'top-[64px]', 5000);
+      console.error('폴짝 데이터 패치 실패 : ', error);
+      return;
+    }
+
+    setMyPolzzak(data);
+  };
+
   useEffect(() => {
-    if (!isPolzzakPage || !userId) return;
-
-    const fetchMyPolzzak = async () => {
-      const { data, error } = await supabase
-        .from('ex_polzzak')
-        .select('*')
-        .eq('user_id', userId);
-
-      if (error) {
-        showToast('잠시 후 다시 시도해 주세요.', 'top-[64px]', 5000);
-        console.error('폴짝 데이터 패치 실패 : ', error);
-        return;
-      }
-
-      setMyPolzzak(data);
-    };
-    fetchMyPolzzak();
-  }, [isPolzzakPage, userId, showToast]);
+    if (isPolzzakPage && userId) {
+      fetchMyPolzzak();
+    }
+  }, [isPolzzakPage, userId]);
 
   return (
     <main className="flex h-full w-full flex-1 flex-col overflow-auto p-6">
@@ -69,7 +70,7 @@ function Polzzak() {
                 <Icon id="search" className="text-gray05 cursor-pointer" />
               </Input>
             </div>
-            <PolzzakList data={myPolzzak ?? []} />
+            <PolzzakList data={myPolzzak ?? []} refetch={fetchMyPolzzak} />
             <Button
               variant={'float'}
               onClick={handleAddPolzzak}
