@@ -7,11 +7,13 @@ interface searchStore {
   region: string;
   theme: string[];
   searchResults: ListItemProps[];
+  detailData: ListItemProps[];
 
   setKeyWord: (keyword: string) => void;
   setRegion: (region: string) => void;
   setTheme: (theme: string[] | ((prev: string[]) => string[])) => void;
   setSearchResults: (data: ListItemProps[]) => void;
+  setDetailData: (detailData: ListItemProps[]) => void;
 }
 
 export const useSearchStore = create<searchStore>()((set, get) => ({
@@ -19,6 +21,7 @@ export const useSearchStore = create<searchStore>()((set, get) => ({
   region: '',
   theme: [],
   searchResults: [],
+  detailData: [],
 
   setKeyWord: (keyword) => set({ keyword }),
   setRegion: (region) => set({ region }),
@@ -31,4 +34,8 @@ export const useSearchStore = create<searchStore>()((set, get) => ({
     }
   },
   setSearchResults: (data) => set({ searchResults: data }),
+  setDetailData: (detailData) =>
+    set({
+      detailData: detailData,
+    }),
 }));
