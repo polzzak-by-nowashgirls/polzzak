@@ -1,6 +1,5 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 
-import Modal from '@/components/Modal/Modal';
 import RootLayout from '@/layouts/RootLayout';
 import {
   Contents,
@@ -15,7 +14,6 @@ import {
   ResetPassword,
   ResetPasswordCallback,
   Search,
-  SearchResult,
   Splash,
 } from '@/pages';
 import ViewDetails from '@/pages/Contents/ViewDetails';
