@@ -10,8 +10,8 @@ interface PolzzakStore {
   fileName: string | null;
   imageUrl: string | null;
 
-  setPolzzakId: (polzzakId: string) => void;
-  setName: (name: string) => void;
+  setPolzzakId: (polzzakId: string | null) => void;
+  setName: (name: string | null) => void;
   setDateRange: (date: DateRange | undefined) => void;
   setRegion: (regionUpdate: (prev: string[] | null) => string[]) => void;
   setThumbnail: (thumbnail: string | null) => void;
