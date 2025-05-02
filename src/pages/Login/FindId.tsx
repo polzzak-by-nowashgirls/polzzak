@@ -7,6 +7,7 @@ import AlertDialog from '@/components/Dialog/AlertDialog';
 import Input from '@/components/Input/Input';
 import SelectMenu from '@/components/Input/SelectMenu';
 import { Label } from '@/components/Label';
+import { validEmail } from '@/lib/validationEmail';
 import { useDialogStore } from '@/store/useDialogStore';
 
 function FindId() {
@@ -32,10 +33,15 @@ function FindId() {
     setInputDomain(selected === '직접 입력' ? '' : selected);
   };
 
+  const isValidEmail =
+    inputEmail && inputDomain
+      ? validEmail(`${inputEmail}@${inputDomain}`)
+      : false;
+
   const onDomainKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (inputEmail && inputDomain) handleFindId();
+      if (isValidEmail) handleFindId();
     }
   };
 
@@ -134,7 +140,9 @@ function FindId() {
           onSelectedEmail={handleSelectedEmail}
           className="flex-1"
         />
-        <Button onClick={handleFindId}>아이디 찾기</Button>
+        <Button onClick={handleFindId} disabled={!isValidEmail}>
+          아이디 찾기
+        </Button>
       </div>
       {isOpen && dialogContent && (
         <AlertDialog
