@@ -4,23 +4,23 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import supabase from '@/api/supabase';
 import Button from '@/components/Button/Button';
 import Checkbox from '@/components/Checkbox/Checkbox';
+import AlertDialog from '@/components/Dialog/AlertDialog';
 import Icon, { IconId } from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
 import Validation from '@/components/Input/Validation';
-import Modal from '@/components/Modal/Modal';
 import RabbitFace from '@/components/RabbitFace/RabbitFace';
 import { useToast } from '@/hooks/useToast';
 import { validatePassword } from '@/lib/validatePassword';
 import { validateId } from '@/lib/validationId';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useModalStore } from '@/store/useModalStore';
+import { useDialogStore } from '@/store/useDialogStore';
 
 function Login() {
   const location = useLocation();
   const showToast = useToast();
   const navigate = useNavigate();
 
-  const { isOpen, modalType, openModal } = useModalStore();
+  const { isOpen, openModal, closeModal } = useDialogStore();
 
   // 🕹️ 아이디
   const [idValue, setIdValue] = useState('');
@@ -67,8 +67,6 @@ function Login() {
       setIdValid(null);
     }
   }, [isSavedId]);
-
-  console.log('아이디 저장 상태: ', isSavedId);
 
   const onChangeIDInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -119,7 +117,7 @@ function Login() {
 
     if (findError || !userRow) {
       setIdValid(false);
-      openModal('login');
+      openModal();
       return;
     }
 
@@ -132,7 +130,7 @@ function Login() {
     });
 
     if (error) {
-      openModal('login');
+      openModal();
       return;
     }
 
@@ -187,6 +185,7 @@ function Login() {
             ref={pwInputRef}
             type={inputType}
             label="비밀번호"
+            value={pwValue}
             placeholder="비밀번호"
             hideLabel={true}
             onChange={onChangePWInput}
@@ -213,11 +212,11 @@ function Login() {
         </Button>
       </fieldset>
       <div className="fs-14 font-regular text-gray07 flex items-center justify-center gap-1">
-        <Link to="#" className="px-1">
+        <Link to="find-id" className="px-1">
           아이디 찾기
         </Link>
         <span aria-hidden={true} className="bg-gray04 h-[11px] w-[1px]"></span>
-        <Link to="#" className="px-1">
+        <Link to="reset-password" className="px-1">
           비밀번호 재설정
         </Link>
         <span aria-hidden={true} className="bg-gray04 h-[11px] w-[1px]"></span>
@@ -234,7 +233,22 @@ function Login() {
           </span>
         </div>
       </div>
-      {isOpen && modalType === 'login' && <Modal mode="alert" type="login" />}
+      {isOpen && (
+        <AlertDialog
+          header="로그인에 실패하였습니다."
+          description={['아이디 또는 비밀번호를', '다시 확인해 주세요.']}
+          button={[
+            {
+              text: '확인',
+              onClick: () => {
+                closeModal();
+                setIdValue('');
+                setPwValue('');
+              },
+            },
+          ]}
+        />
+      )}
     </main>
   );
 }
