@@ -32,6 +32,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+::selection {
+  background: var(--primary);
+  color: var(--white);
+}
+
 #root {
   display: flex;
   flex-flow: column nowrap;
