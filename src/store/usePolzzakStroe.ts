@@ -39,6 +39,7 @@ export const usePolzzakStore = create<PolzzakStore>()((set) => ({
   setImageUrl: (imageUrl) => set({ imageUrl }),
   reset: () =>
     set({
+      polzzakId: null,
       name: null,
       dateRange: null,
       region: null,
