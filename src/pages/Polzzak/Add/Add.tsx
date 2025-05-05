@@ -124,14 +124,12 @@ function Add() {
 
     if (error) {
       errToast();
-      console.error('데이터 저장 실패 : ', error);
-      return;
+      throw error;
     }
 
     if (!data || data.length === 0) {
       errToast();
-      console.error('데이터 저장 실패 : ', { data, error });
-      return;
+      throw error;
     }
 
     const polzzakId = data[0].id;
@@ -150,8 +148,7 @@ function Add() {
 
         if (oneScheduleErr) {
           errToast();
-          console.error('데이터 저장 실패 : ', oneScheduleErr);
-          return;
+          throw oneScheduleErr;
         }
 
         // 날짜 range
@@ -182,8 +179,7 @@ function Add() {
 
           if (scheduleErr) {
             errToast();
-            console.error('데이터 저장 실패 : ', scheduleErr);
-            return;
+            throw scheduleErr;
           }
         }
       }
@@ -201,17 +197,17 @@ function Add() {
 
         if (regionErr) {
           errToast();
-          console.error('데이터 저장 실패 : ', regionErr);
-          return;
+          throw regionErr;
         }
       }
 
       navigate(`/polzzak/${polzzakId}`, { replace: true });
-      console.log('서버에 저장 완료!');
     } catch (err) {
       errToast();
-      await supabase.from('ex_polzzak').delete().eq('id', polzzakId);
       console.error('데이터 저장 실패 : ', err);
+      if (polzzakId) {
+        await supabase.from('ex_polzzak').delete().eq('id', polzzakId);
+      }
     } finally {
       setIsSaving(false);
       reset();
@@ -250,7 +246,9 @@ function Add() {
               <Icon id="calendar" className="text-gray05" />
             </Button>
           </Input>
-          <Validation status={false} message="필수 입력 항목입니다." />
+          {!dateRange?.from && (
+            <Validation status={false} message="필수 입력 항목입니다." />
+          )}
         </div>
         <div>
           <Chip
