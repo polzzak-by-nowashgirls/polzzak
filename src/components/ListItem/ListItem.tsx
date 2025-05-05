@@ -1,19 +1,29 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+import { fetchContentDetail } from '@/api/openAPI/utils/fetchContentDetail';
 import Button from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
 import RabbitFace from '@/components/RabbitFace/RabbitFace';
+import { useSearchStore } from '@/store/useSearchStore';
 
 export interface ListItemProps {
   contentid: string;
-  firstimage: string;
+  contenttypeid?: string;
   title: string;
-  eventstartdate: string;
-  eventenddate: string;
-  region: string;
-  district: string;
-  likes: number;
+  addr1: string;
+  image: string;
+  eventstartdate?: string | '';
+  eventenddate?: string | '';
+  opentimefood?: string;
+  usetime?: string;
+  usetimeleports?: string;
+  usetimeculture?: string;
+  opentime?: string;
+  checkintime?: string;
+  checkouttime?: string;
   reviews: number;
+  likes: number;
 }
 
 interface ListItemData {
@@ -21,32 +31,71 @@ interface ListItemData {
 }
 
 function ListItem({ data }: ListItemData) {
-  const handleFavorite = (contentId: string) => {
-    console.log(`즐겨찾기 저장! ${contentId}`);
+  const navigate = useNavigate();
+  const { detailData, setDetailData } = useSearchStore();
+  const handleFavorite = (contentid: string) => {
+    console.log(`즐겨찾기 저장! ${contentid}`);
   };
+  const getAddress = (address: string) => {
+    const [city = '', province = ''] = address.split(' ');
+
+    return { city, province };
+  };
+  useEffect(() => {
+    const fetchDetails = async () => {
+      const results = await Promise.all(
+        data.map(async (item) => {
+          const detail = await fetchContentDetail(
+            item.contentid,
+            item.contenttypeid,
+            true,
+          );
+          return {
+            ...detail,
+            contentid: item.contentid,
+          };
+        }),
+      );
+      setDetailData(results);
+    };
+
+    fetchDetails();
+  }, [data]);
 
   const changeDate = (date: string) => {
     const yy = date.slice(0, 4);
     const mm = date.slice(4, 6);
     const dd = date.slice(6, 8);
-
     return `${yy}.${mm}.${dd}`;
+  };
+  const handleMoveDetail = (contentid: string) => {
+    navigate(`/contents/${contentid}`);
   };
 
   return (
     <ul className="flex flex-col gap-6">
-      {data.map((item) => (
-        <li key={item.contentid}>
-          <Link
-            to={`/contents/${item.contentid}`}
+      {detailData.map((item) => {
+        const { city, province } = getAddress(item.addr1);
+        const time = [
+          item.opentimefood,
+          item.usetime,
+          item.usetimeleports,
+          item.usetimeculture,
+          item.opentime,
+        ];
+
+        return (
+          <li
+            key={item.contentid}
             className="flex-start relative flex w-full items-center gap-4"
+            onClick={() => handleMoveDetail(item.contentid)}
           >
             <div className="bg-primary/10 flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl object-cover">
-              {item.firstimage === '' ? (
+              {item.image === '' ? (
                 <RabbitFace alt="이미지 준비 중입니다." />
               ) : (
                 <img
-                  src={item.firstimage}
+                  src={item.image}
                   alt={item.title}
                   className="h-full w-full"
                 />
@@ -80,15 +129,37 @@ function ListItem({ data }: ListItemData) {
                   />
                 </Button>
               </div>
-              <span className="fs-14 ls lh font-regular text-gray07">
-                {changeDate(item.eventstartdate)} &#126;{' '}
-                {changeDate(item.eventenddate)}
-              </span>
-              <span className="fs-14 ls lh font-regular text-gray07 inline-flex items-center">
-                {item.region}
-                <Icon id="chevron_right" size={16} className="text-gray07" />
-                {item.district}
-              </span>
+              <>
+                {time.map(
+                  (text, index) =>
+                    text && (
+                      <span
+                        className="fs-14 ls lh font-regular text-gray07"
+                        key={index}
+                      >
+                        {text}
+                      </span>
+                    ),
+                )}
+                {item.eventstartdate && (
+                  <span className="fs-14 ls lh font-regular text-gray07">
+                    {changeDate(item?.eventstartdate)} &#126;{' '}
+                    {changeDate(item?.eventenddate)}
+                  </span>
+                )}
+                {item.checkintime && (
+                  <span className="fs-14 ls lh font-regular text-gray07">
+                    {`체크인 : ${item?.checkintime}, 체크아웃 : ${item?.checkouttime}`}
+                  </span>
+                )}
+              </>
+              {item.addr1 && (
+                <span className="fs-14 ls lh font-regular text-gray07 inline-flex items-center">
+                  {city}
+                  <Icon id="chevron_right" size={16} className="text-gray07" />
+                  {province}
+                </span>
+              )}
               <dl className="fs-14 ls lh font-regular text-gray07 flex items-center gap-2">
                 <div
                   className="flex items-center gap-1"
@@ -109,9 +180,9 @@ function ListItem({ data }: ListItemData) {
                 </div>
               </dl>
             </div>
-          </Link>
-        </li>
-      ))}
+          </li>
+        );
+      })}
     </ul>
   );
 }

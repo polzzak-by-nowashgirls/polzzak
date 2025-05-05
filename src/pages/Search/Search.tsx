@@ -31,9 +31,11 @@ function Search() {
   const openCalendar = () => {
     openModal('calendar');
   };
+
   const handleKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKeyWord(e.target.value);
   };
+
   const handleRegion = (clickedChip: ClickedChipItem) => {
     if (clickedChip.selected) {
       setRegion(clickedChip.name);
@@ -41,6 +43,7 @@ function Search() {
       setRegion('');
     }
   };
+
   const handleTheme = (clickedChip: ClickedChipItem) => {
     setTheme((prev) => {
       if (clickedChip.selected) {
@@ -50,13 +53,28 @@ function Search() {
       }
     });
   };
+
   const handleSearchButton = async () => {
     if (!keyword && !region && theme.length === 0) return;
 
-    const searchResults = await fetchSearchList({ keyword, region, theme });
-    setSearchResults(searchResults);
-    console.log(searchResults);
-    navigate(`/search/result`);
+    try {
+      const searchResults = await fetchSearchList({ keyword, region, theme });
+      const params = new URLSearchParams();
+
+      setSearchResults(searchResults);
+      if (keyword) params.append('q', keyword);
+      if (region) params.append('region', region);
+      if (theme.length > 0) {
+        theme.forEach((t) => params.append('theme', t));
+      }
+      navigate(`/search/result?${params.toString()}`);
+      /* 초기화 */
+      setKeyWord('');
+      setRegion('');
+      setTheme([]);
+    } catch (error) {
+      console.error('검색 결과를 가져오는 중 오류가 발생했습니다:', error);
+    }
   };
 
   return (
