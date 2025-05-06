@@ -1,20 +1,20 @@
 import { Reorder } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import TimelineCard from '@/components/Timeline/TimelineCard';
-import { PolzzakCard } from '@/mockData/PolzzakItemDummyData';
+import { ScheduleList } from '@/pages/Polzzak/Schedule/Schedule';
 
 interface TimelineListProps {
-  itemList: PolzzakCard[];
+  itemList: ScheduleList[];
 }
 
 function TimelineList({ itemList }: TimelineListProps) {
-  const [cards, setCards] = useState<PolzzakCard[]>(itemList);
-  // 정렬된 상태 저장 시 cards 저장!
+  const [cards, setCards] = useState<ScheduleList[]>(itemList);
+  const [openCardId, setOpenCardId] = useState<string | null>(null);
 
-  console.log('cards : ', cards);
-
-  const [openCardId, setOpenCardId] = useState<number | null>(null);
+  useEffect(() => {
+    setCards(itemList);
+  }, [itemList]);
 
   return (
     <Reorder.Group
@@ -27,7 +27,7 @@ function TimelineList({ itemList }: TimelineListProps) {
       <div className="flex w-full flex-col gap-2">
         {cards.map((card) => (
           <TimelineCard
-            key={card.id}
+            key={card.schedule_id}
             value={card}
             openCardId={openCardId}
             setOpenCardId={setOpenCardId}

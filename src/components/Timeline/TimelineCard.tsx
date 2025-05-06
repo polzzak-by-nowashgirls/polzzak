@@ -11,18 +11,18 @@ import { useEffect } from 'react';
 import Button from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
 import { cn } from '@/lib/utils';
-import { PolzzakCard } from '@/mockData/PolzzakItemDummyData';
+import { ScheduleList } from '@/pages/Polzzak/Schedule/Schedule';
 
 interface TimelineCard {
-  value: PolzzakCard;
-  openCardId: number | null;
-  setOpenCardId: (id: number | null) => void;
+  value: ScheduleList;
+  openCardId: string | null;
+  setOpenCardId: (id: string | null) => void;
 }
 
 function TimelineCard({ value, openCardId, setOpenCardId }: TimelineCard) {
-  const { id, place, time, memo } = value;
+  const { schedule_id, place, time, memo } = value;
 
-  const isOpen = openCardId === id;
+  const isOpen = openCardId === schedule_id;
   const controls = useDragControls();
   const x = useMotionValue(0);
 
@@ -41,7 +41,7 @@ function TimelineCard({ value, openCardId, setOpenCardId }: TimelineCard) {
       setOpenCardId(null);
     } else {
       animate(x, -55);
-      setOpenCardId(id);
+      setOpenCardId(schedule_id);
     }
   };
 
@@ -98,7 +98,7 @@ function TimelineCard({ value, openCardId, setOpenCardId }: TimelineCard) {
             className="flex flex-shrink-0 items-center px-4 select-none"
             onPointerDown={(e) => {
               controls.start(e);
-              setOpenCardId(id);
+              setOpenCardId(schedule_id);
             }}
           >
             <Icon id={'drag_handle'} className="text-gray05" size={16} />
