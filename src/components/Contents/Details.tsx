@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
 import { DETAILS_DUMMY_DATA } from '@/mockData';
+import { useSearchStore } from '@/store/useSearchStore';
 
 interface DetailsProps {
   type: 'guide' | 'detail';
@@ -9,6 +11,11 @@ interface DetailsProps {
 }
 
 function Details({ type, children }: DetailsProps) {
+  const { id } = useParams();
+  const { detailData } = useSearchStore();
+  const filterDetailData = detailData.filter((data) => data.contentid === id);
+  console.log(filterDetailData);
+
   const CONTENT_DATA = DETAILS_DUMMY_DATA;
   const GUIDE_LIST = [
     { id: 0, label: '행사명', value: CONTENT_DATA.title },
