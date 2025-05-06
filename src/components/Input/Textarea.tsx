@@ -14,7 +14,7 @@ function Textarea({ label, hideLabel, className, ...props }: TextareaProps) {
 
   return (
     <>
-      <Label hideLabel={hideLabel} htmlFor={labelId}>
+      <Label hideLabel={hideLabel} htmlFor={labelId} className="m-1">
         {label}
       </Label>
       <textarea
