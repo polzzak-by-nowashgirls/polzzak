@@ -5,13 +5,12 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import supabase from '@/api/supabase';
 import Button from '@/components/Button/Button';
+import AlertDialog from '@/components/Dialog/AlertDialog';
 import Icon from '@/components/Icon/Icon';
+import RabbitFace from '@/components/RabbitFace/RabbitFace';
 import { useToast } from '@/hooks/useToast';
 import { ListItemType } from '@/pages/Polzzak/Polzzak';
 import { useDialogStore } from '@/store/useDialogStore';
-
-import AlertDialog from '../Dialog/AlertDialog';
-import RabbitFace from '../RabbitFace/RabbitFace';
 
 interface PolzzakListItemProps {
   item: ListItemType;
@@ -22,7 +21,7 @@ function PolzzakListItem({ item, onDeleted }: PolzzakListItemProps) {
   const navigate = useNavigate();
   const [region, setRegion] = useState<{ region: string }[]>([]);
   const [openMeatball, setOpenMeatball] = useState(false);
-  const { isOpen, closeModal, openModal } = useDialogStore();
+  const { isOpenId, closeModal, openModal } = useDialogStore();
   const showToast = useToast();
 
   useEffect(() => {
@@ -48,6 +47,15 @@ function PolzzakListItem({ item, onDeleted }: PolzzakListItemProps) {
   };
 
   const onClickDelete = async () => {
+    if (item.id !== isOpenId) {
+      showToast(
+        '삭제하지 못했어요. 잠시 후 다시 시도해 주세요.',
+        'top-[64px]',
+        3000,
+      );
+      return;
+    }
+
     const { error } = await supabase
       .from('ex_polzzak')
       .delete()
@@ -117,10 +125,7 @@ function PolzzakListItem({ item, onDeleted }: PolzzakListItemProps) {
                   onClick: (e: React.MouseEvent) => {
                     e.preventDefault();
                     setOpenMeatball(false);
-                    navigate(
-                      `/polzzak/edit/${item.id}`,
-                      // { state: { item, img } }
-                    );
+                    navigate(`/polzzak/edit/${item.id}`);
                   },
                 },
                 {
@@ -129,7 +134,7 @@ function PolzzakListItem({ item, onDeleted }: PolzzakListItemProps) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    openModal();
+                    openModal(item.id);
                   },
                 },
               ].map(({ label, onClick }, index) => (
@@ -147,7 +152,7 @@ function PolzzakListItem({ item, onDeleted }: PolzzakListItemProps) {
           )}
         </div>
       </Link>
-      {isOpen && (
+      {isOpenId === item.id && (
         <AlertDialog
           header="해당 폴짝을 삭제할까요?"
           description={['삭제하면 복구할 수 없어요.']}
