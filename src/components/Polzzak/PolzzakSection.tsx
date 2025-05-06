@@ -34,9 +34,9 @@ function PolzzakSection({
               {getParticle(title[1])} 비어있습니다.
             </li>
           ) : (
-            items.map((item) => (
+            items.map((item, idx) => (
               <PolzzakListItem
-                key={item.name}
+                key={`${item.name}${idx}`}
                 item={item}
                 onDeleted={refetch}
               />
