@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import supabase from '@/api/supabase';
 import Button from '@/components/Button/Button';
@@ -18,8 +18,12 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useDialogStore } from '@/store/useDialogStore';
 import { usePolzzakStore } from '@/store/usePolzzakStroe';
 
-function Add() {
+function AddNEdit() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditPage = Boolean(id);
+  const isAddPage = !isEditPage;
+  const [editRegion, setEditRegion] = useState<string[] | null>(null);
   const [showCropper, setShowCropper] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { isOpen, openModal, closeModal } = useDialogStore();
@@ -42,9 +46,55 @@ function Add() {
   const userId = getUserId?.id;
   const showToast = useToast();
 
+  /* 편집 정보 가져오기 */
+  const getEditInfo = async () => {
+    const { data, error } = await supabase
+      .from('ex_polzzak')
+      .select('*')
+      .eq('id', id);
+
+    if (error) {
+      showToast(
+        '편집할 데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
+        'bottom-[64px]',
+        5000,
+      );
+      return;
+    }
+
+    const getEditRegion = async () => {
+      const { data, error } = await supabase
+        .from('ex_polzzak_region')
+        .select('region')
+        .eq('polzzak_id', id);
+
+      if (error) {
+        showToast(
+          '편집할 데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
+          'bottom-[64px]',
+          5000,
+        );
+        return;
+      } else if (!data || data.length === 0) {
+        return;
+      } else {
+        const regionData = data.map((i) => i.region);
+        setEditRegion(regionData);
+      }
+    };
+
+    setName(data[0]?.name ?? null);
+    setDateRange({ from: data[0].startDate, to: data[0]?.endDate ?? null });
+    setThumbnail(data[0]?.thumbnail ?? null);
+    getEditRegion();
+  };
+
   useEffect(() => {
     reset();
-  }, [reset]);
+
+    if (isAddPage) return;
+    getEditInfo();
+  }, []);
 
   /* 날짜 선택 */
   const handleCalender = () => {
@@ -71,7 +121,6 @@ function Add() {
       text: '초기화',
       onClick: () => {
         setDateRange(undefined);
-        closeModal();
       },
     },
   ];
@@ -93,7 +142,7 @@ function Add() {
     setShowCropper(false);
   };
 
-  /* 저장 */
+  /* 추가하기 */
   const errToast = () => {
     showToast(
       '폴짝을 추가하지 못했어요. 잠시 후 다시 시도해 주세요.',
@@ -222,7 +271,7 @@ function Add() {
           <Input
             label="폴짝 이름"
             type="text"
-            placeholder={name ? name : '폴짝 이름을 입력해 주세요.'}
+            placeholder="폴짝 이름을 입력해 주세요."
             value={name ?? ''}
             onChange={(e) => setName(e.target.value)}
             maxLength={20}
@@ -266,6 +315,7 @@ function Add() {
                   : [...prev, selectChip.name];
               });
             }}
+            // selectedValues={editRegion}
           />
         </div>
         <div>
@@ -317,7 +367,7 @@ function Add() {
         )}
       </div>
       <Button disabled={!dateRange?.from} onClick={saveAddPolzzak}>
-        폴짝 추가하기
+        {isAddPage ? '폴짝 추가하기' : '폴짝 저장하기'}
       </Button>
       {isOpen && (
         <SlideUpDialog
@@ -339,4 +389,4 @@ function Add() {
   );
 }
 
-export default Add;
+export default AddNEdit;
