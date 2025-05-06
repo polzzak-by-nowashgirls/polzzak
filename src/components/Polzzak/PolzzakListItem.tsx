@@ -14,15 +14,21 @@ import { useDialogStore } from '@/store/useDialogStore';
 
 interface PolzzakListItemProps {
   item: ListItemType;
-  onDeleted: () => void;
+  onDeleted?: () => void;
+  detail?: boolean;
 }
 
-function PolzzakListItem({ item, onDeleted }: PolzzakListItemProps) {
+function PolzzakListItem({
+  item,
+  onDeleted,
+  detail = false,
+}: PolzzakListItemProps) {
   const navigate = useNavigate();
   const [region, setRegion] = useState<{ region: string }[]>([]);
   const [openMeatball, setOpenMeatball] = useState(false);
   const { isOpenId, closeModal, openModal } = useDialogStore();
   const showToast = useToast();
+  const Container = detail ? 'div' : 'li';
 
   useEffect(() => {
     const getMyRegion = async () => {
@@ -69,19 +75,21 @@ function PolzzakListItem({ item, onDeleted }: PolzzakListItemProps) {
       );
       console.error('폴짝 삭제 실패', error);
     } else {
-      onDeleted();
-      showToast('삭제가 완료되었습니다.', 'top-[64px]', 2000);
+      if (onDeleted) {
+        onDeleted();
+        showToast('삭제가 완료되었습니다.', 'top-[64px]', 2000);
+      } else {
+        showToast('삭제가 완료되었습니다.', 'top-[64px]', 2000);
+        navigate('/polzzak');
+      }
     }
 
     setOpenMeatball(false);
   };
 
-  return (
-    <li role="listitem">
-      <Link
-        to={`/polzzak/${item.id}`}
-        className="flex flex-row items-center gap-4"
-      >
+  const renderContent = () => {
+    return (
+      <>
         <figure className="bg-primary/10 flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-lg object-cover">
           {item.thumbnail ? (
             <img src={item.thumbnail} alt="폴짝" className="h-full w-full" />
@@ -151,7 +159,25 @@ function PolzzakListItem({ item, onDeleted }: PolzzakListItemProps) {
             </div>
           )}
         </div>
-      </Link>
+      </>
+    );
+  };
+
+  return (
+    <Container {...(detail ? undefined : { role: 'listitem' })}>
+      {detail ? (
+        <div className="flex flex-row items-center gap-4">
+          {renderContent()}
+        </div>
+      ) : (
+        <Link
+          to={`/polzzak/${item.id}`}
+          className="flex flex-row items-center gap-4"
+        >
+          {renderContent()}
+        </Link>
+      )}
+
       {isOpenId === item.id && (
         <AlertDialog
           header="해당 폴짝을 삭제할까요?"
@@ -174,7 +200,7 @@ function PolzzakListItem({ item, onDeleted }: PolzzakListItemProps) {
           ]}
         />
       )}
-    </li>
+    </Container>
   );
 }
 
