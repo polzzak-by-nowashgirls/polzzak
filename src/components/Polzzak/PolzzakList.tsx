@@ -25,7 +25,10 @@ function PolzzakList({
 
     if (!start) {
       section[1][1].push(item);
-    } else if (start <= today && end && end >= today) {
+    } else if (
+      (start.getTime() === today.getTime() && !end) ||
+      (start <= today && end && end >= today)
+    ) {
       section[0][1].push(item);
     } else if (start < today) {
       section[2][1].push(item);
