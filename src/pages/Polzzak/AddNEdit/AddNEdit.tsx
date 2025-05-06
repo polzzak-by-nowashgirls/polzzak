@@ -185,7 +185,7 @@ function AddNEdit() {
     try {
       /* 폴짝 날짜 저장 */
       // 날짜 single
-      if (dateRange?.from) {
+      if (dateRange?.from && !dateRange.to) {
         const { error: oneScheduleErr } = await supabase
           .from('ex_polzzak_schedule')
           .insert([
@@ -199,37 +199,34 @@ function AddNEdit() {
           errToast();
           throw oneScheduleErr;
         }
+      } else if (dateRange?.from && dateRange?.to) {
+        const getDateRangeArray = (start: Date, end: Date) => {
+          const result = [];
+          const current = new Date(start);
+          while (current <= end) {
+            result.push(new Date(current));
+            current.setDate(current.getDate() + 1);
+          }
+          return result;
+        };
 
-        // 날짜 range
-        if (dateRange?.to) {
-          const getDateRangeArray = (start: Date, end: Date) => {
-            const result = [];
-            const current = new Date(start);
-            while (current <= end) {
-              result.push(new Date(current));
-              current.setDate(current.getDate() + 1);
-            }
-            return result;
-          };
+        const dateList = getDateRangeArray(
+          new Date(dateRange.from),
+          new Date(dateRange.to),
+        );
 
-          const dateList = getDateRangeArray(
-            new Date(dateRange.from),
-            new Date(dateRange.to),
+        const { error: scheduleErr } = await supabase
+          .from('ex_polzzak_schedule')
+          .insert(
+            dateList.map((date) => ({
+              polzzak_id: polzzakId,
+              date: format(date, 'yyyy-MM-dd', { locale: ko }),
+            })),
           );
 
-          const { error: scheduleErr } = await supabase
-            .from('ex_polzzak_schedule')
-            .insert(
-              dateList.map((date) => ({
-                polzzak_id: polzzakId,
-                date: format(date, 'yyyy-MM-dd', { locale: ko }),
-              })),
-            );
-
-          if (scheduleErr) {
-            errToast();
-            throw scheduleErr;
-          }
+        if (scheduleErr) {
+          errToast();
+          throw scheduleErr;
         }
       }
 
