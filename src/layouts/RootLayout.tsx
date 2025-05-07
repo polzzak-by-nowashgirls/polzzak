@@ -73,15 +73,17 @@ function RootLayout() {
   const location = useLocation();
   const path = location.pathname;
   const isRegisterPath = path.startsWith('/register');
+  const isEditPath = path.startsWith('/polzzak/edit');
 
   const { contentsTitle } = useHeaderStore();
 
   // ✅ useMemo 최적화 (path가 변경될 때만 연산 실행)
   const headerTitle = useMemo(() => {
     if (isRegisterPath) return '회원가입';
+    if (isEditPath) return '폴짝 편집';
     if (contentsTitle) return contentsTitle;
     return HEADER_TITLES[path] || '🐰폴짝🐰';
-  }, [path, isRegisterPath, contentsTitle]);
+  }, [path, isRegisterPath, isEditPath, contentsTitle]);
 
   const showHeader = useMemo(() => {
     return ![...HIDDEN_HEADER_PATHS].some((hiddenPath) =>
@@ -89,8 +91,8 @@ function RootLayout() {
     );
   }, [path]);
   const showNav = useMemo(
-    () => !(HIDDEN_NAV_PATHS.has(path) || isRegisterPath),
-    [path, isRegisterPath],
+    () => !(HIDDEN_NAV_PATHS.has(path) || isRegisterPath || isEditPath),
+    [path, isRegisterPath, isEditPath],
   );
   const editHide = useMemo(() => path !== '/my/favorites', [path]);
 

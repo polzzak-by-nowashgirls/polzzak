@@ -14,7 +14,6 @@ import {
   ResetPassword,
   ResetPasswordCallback,
   Search,
-  SearchResult,
   Splash,
 } from '@/pages';
 import ViewDetails from '@/pages/Contents/ViewDetails';
@@ -26,8 +25,9 @@ import {
   PhoneNumber,
 } from '@/pages/My/Edit';
 import { Favorites, FavoritesDetails } from '@/pages/My/Favorites';
-import { Add, Edit as PolzzakEdit, Schedule } from '@/pages/Polzzak';
+import { AddNEdit, Schedule } from '@/pages/Polzzak';
 import { StepPage } from '@/pages/Register';
+import SearchResult from '@/pages/Search/SearchResult';
 
 export const routes = [
   {
@@ -81,11 +81,11 @@ export const routes = [
           },
           {
             path: 'add',
-            element: <Add />,
+            element: <AddNEdit />,
           },
           {
             path: 'edit/:id',
-            element: <PolzzakEdit />,
+            element: <AddNEdit />,
           },
           {
             path: ':id',
