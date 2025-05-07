@@ -16,7 +16,7 @@ function SlideUpDialog({
   children,
   className,
 }: DialogProps) {
-  const { isOpen, closeModal } = useDialogStore();
+  const { closeModal } = useDialogStore();
   const Wrapper = dimd ? 'div' : React.Fragment;
   const btnLength = button?.length;
 
@@ -24,7 +24,13 @@ function SlideUpDialog({
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const startYRef = useRef<number | null>(null);
   const startHeightRef = useRef<number | null>(null);
-  const [height, setHeight] = useState<string>('50%'); // 기본 높이 설정
+  const [height, setHeight] = useState<string | null>(null); // 기본 높이 설정
+
+  useEffect(() => {
+    if (dragIcon) {
+      setHeight('50%');
+    }
+  }, [dragIcon]);
 
   // 모바일 여부 확인
   const isTouchDevice =
@@ -129,7 +135,10 @@ function SlideUpDialog({
         animate={{ y: '0%', opacity: 1 }}
         exit={{ y: '20%', opacity: 0 }}
         transition={{ duration: 0.3, ease: 'easeOut' }}
-        style={{ height, transition: 'height 0.3s ease' }}
+        style={{
+          height: height ?? 'auto',
+          transition: 'height 0.3s ease',
+        }}
         className={`fixed bottom-0 left-1/2 z-[100] flex w-screen -translate-x-1/2 transform flex-col gap-4 rounded-t-2xl bg-white px-8 py-6 ${className}`}
       >
         {dragIcon ? (
