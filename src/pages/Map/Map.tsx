@@ -198,6 +198,7 @@ function Map() {
       default:
         setDataList([]);
     }
+    setSelectedContentId(null);
   }, [
     category,
     foodList,
@@ -292,28 +293,30 @@ function Map() {
             현재 위치에서 재검색
           </Button>
         )}
-        {isOpen && dataList ? (
-          <SlideUpDialog
-            header={renderModalHeader(category)}
-            dimd={false}
-            dragIcon={true}
-            className="shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
-          >
-            <ModalContent data={dataList} />
-          </SlideUpDialog>
-        ) : null}
-        {isOpen && selectedContentId ? (
-          <SlideUpDialog
-            header={selectedItem?.title ?? renderModalHeader(category)}
-            dimd={false}
-            dragIcon={true}
-            className="shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
-          >
-            <ModalDetailContent
-              data={selectedItem ?? null}
-              contentId={selectedContentId}
-            />
-          </SlideUpDialog>
+
+        {isOpen ? (
+          selectedContentId ? (
+            <SlideUpDialog
+              header={selectedItem?.title ?? renderModalHeader(category)}
+              dimd={false}
+              dragIcon={true}
+              className="shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+            >
+              <ModalDetailContent
+                data={selectedItem ?? null}
+                contentId={selectedContentId}
+              />
+            </SlideUpDialog>
+          ) : dataList ? (
+            <SlideUpDialog
+              header={renderModalHeader(category)}
+              dimd={false}
+              dragIcon={true}
+              className="shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+            >
+              <ModalContent data={dataList} />
+            </SlideUpDialog>
+          ) : null
         ) : null}
       </MapArea>
     </>
