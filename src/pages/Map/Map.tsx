@@ -20,6 +20,7 @@ import Button from '@/components/Button/Button';
 import SlideUpDialog from '@/components/Dialog/SlideUpDialog';
 import MapHeader from '@/components/Map/MapHeader';
 import ModalContent from '@/components/Map/ModalContent';
+import ModalDetailContent from '@/components/Map/ModalDetailContent';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useDialogStore } from '@/store/useDialogStore';
 import { DetailCommonDataType } from '@/types/detailCommonDataType';
@@ -31,12 +32,15 @@ function Map() {
     libraries: ['services'],
   });
   const { isAuthenticated } = useAuthStore();
-  const mapRef = useRef<kakao.maps.Map | null>(null);
+  const { isOpen, openModal } = useDialogStore();
   const [myLocation, setMyLocation] = useState<LatLng | null>(null);
   const [mapCenter, setMapCenter] = useState<LatLng | null>(null);
   const [showReSearchButton, setShowReSearchButton] = useState(false);
-  const { isOpen, openModal } = useDialogStore();
   const [dataList, setDataList] = useState<NearItemType[]>([]); // 데이터 상태
+  const [selectedContentId, setSelectedContentId] = useState<string | null>(
+    null,
+  );
+  const mapRef = useRef<kakao.maps.Map | null>(null);
   const [searchParams] = useSearchParams();
   const category = searchParams.get('category');
   const isFiltered = category !== null && category.trim() !== '';
@@ -157,6 +161,10 @@ function Map() {
     }
   };
 
+  const selectedItem = dataList.find(
+    (item) => item.contentid === selectedContentId,
+  );
+
   useEffect(() => {
     switch (category) {
       case 'food':
@@ -237,6 +245,11 @@ function Map() {
             size: { width: 28, height: 28 },
             options: { offset: { x: 14, y: 14 } },
           }}
+          onClick={() => {
+            console.log('마커 클릭');
+            setSelectedContentId(item.contentid ?? null);
+            openModal();
+          }}
         />
       );
     });
@@ -279,7 +292,7 @@ function Map() {
             현재 위치에서 재검색
           </Button>
         )}
-        {isOpen ? (
+        {isOpen && dataList ? (
           <SlideUpDialog
             header={renderModalHeader(category)}
             dimd={false}
@@ -287,6 +300,19 @@ function Map() {
             className="shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
           >
             <ModalContent data={dataList} />
+          </SlideUpDialog>
+        ) : null}
+        {isOpen && selectedContentId ? (
+          <SlideUpDialog
+            header={selectedItem?.title ?? renderModalHeader(category)}
+            dimd={false}
+            dragIcon={true}
+            className="shadow-[0_-4px_16px_rgba(0,0,0,0.1)]"
+          >
+            <ModalDetailContent
+              data={selectedItem ?? null}
+              contentId={selectedContentId}
+            />
           </SlideUpDialog>
         ) : null}
       </MapArea>
