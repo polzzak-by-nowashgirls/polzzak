@@ -1,20 +1,18 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
 import { DETAILS_DUMMY_DATA } from '@/mockData';
-import { useSearchStore } from '@/store/useSearchStore';
+
+import { ListItemProps } from '../ListItem/ListItem';
 
 interface DetailsProps {
   type: 'guide' | 'detail';
   children: React.ReactNode;
+  data: ListItemProps;
 }
 
-function Details({ type, children }: DetailsProps) {
-  const { id } = useParams();
-  const { detailData } = useSearchStore();
-  const filterDetailData = detailData.filter((data) => data.contentid === id);
-  console.log(filterDetailData);
+function Details({ type, children, data }: DetailsProps) {
+  console.log(data);
 
   const CONTENT_DATA = DETAILS_DUMMY_DATA;
   const GUIDE_LIST = [
