@@ -12,11 +12,6 @@ interface SearchResult {
   contentid: string;
 }
 
-// interface DetailIntroResult {
-//   contentid: string;
-//   contenttypeid: string;
-// }
-
 const REGION_MAP: Record<string, string> = {
   서울: '1',
   인천: '2',
@@ -64,52 +59,74 @@ async function fetchSearchList({
   region = '',
   theme = [],
 }: SearchList) {
-  let results: any[] = [];
+  const results: any[] = [];
   const regionCode = REGION_MAP[region] || '';
   // const themeCodes = theme.map((theme_name) => THEME_MAP[theme_name]);
 
-  if (keyword) {
-    const keywordResponse = await client.get(`/searchKeyword1`, {
-      params: {
-        keyword,
-        pageNo: 1,
-        numOfRows: 20,
-      },
-    });
-    results = keywordResponse.data.response.body.items.item || [];
-  }
+  try {
+    if (keyword) {
+      try {
+        const keywordResponse = await client.get(`/searchKeyword1`, {
+          params: {
+            keyword,
+            pageNo: 1,
+            numOfRows: 20,
+          },
+        });
 
-  if (region) {
-    const regionResponse = await client.get(`/areaBasedList1`, {
-      params: {
-        areaCode: regionCode,
-        pageNo: 1,
-        numOfRows: 20,
-      },
-    });
-    results = regionResponse.data.response.body.items.item || [];
-  }
-  // if (themeCodes.includes('A02')) {
-  //   // > 출력되는 contentId에 맞는 데이터 불러와야함
-  //   const petTourResponse = await Promise.all([
-  //     client.get(`/detailPetTour1`, {
-  //       params: {
-  //         contentId: '1019041',
-  //         pageNo: 1,
-  //         numOfRows: 20,
-  //       },
-  //     }),
-  //   ]);
-  //   results.push(...(petTourResponse[0].data.response.body.items.item || []));
-  // }
-
-  const uniqueResults = results.reduce((acc, item) => {
-    if (!acc.some((existing: any) => existing.contentid === item.contentid)) {
-      acc.push(item);
+        // 응답 구조 안전하게 처리
+        const items = keywordResponse?.data?.response?.body?.items?.item;
+        if (items) {
+          // 단일 항목인 경우 배열로 변환
+          const itemsArray = Array.isArray(items) ? items : [items];
+          results.push(...itemsArray);
+        }
+      } catch (error) {
+        console.error('키워드 검색 중 오류 발생:', error);
+      }
     }
-    return acc;
-  }, []);
 
-  return uniqueResults;
+    if (region) {
+      try {
+        const regionResponse = await client.get(`/areaBasedList1`, {
+          params: {
+            areaCode: regionCode,
+            pageNo: 1,
+            numOfRows: 20,
+          },
+        });
+
+        // 응답 구조 안전하게 처리
+        const items = regionResponse?.data?.response?.body?.items?.item;
+        if (items) {
+          // 단일 항목인 경우 배열로 변환
+          const itemsArray = Array.isArray(items) ? items : [items];
+          results.push(...itemsArray);
+        }
+      } catch (error) {
+        console.error('지역 검색 중 오류 발생:', error);
+      }
+    }
+
+    // 테마 검색 코드는 주석 처리되어 있으므로 그대로 유지
+
+    // 중복 제거
+    const uniqueResults = results.reduce((acc, item) => {
+      if (
+        item &&
+        item.contentid &&
+        !acc.some((existing: any) => existing.contentid === item.contentid)
+      ) {
+        acc.push(item);
+      }
+      return acc;
+    }, []);
+
+    return uniqueResults;
+  } catch (error) {
+    console.error('검색 중 오류 발생:', error);
+    return []; // 오류 발생 시 빈 배열 반환
+  }
 }
+
 export { fetchSearchList };
