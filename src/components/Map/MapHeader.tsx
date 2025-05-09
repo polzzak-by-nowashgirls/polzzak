@@ -52,7 +52,7 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
         search: current.toString(),
       });
     }
-  }, [isOpen]);
+  }, [isOpen, navigate, searchParams]);
 
   // ✅ 필터링 버튼 클릭 시
   const handleFilterClick = (category: string) => {
