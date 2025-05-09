@@ -10,15 +10,15 @@ function Step3() {
   const { openModal } = useModalStore();
   // > 휴대폰 번호 입력
   const { phoneNumber, setPhoneNumber } = useRegisterStore();
-  // const [inputPhoneNumber, setInputPhoneNumber] = useState('');
   // > 인증 번호 입력
   const [inputConfirm, setInputConfirm] = useState('');
 
   const [confirmBtn, setConfirmBtn] = useState(false); // 인증번호 받았는지?
-  const [confirm, setConfirm] = useState(true); // 인증번호 일치? 일단 true로 만들어서 다음 페이지 넘어가도록 함
+  const [confirm] = useState(true); // 인증번호 일치? 일단 true로 만들어서 다음 페이지 넘어가도록 함
+  // > 모달 타입 지정
   const [modalType, setModalType] = useState<
     'certify_success' | 'certify_fail' | null
-  >(null); // 모달 타입 지정
+  >(null);
 
   function handlePhoneNumber(e: React.ChangeEvent<HTMLInputElement>) {
     let value = e.target.value.replace(/\D/g, '');
@@ -89,7 +89,6 @@ function Step3() {
         </div>
       )}
       {confirmBtn ? (
-        // <Button onClick={handleConfirm} disabled={inputConfirm.length !== 6}>
         <Button disabled={inputConfirm.length !== 6} onClick={handleAuthButton}>
           인증하기
         </Button>
