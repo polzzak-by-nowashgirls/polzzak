@@ -24,6 +24,7 @@ function AddNEdit() {
   const isEditPage = Boolean(id);
   const isAddPage = !isEditPage;
   const [editRegion, setEditRegion] = useState<string[] | null>(null);
+  console.log(editRegion); // Chip 컴포넌트 완료 후 수정
   const [showCropper, setShowCropper] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { isOpen, openModal, closeModal } = useDialogStore();
@@ -312,7 +313,7 @@ function AddNEdit() {
                   : [...prev, selectChip.name];
               });
             }}
-            // selectedValues={editRegion}
+            // selectedValues={editRegion}  // Chip 컴포넌트 완료 후 수정
           />
         </div>
         <div>

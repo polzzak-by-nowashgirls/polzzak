@@ -55,7 +55,14 @@ function useGetFestival({
     };
 
     fetchFestivalList();
-  }, [numOfRows, JSON.stringify(areaCodes), pageNo, eventStartDate]);
+  }, [
+    numOfRows,
+    JSON.stringify(areaCodes),
+    pageNo,
+    eventStartDate,
+    areaCodes,
+    date,
+  ]);
 
   return festivalList;
 }
