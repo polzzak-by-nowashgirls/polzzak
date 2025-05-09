@@ -17,6 +17,11 @@ async function fetchContentDetail(
   contentTypeId: string,
   detail: boolean = false,
 ) {
+  /* 📌 응답 객체가 유효한 형식인지 검사 */
+  const isValidResponse = (res: any) => {
+    return typeof res?.data === 'object' && res?.data?.response?.body;
+  };
+
   /* 🧩 detailCommon1과 detailIntro1 함께 호출 */
   const [commonRes, introRes] = await Promise.all([
     client.get(`/detailCommon1`, {
@@ -43,8 +48,19 @@ async function fetchContentDetail(
     }),
   ]);
 
-  const commonItem = commonRes.data.response.body.items.item[0];
-  const introItem = introRes.data.response.body.items.item[0];
+  /* 📌 공통 API 응답(commonRes) 또는 소개 API 응답(introRes)이 유효하지 않을 경우 */
+  if (!isValidResponse(commonRes) || !isValidResponse(introRes)) {
+    console.error('❌ API 요청 실패:', {
+      common: commonRes.data,
+      intro: introRes.data,
+    });
+    throw new Error(
+      'OpenAPI 요청 제한을 초과했습니다. 잠시 후 다시 시도해주세요.',
+    );
+  }
+
+  const commonItem = commonRes.data?.response?.body.items.item[0];
+  const introItem = introRes.data?.response?.body.items.item[0];
 
   /* 🔑 받아온 주소에서 "region: 서울, destrict: 용산구" 뽑아냄 */
   const [region, district] = commonItem.addr1.split(' ') ?? [];
