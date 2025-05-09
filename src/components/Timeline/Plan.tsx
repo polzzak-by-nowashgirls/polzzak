@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import supabase from '@/api/supabase';
@@ -13,10 +13,9 @@ interface PlanProps {
   cardId?: string;
   onUpdatePlan?: (plan: {
     place: string;
+    content_id: string;
     time: string;
     memo: string;
-    content_id: string;
-    order: number;
   }) => void;
 }
 
@@ -32,7 +31,6 @@ function Plan({ cardId, onUpdatePlan }: PlanProps) {
     content_id: '',
     time: '',
     memo: '',
-    order: 0,
   });
   const [isSaving, setIsSaving] = useState(false);
   const showToast = useToast();
@@ -45,7 +43,7 @@ function Plan({ cardId, onUpdatePlan }: PlanProps) {
     } else if (!id) {
       navigate('/polzzak');
     }
-  }, [date, id]);
+  }, [date, id, navigate]);
 
   const onSavePlan = async () => {
     if (isSaving) return;
@@ -118,39 +116,42 @@ function Plan({ cardId, onUpdatePlan }: PlanProps) {
   };
 
   /* edit */
-  useEffect(() => {
-    if (!cardId) return;
-    getEditPlan(cardId);
-  }, [cardId]);
 
   useEffect(() => {
     if (cardId && onUpdatePlan) onUpdatePlan(plan);
   }, [cardId, onUpdatePlan, plan]);
 
-  const getEditPlan = async (cardId: string) => {
-    const { data, error } = await supabase
-      .from('ex_polzzak_detail')
-      .select('place, time, memo, content_id, order')
-      .eq('id', cardId);
+  const getEditPlan = useCallback(
+    async (cardId: string) => {
+      const { data, error } = await supabase
+        .from('ex_polzzak_detail')
+        .select('place, time, memo, content_id, order')
+        .eq('id', cardId);
 
-    if (error || !data) {
-      console.error(error);
-      showToast(
-        '해당 폴짝을 가져오지 못했어요. 잠시 후 다시 시도해 주세요.',
-        'top-[64px]',
-        4000,
-      );
-      return;
-    }
+      if (error || !data) {
+        console.error(error);
+        showToast(
+          '해당 폴짝을 가져오지 못했어요. 잠시 후 다시 시도해 주세요.',
+          'top-[64px]',
+          4000,
+        );
+        return;
+      }
 
-    setPlan({
-      place: data[0].place,
-      time: data[0]?.time?.slice(0, 5) ?? '',
-      memo: data[0]?.memo ?? '',
-      content_id: data[0]?.content_id ?? '',
-      order: data[0].order,
-    });
-  };
+      setPlan({
+        place: data[0].place,
+        time: data[0]?.time?.slice(0, 5) ?? '',
+        memo: data[0]?.memo ?? '',
+        content_id: data[0]?.content_id ?? '',
+      });
+    },
+    [showToast],
+  );
+
+  useEffect(() => {
+    if (!cardId) return;
+    getEditPlan(cardId);
+  }, [cardId, getEditPlan]);
 
   return (
     <>
@@ -166,7 +167,6 @@ function Plan({ cardId, onUpdatePlan }: PlanProps) {
               time: plan.time,
               memo: plan.memo,
               content_id: plan.content_id,
-              order: plan.order,
             })
           }
           maxLength={20}
@@ -185,7 +185,6 @@ function Plan({ cardId, onUpdatePlan }: PlanProps) {
               time: e.target.value,
               memo: plan.memo,
               content_id: plan.content_id,
-              order: plan.order,
             })
           }
           placeholder="폴짝 시간을 선택해 주세요."
@@ -220,7 +219,6 @@ function Plan({ cardId, onUpdatePlan }: PlanProps) {
               time: plan.time,
               memo: e.target.value,
               content_id: plan.content_id,
-              order: plan.order,
             })
           }
         />
