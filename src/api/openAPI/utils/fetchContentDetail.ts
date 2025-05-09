@@ -1,3 +1,5 @@
+import { AxiosResponse } from 'axios';
+
 import { client } from '@/api/openAPI/client';
 
 // 관광지, 문화시설, 축제공연행사, 레포츠, 숙박, 쇼핑, 음식점
@@ -11,6 +13,35 @@ import { client } from '@/api/openAPI/client';
 //   '2758120', // 음식점
 // ];
 
+interface OpenAPIResponse<T> {
+  response: {
+    body: {
+      items: {
+        item: T[];
+      };
+    };
+  };
+}
+
+interface IntroItem {
+  [key: string]: unknown;
+}
+
+interface CommonItem {
+  title: string;
+  firstimage?: string;
+  addr1: string;
+  addr2?: string;
+  overview?: string;
+  eventhomepage?: string;
+  eventplace?: string;
+  placeinfo?: string;
+  playtime?: string;
+  program?: string;
+  subevent?: string;
+  usetimefestival?: string;
+}
+
 /* 📍 detail=true는 콘텐츠가 세부 페이지일 때 */
 async function fetchContentDetail(
   contentId: string,
@@ -18,12 +49,24 @@ async function fetchContentDetail(
   detail: boolean = false,
 ) {
   /* 📌 응답 객체가 유효한 형식인지 검사 */
-  const isValidResponse = (res: any) => {
-    return typeof res?.data === 'object' && res?.data?.response?.body;
+  // const isValidResponse = (res) => {
+  //   return typeof res?.data === 'object' && res?.data?.response?.body;
+  // };
+
+  const isValidResponse = <T>(
+    res: AxiosResponse<OpenAPIResponse<T>>,
+  ): res is AxiosResponse<OpenAPIResponse<T>> => {
+    return (
+      typeof res?.data === 'object' &&
+      Array.isArray(res.data.response?.body?.items?.item)
+    );
   };
 
   /* 🧩 detailCommon1과 detailIntro1 함께 호출 */
-  const [commonRes, introRes] = await Promise.all([
+  const [commonRes, introRes]: [
+    AxiosResponse<OpenAPIResponse<CommonItem>>,
+    AxiosResponse<OpenAPIResponse<IntroItem>>,
+  ] = await Promise.all([
     client.get(`/detailCommon1`, {
       params: {
         contentId,
