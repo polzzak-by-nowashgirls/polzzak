@@ -36,19 +36,23 @@ export default function ModalDetailContent({
   data,
   contentId,
 }: ModalDetailContent) {
-  console.log(data, contentId);
-
   const [detail, setDetail] = useState<TourDataDetail | null>(null);
 
   useEffect(() => {
+    function isTourDataDetail(data: unknown): data is TourDataDetail {
+      return typeof data === 'object' && data !== null && 'title' in data;
+    }
+
     if (contentId && data?.contenttypeid) {
       fetchContentDetail(contentId, data.contenttypeid, true).then((res) => {
-        setDetail(res);
+        if (isTourDataDetail(res)) {
+          setDetail(res);
+        } else {
+          console.warn('Unexpected detail type:', res);
+        }
       });
     }
   }, [contentId, data?.contenttypeid]);
-
-  console.log(detail);
 
   return (
     <>
@@ -89,8 +93,8 @@ export default function ModalDetailContent({
                   <div key={key} className="flex gap-4">
                     <dt className="fs-14 text-gray06 w-18">{label}</dt>
                     <dd className="text-black">
-                      {formatDate((detail as any).eventstartdate)} ~{' '}
-                      {formatDate((detail as any).eventenddate)}
+                      {formatDate(detail.eventstartdate as string)} ~{' '}
+                      {formatDate(detail.eventenddate as string)}
                     </dd>
                   </div>
                 );
