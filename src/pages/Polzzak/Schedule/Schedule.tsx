@@ -13,8 +13,10 @@ export interface ScheduleList {
   id: string;
   schedule_id: string;
   place: string;
+  content_id: string;
   time: string;
   memo: string;
+  order: number;
 }
 
 export interface ScheduleDetail {
@@ -108,8 +110,10 @@ function Schedule() {
           id: d.id,
           schedule_id: entry.schedule_id,
           place: d.place,
+          content_id: d.content_id,
           time: d.time,
           memo: d.memo,
+          order: d.order,
         }));
 
       return { day, date, items };
@@ -136,8 +140,6 @@ function Schedule() {
       <div className="flex justify-center">데이터를 불러오지 못했어요.</div>
     );
   }
-
-  console.log('💬 detailData:', detailData);
 
   return (
     <div className="flex flex-col gap-4">

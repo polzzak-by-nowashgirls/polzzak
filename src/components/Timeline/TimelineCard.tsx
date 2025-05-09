@@ -104,7 +104,7 @@ function TimelineCard({
           {isEditcard && (
             <motion.div
               style={{ opacity: dragOpacity, scale }}
-              className="flex flex-shrink-0 items-center px-4 select-none"
+              className="flex flex-shrink-0 cursor-pointer items-center px-4 select-none"
               onPointerDown={(e) => {
                 controls.start(e);
                 setOpenCardId(id);
