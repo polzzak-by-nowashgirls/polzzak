@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import supabase from '@/api/supabase';
@@ -33,7 +33,7 @@ function Polzzak() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const userId = getUserId?.id;
 
-  const fetchMyPolzzak = async () => {
+  const fetchMyPolzzak = useCallback(async () => {
     const { data, error } = await supabase
       .from('ex_polzzak')
       .select('*')
@@ -46,13 +46,13 @@ function Polzzak() {
     }
 
     setMyPolzzak(data);
-  };
+  }, [userId, showToast]);
 
   useEffect(() => {
     if (isPolzzakPage && userId) {
       fetchMyPolzzak();
     }
-  }, [isPolzzakPage, userId]);
+  }, [isPolzzakPage, userId, fetchMyPolzzak]);
 
   return (
     <main className="flex h-full w-full flex-1 flex-col overflow-auto p-6">
