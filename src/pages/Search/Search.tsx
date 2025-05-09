@@ -3,17 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { fetchSearchList } from '@/api/openAPI/utils/fetchSearchList';
 import Button from '@/components/Button/Button';
 import Chip from '@/components/Chip/Chip';
+import { ClickedChipItem } from '@/components/Chip/Chip';
 import Icon from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
 import Modal from '@/components/Modal/Modal';
 import { useModalStore } from '@/store/useModalStore';
 import { useSearchStore } from '@/store/useSearchStore';
-
-interface ClickedChipItem {
-  id: number;
-  name: string;
-  selected: boolean;
-}
 
 function Search() {
   const navigate = useNavigate();
@@ -59,16 +54,17 @@ function Search() {
 
     try {
       const searchResults = await fetchSearchList({ keyword, region, theme });
-      const params = new URLSearchParams();
 
       setSearchResults(searchResults);
-      if (keyword) params.append('q', keyword);
-      if (region) params.append('region', region);
+
+      const params = new URLSearchParams();
+      if (keyword) params.set('q', keyword);
+      if (region) params.set('region', region);
       if (theme.length > 0) {
-        theme.forEach((t) => params.append('theme', t));
+        params.set('theme', theme.join(','));
       }
       navigate(`/search/result?${params.toString()}`);
-      /* 초기화 */
+
       setKeyWord('');
       setRegion('');
       setTheme([]);
