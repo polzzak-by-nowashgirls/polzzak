@@ -7,9 +7,9 @@ function useContentDetail(contentId: string, contentTypeId: string) {
     queryKey: ['contentDetail', contentId],
     queryFn: () => fetchContentDetail(contentId, contentTypeId),
     enabled: !!contentId,
-    onError: (error) => {
-      console.error('❌ useQuery onError:', error);
-    },
+    // onError: (error) => {
+    //   console.error('❌ useQuery onError:', error);
+    // },
   });
 }
 
