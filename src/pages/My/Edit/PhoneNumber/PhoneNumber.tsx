@@ -24,7 +24,7 @@ function PhoneNumber() {
 
     // > 000-0000-0000 형태
     if (value.length <= 3) {
-      value = value;
+      // value = value;
     } else if (value.length <= 7) {
       // 4~7자리
       value = `${value.slice(0, 3)}-${value.slice(3)}`;

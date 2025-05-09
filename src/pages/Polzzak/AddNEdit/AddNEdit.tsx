@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import supabase from '@/api/supabase';
@@ -48,7 +48,7 @@ function AddNEdit() {
   const showToast = useToast();
 
   /* 편집 정보 가져오기 */
-  const getEditInfo = async () => {
+  const getEditInfo = useCallback(async () => {
     const { data, error } = await supabase
       .from('ex_polzzak')
       .select('*')
@@ -88,14 +88,15 @@ function AddNEdit() {
     setDateRange({ from: data[0].startDate, to: data[0]?.endDate ?? null });
     setThumbnail(data[0]?.thumbnail ?? null);
     getEditRegion();
-  };
+  }, [id, setDateRange, setName, setThumbnail, showToast]);
 
   useEffect(() => {
     reset();
 
-    if (isAddPage) return;
-    getEditInfo();
-  }, []);
+    if (isEditPage) {
+      getEditInfo();
+    }
+  }, [reset, isEditPage, getEditInfo]);
 
   /* 날짜 선택 */
   const handleCalender = () => {
