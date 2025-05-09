@@ -5,11 +5,12 @@ import { cn } from '@/lib/utils';
 import { usePolzzakStore } from '@/store/usePolzzakStroe';
 
 interface InputProps extends Omit<React.ComponentProps<'input'>, 'type'> {
-  type?: 'text' | 'password' | 'button' | 'file';
+  type?: 'text' | 'password' | 'button' | 'file' | 'time';
   label: string;
   hideLabel?: boolean;
   placeholder?: string;
   children?: React.ReactNode;
+  timeValue?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -21,6 +22,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       hideLabel = false,
       placeholder,
       children,
+      timeValue,
       ...props
     },
     ref,
@@ -85,6 +87,43 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
 
+          {iconBtn}
+        </Wrapper>
+      </>
+    ) : type === 'time' ? (
+      <>
+        <Label hideLabel={hideLabel} htmlFor={labelId} className="m-1">
+          {label}
+        </Label>
+        <Wrapper {...(children ? { className: 'relative' } : {})}>
+          <input
+            type="text"
+            readOnly
+            data-slot="input"
+            id={labelId}
+            value={timeValue || ''}
+            placeholder={placeholder}
+            className={cn(
+              inputClassName,
+              !timeValue && 'text-gray05',
+              'cursor-pointer',
+            )}
+            onClick={() => {
+              if (ref && 'current' in ref && ref.current) {
+                ref.current?.showPicker();
+                ref.current?.focus();
+              }
+            }}
+          />
+          <input
+            type="time"
+            className="sr-only"
+            ref={ref}
+            id={`${labelId}-hidden`}
+            step={300}
+            tabIndex={-1}
+            {...props}
+          />
           {iconBtn}
         </Wrapper>
       </>

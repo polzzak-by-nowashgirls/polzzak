@@ -1,6 +1,5 @@
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import supabase from '@/api/supabase';
@@ -8,14 +7,16 @@ import Loader from '@/components/Loader/Loader';
 import PolzzakListItem from '@/components/Polzzak/PolzzakListItem';
 import TimelineSchedule from '@/components/Timeline/TimelineSchedule';
 import { useToast } from '@/hooks/useToast';
-import { ListItemType } from '@/pages/Polzzak/Polzzak';
 import { useHeaderStore } from '@/store/useHeaderStore';
 
 export interface ScheduleList {
+  id: string;
   schedule_id: string;
   place: string;
+  content_id: string;
   time: string;
   memo: string;
+  order: number;
 }
 
 export interface ScheduleDetail {
@@ -27,83 +28,65 @@ export interface ScheduleDetail {
 function Schedule() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [polzzakData, setPolzzakData] = useState<ListItemType>();
-  const [schedule, setSchedule] = useState<ScheduleDetail[]>();
   const setContentsTitle = useHeaderStore((state) => state.setContentsTitle);
   const showToast = useToast();
 
-  const getMyPolzzakInfo = async () => {
-    const { data, error } = await supabase
-      .from('ex_polzzak')
-      .select('*')
-      .eq('id', id);
+  const {
+    data: polzzakData,
+    isLoading: isPolzzakLoading,
+    error: polzzakError,
+  } = useQuery({
+    queryKey: ['polzzak', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('ex_polzzak')
+        .select('*')
+        .eq('id', id)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id,
+  });
 
-    if (error) {
-      console.error(error);
-      showToast(
-        '편집할 데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
-        'bottom-[64px]',
-        5000,
-      );
-      return;
-    }
-    const polzzakData = data[0];
-    setPolzzakData(polzzakData);
+  const {
+    data: scheduleData,
+    isLoading: isScheduleLoading,
+    error: scheduleError,
+  } = useQuery({
+    queryKey: ['schedule', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('ex_polzzak_schedule')
+        .select('date, schedule_id')
+        .eq('polzzak_id', id);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id && !!polzzakData,
+  });
 
-    const { data: scheduleData, error: scheduleErr } = await supabase
-      .from('ex_polzzak_schedule')
-      .select('date, schedule_id')
-      .eq('polzzak_id', polzzakData.id);
+  const scheduleIds = scheduleData?.map((s) => s.schedule_id) ?? [];
 
-    if (scheduleErr || !scheduleData || scheduleData.length === 0) {
-      console.error(scheduleErr);
-      showToast(
-        '편집할 데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
-        'bottom-[64px]',
-        5000,
-      );
-      return;
-    }
-    const scheduleId = scheduleData.map((i) => i.schedule_id);
-
-    const { data: detailDataRaw, error: DetailErr } = await supabase
-      .from('ex_polzzak_detail')
-      .select('*')
-      .in('schedule_id', scheduleId);
-
-    if (DetailErr) {
-      console.error(DetailErr);
-      showToast(
-        '편집할 데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
-        'bottom-[64px]',
-        5000,
-      );
-      return;
-    }
-
-    const detailData = detailDataRaw ?? [];
-
-    const mergedScheduled: ScheduleDetail[] = scheduleData.map((entry, idx) => {
-      const day = `Day ${idx + 1}`;
-      const date = format(new Date(entry.date), 'MM.dd EEE', { locale: ko });
-      const item = detailData
-        .filter((d) => d.schedule_id === entry.schedule_id)
-        .map((d) => ({
-          schedule_id: entry.schedule_id,
-          place: d.place,
-          time: d.time,
-          memo: d.memo,
-        }));
-
-      return { day, date, items: item };
-    });
-
-    setSchedule(mergedScheduled);
-  };
-
-  useEffect(() => {
-    getMyPolzzakInfo();
-  }, []);
+  const {
+    data: detailData,
+    isLoading: isDetailLoading,
+    error: detailError,
+  } = useQuery({
+    queryKey: ['schedule-details'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('ex_polzzak_detail')
+        .select('*')
+        .in('schedule_id', scheduleIds)
+        .order('order', { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: scheduleIds.length > 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  });
 
   useEffect(() => {
     if (polzzakData === undefined) return;
@@ -116,15 +99,54 @@ function Schedule() {
     return () => setContentsTitle(null);
   }, [polzzakData, navigate, setContentsTitle]);
 
-  // 로더 대신 스켈레톤 필요
-  if (polzzakData === undefined) return <Loader text="잠시만 기다려 주세요~" />;
+  const mergedScheduled = useMemo(() => {
+    if (!scheduleData || !detailData) return [];
+    return scheduleData.map((entry, idx) => {
+      const day = `Day ${idx + 1}`;
+      const date = entry.date;
+      const items = detailData
+        .filter((d) => d.schedule_id === entry.schedule_id)
+        .map((d) => ({
+          id: d.id,
+          schedule_id: entry.schedule_id,
+          place: d.place,
+          content_id: d.content_id,
+          time: d.time,
+          memo: d.memo,
+          order: d.order,
+        }));
+
+      return { day, date, items };
+    });
+  }, [scheduleData, detailData]);
+
+  if (isPolzzakLoading || isScheduleLoading || isDetailLoading) {
+    return <Loader text="데이터 불러오는 중..." />; // 스켈레톤으로 변경 필요
+  }
+
+  if (
+    polzzakError ||
+    scheduleError ||
+    detailError ||
+    !scheduleData ||
+    !detailData
+  ) {
+    showToast(
+      '일정을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
+      'top-[64px]',
+      5000,
+    );
+    return (
+      <div className="flex justify-center">데이터를 불러오지 못했어요.</div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
       <section>
         {polzzakData && <PolzzakListItem item={polzzakData} detail={true} />}
       </section>
-      <TimelineSchedule schedule={schedule ?? []} />
+      <TimelineSchedule schedule={mergedScheduled} />
     </div>
   );
 }

@@ -1,22 +1,20 @@
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
 import Calendar from '@/components/Calendar/Calendar';
 
-function CalendarCustom() {
-  const [selected, setSelected] = useState<DateRange | undefined>(undefined);
+interface CalendarCustomProps {
+  selected: DateRange | undefined;
+  onSelect: (range: DateRange | undefined) => void;
+}
 
-  const handleSelect = (range: DateRange | undefined) => {
-    setSelected(range);
-  };
-
+function CalendarCustom({ selected, onSelect }: CalendarCustomProps) {
   return (
     <Calendar
       mode={'range'}
       selected={selected}
-      onSelect={handleSelect}
+      onSelect={onSelect}
       locale={ko}
       className="rounded-md border"
       formatters={{
