@@ -13,7 +13,7 @@ function PhoneNumber() {
   const { phoneNumber, setPhoneNumber, authNumber, setAuthNumber } =
     useEditStore();
   const [isAuth, setIsAuth] = useState(false); // 인증번호 받았는지?
-  const [vertify, setVertify] = useState(true); // 인증번호 일치? 일단 true로 만들어서 다음 페이지 넘어가도록 함
+  const [vertify] = useState(true); // 인증번호 일치? 일단 true로 만들어서 다음 페이지 넘어가도록 함
 
   const handleGetAuth = () => {
     setIsAuth(true);
