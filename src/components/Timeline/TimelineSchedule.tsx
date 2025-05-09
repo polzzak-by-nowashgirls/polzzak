@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import supabase from '@/api/supabase';
@@ -10,7 +10,10 @@ import SlideUpDialog from '@/components/Dialog/SlideUpDialog';
 import Plan from '@/components/Timeline/Plan';
 import TimelineList from '@/components/Timeline/TimelineList';
 import { useToast } from '@/hooks/useToast';
-import { ScheduleDetail } from '@/pages/Polzzak/Schedule/Schedule';
+import {
+  ScheduleDetail,
+  ScheduleList,
+} from '@/pages/Polzzak/Schedule/Schedule';
 import { useDialogStore } from '@/store/useDialogStore';
 
 interface TimelineScheduleProps {
@@ -30,10 +33,9 @@ function TimelineSchedule({ schedule }: TimelineScheduleProps) {
   const [changeOrderBtn, setChangeOrderBtn] = useState<string | null>(null);
   const [editPlanData, setEditPlanData] = useState<{
     place: string;
+    content_id: string;
     time: string;
     memo: string;
-    content_id: string;
-    order: number;
   } | null>(null);
   const showToast = useToast();
   const queryClient = useQueryClient();
@@ -78,6 +80,7 @@ function TimelineSchedule({ schedule }: TimelineScheduleProps) {
             place: editPlanData.place.trim(),
             time: editPlanData.time || null,
             memo: editPlanData.memo.trim() || null,
+            content_id: editPlanData.content_id || null,
           })
           .eq('id', isOpenId);
 
@@ -102,6 +105,32 @@ function TimelineSchedule({ schedule }: TimelineScheduleProps) {
   const handleEditDetail = (idx: string | null) => {
     setChangeOrderBtn(idx);
   };
+
+  const saveReorderedCards = useCallback(
+    async (changeCards: ScheduleList[]) => {
+      await Promise.all(
+        changeCards.map(async (card, idx) => {
+          const { error } = await supabase
+            .from('ex_polzzak_detail')
+            .update({ order: idx })
+            .eq('id', card.id);
+
+          if (error) {
+            console.error(error);
+            showToast(
+              '순서를 변경하지 못했어요. 잠시 후 다시 시도해 주세요.',
+              'top-[64px]',
+              4000,
+            );
+            return;
+          }
+        }),
+      );
+
+      await queryClient.invalidateQueries({ queryKey: ['schedule-details'] });
+    },
+    [showToast, queryClient],
+  );
 
   return (
     <main className="flex flex-col gap-4">
@@ -136,6 +165,7 @@ function TimelineSchedule({ schedule }: TimelineScheduleProps) {
               <TimelineList
                 itemList={daySchedule.items}
                 isEditMode={changeOrderBtn === daySchedule.day}
+                onSaveCards={saveReorderedCards}
               />
             )}
             <Button

@@ -7,15 +7,28 @@ import { ScheduleList } from '@/pages/Polzzak/Schedule/Schedule';
 interface TimelineListProps {
   itemList: ScheduleList[];
   isEditMode: boolean;
+  onSaveCards: (cards: ScheduleList[]) => void;
 }
 
-function TimelineList({ itemList, isEditMode }: TimelineListProps) {
-  const [cards, setCards] = useState(itemList); // 서버 저장
+function TimelineList({
+  itemList,
+  isEditMode,
+  onSaveCards,
+}: TimelineListProps) {
+  const [cards, setCards] = useState(itemList);
+  const [hasReordered, setHasReordered] = useState(false);
   const [openCardId, setOpenCardId] = useState<string | null>(null);
 
   useEffect(() => {
     setCards(itemList);
   }, [itemList]);
+
+  useEffect(() => {
+    if (!isEditMode && hasReordered) {
+      onSaveCards(cards);
+      setHasReordered(false);
+    }
+  }, [isEditMode, hasReordered, onSaveCards]);
 
   return (
     <Reorder.Group
@@ -24,6 +37,7 @@ function TimelineList({ itemList, isEditMode }: TimelineListProps) {
       onReorder={(newOrder) => {
         const reordered = newOrder.map((id) => cards.find((c) => c.id === id)!);
         setCards(reordered);
+        setHasReordered(true);
       }}
       className="relative flex"
     >
