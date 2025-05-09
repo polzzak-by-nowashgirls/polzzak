@@ -9,6 +9,8 @@ interface GetFestival {
 
 type FestivalListType = Record<string, string>;
 
+// 📍 areaCodes는 무조건 useMemo로 넘겨주세요!
+// const areaCodes = useMemo(() => ['1', '2'], []);
 function useGetFestival({
   numOfRows = '10',
   areaCodes,
@@ -57,7 +59,7 @@ function useGetFestival({
     fetchFestivalList();
   }, [
     numOfRows,
-    JSON.stringify(areaCodes),
+    // JSON.stringify(areaCodes),
     pageNo,
     eventStartDate,
     areaCodes,
