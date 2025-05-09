@@ -28,7 +28,7 @@ function TimelineList({
       onSaveCards(cards);
       setHasReordered(false);
     }
-  }, [isEditMode, hasReordered, onSaveCards]);
+  }, [isEditMode, hasReordered, onSaveCards, cards]);
 
   return (
     <Reorder.Group
