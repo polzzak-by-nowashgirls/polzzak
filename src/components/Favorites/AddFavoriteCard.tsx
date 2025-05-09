@@ -1,7 +1,7 @@
 import FavoriteCard from '@/components/Favorites/FavoriteCard';
 import { cn } from '@/lib/utils';
 
-function AddFavoriteCard({ onClick }) {
+function AddFavoriteCard({ onClick }: { onClick: () => void }) {
   return (
     <div
       className={cn(
