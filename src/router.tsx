@@ -25,7 +25,7 @@ import {
   PhoneNumber,
 } from '@/pages/My/Edit';
 import { Favorites, FavoritesDetails } from '@/pages/My/Favorites';
-import { AddNEdit, Schedule } from '@/pages/Polzzak';
+import { AddNEdit, AddPlan, Schedule } from '@/pages/Polzzak';
 import { StepPage } from '@/pages/Register';
 import SearchResult from '@/pages/Search/SearchResult';
 
@@ -90,6 +90,12 @@ export const routes = [
           {
             path: ':id',
             element: <Schedule />,
+            children: [
+              {
+                path: 'addplan',
+                element: <AddPlan />,
+              },
+            ],
           },
         ],
       },
