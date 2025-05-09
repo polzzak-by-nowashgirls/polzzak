@@ -24,7 +24,7 @@ interface OpenAPIResponse<T> {
 }
 
 interface IntroItem {
-  [key: string]: unknown;
+  [key: string]: string;
 }
 
 interface CommonItem {
