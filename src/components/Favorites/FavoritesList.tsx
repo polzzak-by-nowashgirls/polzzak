@@ -68,7 +68,7 @@ function FavoritesList({
     };
 
     fetchAllImages();
-  }, [folders]);
+  }, [folders, showToast]);
 
   return (
     <section className="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-6">

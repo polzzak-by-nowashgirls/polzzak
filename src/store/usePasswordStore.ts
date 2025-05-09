@@ -5,7 +5,7 @@ interface PasswordStore {
   changePw: string;
   changePwConfirm: string;
   isVisible: boolean;
-  currentPwValidation: { status: string; message: string };
+  currentPwValidation: { status: boolean; message: string };
   changePwValidation: { status: boolean; message: string };
   changePwConfirmValidation: { status: boolean; message: string };
 

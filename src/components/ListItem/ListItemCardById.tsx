@@ -55,7 +55,7 @@ function ListItemCardById({
 
     fetchData();
     getLikesAndReviews();
-  }, [contentId]);
+  }, [contentId, contentTypeId]);
 
   if (!item.title) return <p>불러오는 중...</p>;
 
