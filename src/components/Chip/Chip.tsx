@@ -38,7 +38,7 @@ const MAP_FILTER_DATA = [
   { id: 4, name: '관광지', selected: false },
 ];
 
-interface ClickedChipItem {
+export interface ClickedChipItem {
   id: number;
   name: string;
   selected: boolean;
@@ -79,7 +79,6 @@ function Chip({ mode, label, subLabel, type = 'default', onClick }: ChipProps) {
               ? { ...chip, selected: !chip.selected }
               : { ...chip, selected: false },
           );
-
     setChips(updatedChips);
 
     const clickedChip = updatedChips.find((chip) => chip.id === id);
@@ -104,7 +103,7 @@ function Chip({ mode, label, subLabel, type = 'default', onClick }: ChipProps) {
             <Button
               type="button"
               size="md"
-              className={`rounded-4xl border ${chip.selected ? 'bg-primary border-primary text-white' : 'text-gray07 border-gray07 bg-white'}`}
+              className={`rounded-4xl border ${chip.selected ? 'bg-primary border-primary text-white' : 'text-gray07 border-gray07 bg-white'} active:text-white`}
               onClick={() => handleChips(chip.id)}
             >
               {chip.name}
