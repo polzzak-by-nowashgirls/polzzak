@@ -6,6 +6,10 @@ import { useUserUpdate } from '@/hooks/register/useUserUpdate';
 import { useModalStore } from '@/store/useModalStore';
 import { useRegisterStore } from '@/store/useRegisterStore';
 
+export interface ModalActionParams {
+  buttonText: string;
+}
+
 export function useModalActions() {
   const navigate = useNavigate();
   const { closeModal } = useModalStore();
@@ -73,12 +77,12 @@ export function useModalActions() {
       console.log('기존 폴짝 추가하기 버튼에 맞는 함수'),
   };
 
-  const handleButtonClick = (buttonText: string) => {
-    const action = modalActions[buttonText];
+  const handleButtonClick = (params: ModalActionParams) => {
+    const action = modalActions[params.buttonText];
     if (action) {
       action();
     } else {
-      console.warn(`"${buttonText}"에 대한 동작이 정의되지 않았습니다.`);
+      console.warn(`"${params.buttonText}"에 대한 동작이 정의되지 않았습니다.`);
     }
   };
 

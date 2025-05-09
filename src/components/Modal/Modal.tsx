@@ -18,7 +18,10 @@ function Modal({ mode, type }: ModalProps) {
   return (
     <Dimd>
       {mode === 'alert' ? (
-        <AlertModal type={type} handleButtonClick={handleButtonClick} />
+        <AlertModal
+          type={type}
+          handleButtonClick={(buttonText) => handleButtonClick({ buttonText })}
+        />
       ) : (
         <SlideUpModal type={type} handleButtonClick={handleButtonClick} />
       )}
