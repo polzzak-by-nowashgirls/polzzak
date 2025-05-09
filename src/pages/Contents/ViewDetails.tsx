@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import { useGetDetailCommon } from '@/api/openAPI';
 import Button from '@/components/Button/Button';
-import Details from '@/components/Contents/Details';
+// import Details from '@/components/Contents/Details';
 import Icon from '@/components/Icon/Icon';
 import UserMenu, { MenuItemTypes } from '@/components/UserMenu/UserMenu';
 import { useHeaderStore } from '@/store/useHeaderStore';
@@ -48,35 +48,35 @@ function ViewDetails() {
     };
   }, [data, setContentsTitle]);
 
-  let contentSection;
+  // let contentSection;
 
-  if (data.length === 0) {
-    contentSection = <div className="text-center">로딩 중...</div>;
-  } else if (
-    ['39', '32', '14', '28'].includes(data[0].contenttypeid.toString())
-  ) {
-    contentSection = (
-      <Details type="guide" data={data[0]}>
-        이용 안내
-      </Details>
-    );
-  } else if (['15', '12'].includes(data[0].contenttypeid)) {
-    contentSection = (
-      <div className="flex flex-col gap-6">
-        <Details type="guide" data={data[0]}>
-          이용 안내
-        </Details>
-        <Details type="detail" data={data[0]}>
-          행사 소개
-        </Details>
-        <Details type="detail" data={data[0]}>
-          행사 내용
-        </Details>
-      </div>
-    );
-  } else {
-    contentSection = null; // 혹은 다른 fallback
-  }
+  // if (data.length === 0) {
+  //   contentSection = <div className="text-center">로딩 중...</div>;
+  // } else if (
+  //   ['39', '32', '14', '28'].includes(data[0].contenttypeid.toString())
+  // ) {
+  //   contentSection = (
+  //     <Details type="guide" data={data[0]}>
+  //       이용 안내
+  //     </Details>
+  //   );
+  // } else if (['15', '12'].includes(data[0].contenttypeid)) {
+  //   contentSection = (
+  //     <div className="flex flex-col gap-6">
+  //       <Details type="guide" data={data[0]}>
+  //         이용 안내
+  //       </Details>
+  //       <Details type="detail" data={data[0]}>
+  //         행사 소개
+  //       </Details>
+  //       <Details type="detail" data={data[0]}>
+  //         행사 내용
+  //       </Details>
+  //     </div>
+  //   );
+  // } else {
+  //   contentSection = null; // 혹은 다른 fallback
+  // }
 
   return (
     <>
@@ -98,7 +98,7 @@ function ViewDetails() {
         <div className="text-center">로딩 중...</div>
       )}
       <UserMenu menus={userMenu} />
-      {contentSection}
+      {/* {contentSection} */}
       <Button variant={'float'}>
         <Icon id="arrow_top" />
       </Button>
