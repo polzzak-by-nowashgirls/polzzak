@@ -15,6 +15,7 @@ type ModalType =
   | 'logout'
   | 'login'
   | 'delete'
+  | 'calendar'
   | null;
 
 interface ModalStore {

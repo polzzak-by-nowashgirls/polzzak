@@ -8,6 +8,10 @@ import { useModalStore } from '@/store/useModalStore';
 function Search() {
   const { openModal } = useModalStore();
 
+  const openCalendar = () => {
+    openModal('calendar');
+  };
+
   return (
     <section className="flex h-full w-full flex-col justify-between">
       <h1 className="sr-only">검색</h1>
@@ -30,9 +34,9 @@ function Search() {
             hideLabel={true}
             type="button"
             value={'날짜를 선택해 주세요.'}
-            onClick={openModal}
+            onClick={openCalendar}
           >
-            <Button variant={'tertiary'} size="md" onClick={openModal}>
+            <Button variant={'tertiary'} size="md" onClick={openCalendar}>
               <Icon id="calendar" className="text-gray05" />
             </Button>
           </Input>
