@@ -54,6 +54,10 @@ function Polzzak() {
     }
   }, [isPolzzakPage, userId, fetchMyPolzzak]);
 
+  const handleSearch = () => {
+    console.log('폴짝 찾기');
+  };
+
   return (
     <main className="flex h-full w-full flex-1 flex-col overflow-auto p-6">
       <h2 className="sr-only">폴짝</h2>
@@ -66,8 +70,14 @@ function Polzzak() {
                 label=""
                 hideLabel={true}
                 placeholder="폴짝 찾기"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  console.log(value);
+                }}
               >
-                <Icon id="search" className="text-gray05 cursor-pointer" />
+                <Button variant="input" onClick={handleSearch}>
+                  <Icon id="search" />
+                </Button>
               </Input>
             </div>
             <PolzzakList data={myPolzzak ?? []} refetch={fetchMyPolzzak} />
