@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect, useState } from 'react';
+import { MutableRefObject } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
@@ -16,8 +16,7 @@ interface MapHeaderProps {
 function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
-  // console.log(dialogOpen);
+  const { closeModal } = useDialogStore();
 
   const MAP_FILTER = [
     { contentTypeId: '', category: 'favorite', label: '즐겨찾기' },
@@ -31,40 +30,14 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
     { contentTypeId: '14', category: 'cultural', label: '문화시설' },
   ];
 
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const { isOpen, closeModal } = useDialogStore();
-  const category = searchParams.get('category');
-
-  useEffect(() => {
-    setActiveFilter(category);
-  }, [category]);
-
-  // ✅ 모달 닫혔을 경우
-  useEffect(() => {
-    if (!isOpen) {
-      setActiveFilter(null);
-
-      const current = new URLSearchParams(searchParams);
-      current.delete('category');
-
-      navigate({
-        pathname: '/map',
-        search: current.toString(),
-      });
-    }
-  }, [isOpen, navigate, searchParams]);
-
-  // ✅ 필터링 버튼 클릭 시
   const handleFilterClick = (category: string) => {
     const current = new URLSearchParams(searchParams);
-    const isActive = category === activeFilter;
+    const isActive = searchParams.get('category') === category;
 
     if (isActive) {
-      setActiveFilter(null);
       current.delete('category');
       closeModal();
     } else {
-      setActiveFilter(category);
       current.set('category', category);
     }
 
@@ -101,25 +74,28 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
         {MAP_FILTER.filter(
           ({ category }) =>
             isLoggedIn || (category !== 'favorite' && category !== 'polzzak'),
-        ).map(({ category, label }) => (
-          <li key={category} className="first-of-type:ml-4">
-            <button
-              className={`fs-14 text-gray07 border-gray03 flex items-center gap-1 rounded-4xl border px-3 py-1 whitespace-nowrap ${activeFilter === category ? 'bg-primary border-primary text-white' : 'bg-white'}`}
-              onClick={() => handleFilterClick(category)}
-            >
-              <Icon
-                id={
-                  (category === 'favorite'
-                    ? 'favorite_off'
-                    : category) as IconId
-                }
-                size={16}
-                className={`${activeFilter === category ? 'text-white' : 'text-gray05'}`}
-              />
-              {label}
-            </button>
-          </li>
-        ))}
+        ).map(({ category, label }) => {
+          const isActive = searchParams.get('category') === category;
+          return (
+            <li key={category} className="first-of-type:ml-4">
+              <button
+                className={`fs-14 text-gray07 border-gray03 flex items-center gap-1 rounded-4xl border px-3 py-1 whitespace-nowrap ${isActive ? 'bg-primary border-primary text-white' : 'bg-white'}`}
+                onClick={() => handleFilterClick(category)}
+              >
+                <Icon
+                  id={
+                    (category === 'favorite'
+                      ? 'favorite_off'
+                      : category) as IconId
+                  }
+                  size={16}
+                  className={`${isActive ? 'text-white' : 'text-gray05'}`}
+                />
+                {label}
+              </button>
+            </li>
+          );
+        })}
       </ul>
 
       <Button
