@@ -166,38 +166,37 @@ function Map() {
   );
 
   useEffect(() => {
+    if (!category) return;
+
+    let newList: NearItemType[] = [];
+
     switch (category) {
       case 'food':
-        setDataList(foodList);
-        openModal();
+        newList = foodList;
         break;
       case 'festival':
-        setDataList(festivalList);
-        openModal();
+        newList = festivalList;
         break;
       case 'tour':
-        setDataList(tourList);
-        openModal();
+        newList = tourList;
         break;
       case 'leports':
-        setDataList(leportsList);
-        openModal();
+        newList = leportsList;
         break;
       case 'shopping':
-        setDataList(shoppingList);
-        openModal();
+        newList = shoppingList;
         break;
       case 'hotels':
-        setDataList(hotelsList);
-        openModal();
+        newList = hotelsList;
         break;
       case 'cultural':
-        setDataList(culturalList);
-        openModal();
+        newList = culturalList;
         break;
       default:
-        setDataList([]);
+        newList = [];
     }
+
+    setDataList(newList);
     setSelectedContentId(null);
   }, [
     category,
@@ -208,8 +207,13 @@ function Map() {
     shoppingList,
     hotelsList,
     culturalList,
-    openModal,
   ]);
+
+  useEffect(() => {
+    if (dataList.length > 0 && category) {
+      openModal();
+    }
+  }, [dataList, category, openModal]);
 
   // 🚩 마커 렌더링 함수
   const renderMarker = (data: DetailCommonDataType[]) =>
