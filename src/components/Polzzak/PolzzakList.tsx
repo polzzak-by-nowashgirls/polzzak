@@ -1,12 +1,17 @@
+import PolzzakListItem from '@/components/Polzzak/PolzzakListItem';
 import PolzzakSection from '@/components/Polzzak/PolzzakSection';
 import { ListItemType } from '@/pages/Polzzak/Polzzak';
 
 function PolzzakList({
   data,
   refetch,
+  searchData,
+  isSearching = false,
 }: {
   data: ListItemType[];
   refetch: () => Promise<void>;
+  searchData?: ListItemType[];
+  isSearching?: boolean;
 }) {
   const section: [string[], ListItemType[]][] = [
     [['/images/rabbit_face.png', '폴짝 중'], []],
@@ -39,14 +44,32 @@ function PolzzakList({
 
   return (
     <div className="flex flex-col gap-6">
-      {section.map((i, idx) => (
-        <PolzzakSection
-          key={`${i[0][2]}${idx}`}
-          title={i[0]}
-          items={i[1]}
-          refetch={refetch}
-        />
-      ))}
+      {isSearching ? (
+        searchData?.length ? (
+          <ul className="flex flex-col gap-4">
+            {searchData.map((item, idx) => (
+              <PolzzakListItem
+                key={`${item.name}${idx}`}
+                item={item}
+                onDeleted={refetch}
+              />
+            ))}
+          </ul>
+        ) : (
+          <p className="bg-gray01 text-gray07 fs-14 rounded-sm px-4 py-2">
+            검색결과가 없습니다.
+          </p>
+        )
+      ) : (
+        section.map((i, idx) => (
+          <PolzzakSection
+            key={`${i[0][2]}${idx}`}
+            title={i[0]}
+            items={i[1]}
+            refetch={refetch}
+          />
+        ))
+      )}
     </div>
   );
 }
