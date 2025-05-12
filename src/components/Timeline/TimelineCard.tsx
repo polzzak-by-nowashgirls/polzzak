@@ -11,16 +11,24 @@ import { useEffect } from 'react';
 import Button from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
 import { cn } from '@/lib/utils';
-import { PolzzakCard } from '@/mockData/PolzzakItemDummyData';
+import { ScheduleList } from '@/pages/Polzzak/Schedule/Schedule';
+import { useDialogStore } from '@/store/useDialogStore';
 
 interface TimelineCard {
-  value: PolzzakCard;
-  openCardId: number | null;
-  setOpenCardId: (id: number | null) => void;
+  data: ScheduleList;
+  openCardId: string | null;
+  setOpenCardId: (id: string | null) => void;
+  isEditcard: boolean;
 }
 
-function TimelineCard({ value, openCardId, setOpenCardId }: TimelineCard) {
-  const { id, place, time, memo } = value;
+function TimelineCard({
+  data,
+  openCardId,
+  setOpenCardId,
+  isEditcard,
+}: TimelineCard) {
+  const openModal = useDialogStore((state) => state.openModal);
+  const { id, place, time, memo } = data;
 
   const isOpen = openCardId === id;
   const controls = useDragControls();
@@ -46,7 +54,7 @@ function TimelineCard({ value, openCardId, setOpenCardId }: TimelineCard) {
   };
 
   const onClickOpenEditModal = () => {
-    console.log('‼️ Open Modal ‼️');
+    openModal(id);
   };
 
   const handleEditButton = () => {
@@ -57,7 +65,7 @@ function TimelineCard({ value, openCardId, setOpenCardId }: TimelineCard) {
 
   return (
     <Reorder.Item
-      value={value}
+      value={id}
       dragListener={false}
       dragControls={controls}
       className={cn('relative flex w-full gap-4 overflow-hidden')}
@@ -83,8 +91,8 @@ function TimelineCard({ value, openCardId, setOpenCardId }: TimelineCard) {
           <div className="min-w-0 flex-1">
             <h4 className="fs-14 inline-block font-semibold">{place}</h4>
             {time && (
-              <time className="fs-14 text-gray08 ml-1" dateTime={time}>
-                {time}
+              <time className="fs-14 text-gray07 ml-2" dateTime={time}>
+                {time.slice(0, 5)}
               </time>
             )}
             {memo && (
@@ -93,16 +101,18 @@ function TimelineCard({ value, openCardId, setOpenCardId }: TimelineCard) {
               </p>
             )}
           </div>
-          <motion.div
-            style={{ opacity: dragOpacity, scale }}
-            className="flex flex-shrink-0 items-center px-4 select-none"
-            onPointerDown={(e) => {
-              controls.start(e);
-              setOpenCardId(id);
-            }}
-          >
-            <Icon id={'drag_handle'} className="text-gray05" size={16} />
-          </motion.div>
+          {isEditcard && (
+            <motion.div
+              style={{ opacity: dragOpacity, scale }}
+              className="flex flex-shrink-0 cursor-pointer items-center px-4 select-none"
+              onPointerDown={(e) => {
+                controls.start(e);
+                setOpenCardId(id);
+              }}
+            >
+              <Icon id={'drag_handle'} className="text-gray05" size={16} />
+            </motion.div>
+          )}
         </header>
 
         <motion.footer

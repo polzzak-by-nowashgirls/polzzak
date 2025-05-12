@@ -13,7 +13,7 @@ function PhoneNumber() {
   const { phoneNumber, setPhoneNumber, authNumber, setAuthNumber } =
     useEditStore();
   const [isAuth, setIsAuth] = useState(false); // 인증번호 받았는지?
-  const [vertify, setVertify] = useState(true); // 인증번호 일치? 일단 true로 만들어서 다음 페이지 넘어가도록 함
+  const [vertify] = useState(true); // 인증번호 일치? 일단 true로 만들어서 다음 페이지 넘어가도록 함
 
   const handleGetAuth = () => {
     setIsAuth(true);
@@ -24,7 +24,7 @@ function PhoneNumber() {
 
     // > 000-0000-0000 형태
     if (value.length <= 3) {
-      value = value;
+      // value = value;
     } else if (value.length <= 7) {
       // 4~7자리
       value = `${value.slice(0, 3)}-${value.slice(3)}`;

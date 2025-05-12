@@ -27,7 +27,9 @@ function Email() {
     setValidationStatus,
   } = useEditStore();
   const email = `${emailId}@${domain}`;
-  const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-za-z0-9\-]+/;
+  // const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-za-z0-9\-]+/;
+  const pattern = /^[A-Za-z0-9_.-]+@[A-Za-z0-9-]+\.[A-Za-z0-9-]+$/;
+
   const message = {
     success: '사용 가능한 이메일 입니다.',
     errorGap: '공백은 사용할 수 없습니다.',

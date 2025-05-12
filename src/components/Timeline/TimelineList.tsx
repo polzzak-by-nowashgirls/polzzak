@@ -1,26 +1,44 @@
 import { Reorder } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import TimelineCard from '@/components/Timeline/TimelineCard';
-import { PolzzakCard } from '@/mockData/PolzzakItemDummyData';
+import { ScheduleList } from '@/pages/Polzzak/Schedule/Schedule';
 
 interface TimelineListProps {
-  itemList: PolzzakCard[];
+  itemList: ScheduleList[];
+  isEditMode: boolean;
+  onSaveCards: (cards: ScheduleList[]) => void;
 }
 
-function TimelineList({ itemList }: TimelineListProps) {
-  const [cards, setCards] = useState<PolzzakCard[]>(itemList);
-  // 정렬된 상태 저장 시 cards 저장!
+function TimelineList({
+  itemList,
+  isEditMode,
+  onSaveCards,
+}: TimelineListProps) {
+  const [cards, setCards] = useState(itemList);
+  const [hasReordered, setHasReordered] = useState(false);
+  const [openCardId, setOpenCardId] = useState<string | null>(null);
 
-  console.log('cards : ', cards);
+  useEffect(() => {
+    setCards(itemList);
+  }, [itemList]);
 
-  const [openCardId, setOpenCardId] = useState<number | null>(null);
+  useEffect(() => {
+    if (!isEditMode && hasReordered) {
+      onSaveCards(cards);
+      setHasReordered(false);
+    }
+  }, [isEditMode, hasReordered, onSaveCards, cards]);
 
   return (
     <Reorder.Group
       axis="y"
-      values={cards}
-      onReorder={setCards}
+      values={cards.map((c) => c.id)}
+      onReorder={(newOrder) => {
+        const reordered = newOrder.map((id) => cards.find((c) => c.id === id)!);
+        setCards(reordered);
+        setHasReordered(true);
+      }}
       className="relative flex"
     >
       <div className="bg-gray03 absolute mx-[5px] h-full w-[1px]"></div>
@@ -28,9 +46,10 @@ function TimelineList({ itemList }: TimelineListProps) {
         {cards.map((card) => (
           <TimelineCard
             key={card.id}
-            value={card}
+            data={card}
             openCardId={openCardId}
             setOpenCardId={setOpenCardId}
+            isEditcard={isEditMode}
           />
         ))}
       </div>

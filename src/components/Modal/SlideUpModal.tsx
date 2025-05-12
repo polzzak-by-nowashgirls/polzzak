@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 
+// import { useState } from 'react';
 import Button from '@/components/Button/Button';
 import Calendar from '@/components/Calendar/Calendar';
 import Icon from '@/components/Icon/Icon';
@@ -8,10 +8,7 @@ import Input from '@/components/Input/Input';
 import { Radio } from '@/components/Input/RadioGroup';
 import { Textarea } from '@/components/Input/Textarea';
 import ListItem from '@/components/ListItem/ListItem';
-import {
-  BookmarkDummyData,
-  ScheduleDummyData,
-} from '@/mockData/ScheduleDummyData';
+import { ScheduleDummyData } from '@/mockData/ScheduleDummyData';
 import { useModalStore } from '@/store/useModalStore';
 
 interface ModalActionParams {
@@ -31,7 +28,7 @@ const MODAL_DATA = [
     type: 'favorite_add',
     prevBtn: '취소',
     nextBtn: '추가',
-    content: <Radio data={BookmarkDummyData} />,
+    content: '',
   },
   {
     id: 1,
@@ -39,21 +36,14 @@ const MODAL_DATA = [
     type: 'calendar',
     content: <Calendar />,
     prevBtn: '초기화',
-    nextBtn: '2025.03.17(월) ~ 2025.03.19(수)',
+    nextBtn: '',
+    // nextBtn: '2025.03.17(월) ~ 2025.03.19(수)',
   },
   {
     id: 2,
     title: '폴더 추가하기',
     type: 'folder_add',
-    contentComponent: ({ inputValue, setInputValue }) => (
-      <Input
-        label="폴더 추가하기"
-        hideLabel={true}
-        placeholder="폴더 이름을 입력해 주세요"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-      />
-    ),
+    content: '',
     prevBtn: '취소',
     nextBtn: '추가',
   },
@@ -61,15 +51,7 @@ const MODAL_DATA = [
     id: 3,
     title: '폴더 이름 편집하기',
     type: 'folder_edit',
-    contentComponent: ({ inputValue, setInputValue }) => (
-      <Input
-        label="폴더 이름 편집하기"
-        hideLabel={true}
-        placeholder="기본 폴더"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-      />
-    ),
+    content: '',
     prevBtn: '취소',
     nextBtn: '저장',
   },
@@ -133,7 +115,7 @@ const MODAL_DATA = [
     id: 8,
     title: '즐겨찾기',
     type: 'favorite_list',
-    content: <ListItem />,
+    content: <ListItem data={[]} />,
   },
   {
     id: 9,
@@ -155,7 +137,7 @@ function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
   const { closeModal, setButtonText } = useModalStore();
   const modalContent = MODAL_DATA.find((item) => item.type === type);
   // 즐겨찾기 폴더 추가
-  const [inputValue, setInputValue] = useState('');
+  // const [inputValue, setInputValue] = useState('');
 
   if (!modalContent) return null;
 
@@ -189,7 +171,7 @@ function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
           <Icon id="close" />
         </Button>
       </header>
-      <div>
+      {/* <div>
         {modalContent.contentComponent
           ? modalContent.contentComponent({ inputValue, setInputValue })
           : modalContent.content ||
@@ -201,7 +183,7 @@ function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
                 <span>{i}</span>
               </p>
             ))}
-      </div>
+      </div> */}
       <div
         className={`flex w-full items-center justify-center gap-1 ${type === 'calendar' ? 'flex-col' : 'flex-row'}`}
       >
@@ -217,7 +199,7 @@ function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
             {modalContent.prevBtn}
           </Button>
         )}
-        {modalContent.nextBtn && (
+        {/* {modalContent.nextBtn && (
           <Button
             className={`${type === 'calendar' ? 'order-first w-full' : 'w-1/2'}`}
             onClick={() =>
@@ -231,7 +213,7 @@ function SlideUpModal({ type, handleButtonClick }: SlideUpModal) {
           >
             {modalContent.nextBtn}
           </Button>
-        )}
+        )} */}
       </div>
     </motion.dialog>
   );

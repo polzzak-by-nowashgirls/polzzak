@@ -1,5 +1,10 @@
 import { create } from 'zustand';
 
+interface ValidationStatus {
+  status: boolean;
+  message: string;
+}
+
 interface EditStore {
   phoneNumber: string;
   setPhoneNumber: (phoneNumber: string) => void;
@@ -11,6 +16,8 @@ interface EditStore {
   setEmailId: (emailId: string) => void;
   domain: string;
   setDomain: (domain: string) => void;
+  validationStatus: ValidationStatus;
+  setValidationStatus: (validationStatus: ValidationStatus) => void;
 }
 
 export const useEditStore = create<EditStore>()((set) => ({

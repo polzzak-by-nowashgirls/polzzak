@@ -127,6 +127,7 @@ function Favorites() {
           <Input
             label="폴더 추가"
             hideLabel={true}
+            value={folderName ?? ''}
             onChange={(e) => setSelectFolder({ name: e.target.value })}
             placeholder="폴더 이름을 입력해 주세요."
             ref={inputRef}

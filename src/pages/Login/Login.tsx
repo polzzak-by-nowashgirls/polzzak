@@ -1,27 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import supabase from '@/api/supabase';
 import Button from '@/components/Button/Button';
 import Checkbox from '@/components/Checkbox/Checkbox';
+import AlertDialog from '@/components/Dialog/AlertDialog';
 import Icon, { IconId } from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
 import Validation from '@/components/Input/Validation';
-import Modal from '@/components/Modal/Modal';
 import RabbitFace from '@/components/RabbitFace/RabbitFace';
 import { useToast } from '@/hooks/useToast';
 import { validatePassword } from '@/lib/validatePassword';
 import { validateId } from '@/lib/validationId';
-import { useModalStore } from '@/store/useModalStore';
-
-// ⚠️ 로그인/아웃 상태에 따라 로컬/세션 스토리지에 저장
+import { useAuthStore } from '@/store/useAuthStore';
+import { useDialogStore } from '@/store/useDialogStore';
 
 function Login() {
   const location = useLocation();
   const showToast = useToast();
-
   const navigate = useNavigate();
-  const { isOpen, modalType, openModal } = useModalStore();
+
+  const { isOpen, openModal, closeModal } = useDialogStore();
 
   // 🕹️ 아이디
   const [idValue, setIdValue] = useState('');
@@ -41,27 +40,51 @@ function Login() {
     : 'visibillity_off';
 
   // 🕹️ 아이디 저장
-  const [isSavedId, setIsSavedId] = useState(true);
-  console.log(isSavedId);
+  const [isSavedId, setIsSavedId] = useState(() => {
+    const saved = localStorage.getItem('saveId');
+    return saved ? JSON.parse(saved) : true;
+  });
 
-  // 페이지 진입 시 토스트 메시지 출력
+  const pwInputRef = useRef<HTMLInputElement>(null);
+
+  // 1. 페이지 진입 시 foundId 적용
   useEffect(() => {
+    if (location.state?.foundId) {
+      setIdValue(location.state.foundId);
+      setIdValid(true);
+    }
+  }, [location.state?.foundId]);
+
+  // 2. 페이지 진입 시 토스트 메시지 출력
+  useEffect(() => {
+    console.log('location.state', location.state);
+
     if (location.state?.toastMessage) {
       showToast(location.state.toastMessage);
     }
+
+    if (location.state?.foundId) {
+      setIdValue(location.state.foundId);
+      setIdValid(true);
+      return;
+    }
   }, [location.state, showToast]);
 
-  // 아이디 저장된 값 불러오기
+  // 3. 로컬 스토리지 아이디 값 불러오기
   useEffect(() => {
-    const savedId = localStorage.getItem('user');
-
-    if (savedId) {
-      setIdValue(savedId);
-      setIdValid(true);
-    } else {
-      localStorage.setItem('user', '');
+    if (!location.state?.foundId) {
+      if (isSavedId) {
+        const savedId = localStorage.getItem('user');
+        if (savedId) {
+          setIdValue(savedId);
+          setIdValid(true);
+        }
+      } else {
+        setIdValue('');
+        setIdValid(null);
+      }
     }
-  }, []);
+  }, [isSavedId, location.state?.foundId]);
 
   const onChangeIDInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -70,6 +93,15 @@ function Login() {
     const { isValid, message } = validateId(value);
     setIdValid(isValid);
     setIdMessage(isValid ? '' : message);
+  };
+
+  const onIdKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (idValid) {
+        pwInputRef.current?.focus();
+      }
+    }
   };
 
   const onChangePWInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,38 +113,57 @@ function Login() {
     setPwMessage(isValid ? '' : message);
   };
 
-  const onClickVisible = () => {
-    setIsVisible((prev) => !prev);
+  const onPWKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (idValid && pwValid) onClickLogin();
+    }
   };
 
-  const onChangeSavedIdToggle = () => {
-    setIsSavedId((prev) => !prev);
-  };
+  const onClickVisible = () => setIsVisible((prev) => !prev);
 
-  // ⚠️ supabase auth로 변경 필요
+  const onChangeSavedIdToggle = () => setIsSavedId((prev: boolean) => !prev);
+
+  // * 🛡️ Supabase Auth 로그인 처리
   const onClickLogin = async () => {
-    const { data, error } = await supabase
+    // 1. user_id → email 매핑
+    const { data: userRow, error: findError } = await supabase
       .from('ex_users')
-      .select('*')
+      .select('email')
       .eq('user_id', idValue)
-      .eq('password', pwValue)
       .single();
 
-    if (error || !data) {
+    if (findError || !userRow) {
       setIdValid(false);
-      setPwValid(false);
-      openModal('login');
+      openModal();
       return;
     }
 
-    /* 잠시 변경해놨어요! 나중에 수정해야해요! */
+    const { setSession, setUser } = useAuthStore.getState();
+
+    // 2. email + password로 supabase.auth 로그인
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: userRow.email,
+      password: pwValue,
+    });
+
+    if (error) {
+      openModal();
+      return;
+    }
+
+    if (data.session && data.user) {
+      setSession(data.session);
+      setUser(data.user);
+    }
+
+    // 3. 저장 옵션에 따라 아이디 저장
     if (isSavedId) {
       localStorage.setItem('user', idValue);
-      localStorage.setItem('user_id', data.id);
+      localStorage.setItem('saveId', 'true');
     } else {
-      // localStorage.setItem('user', '');
-      sessionStorage.setItem('user', idValue);
-      sessionStorage.setItem('user_id', data.id);
+      localStorage.removeItem('user');
+      localStorage.setItem('saveId', 'false');
     }
 
     navigate('/', { replace: true });
@@ -140,6 +191,7 @@ function Login() {
             placeholder="아이디"
             hideLabel={true}
             onChange={onChangeIDInput}
+            onKeyDown={onIdKeyDown}
             aria-label="아이디를 입력해 주세요."
           />
           {idValid !== null && (
@@ -148,11 +200,14 @@ function Login() {
         </div>
         <div>
           <Input
+            ref={pwInputRef}
             type={inputType}
             label="비밀번호"
+            value={pwValue}
             placeholder="비밀번호"
             hideLabel={true}
             onChange={onChangePWInput}
+            onKeyDown={onPWKeyDown}
             aria-label="비밀번호를 입력해 주세요."
           >
             <Button variant="input" onClick={onClickVisible}>
@@ -175,11 +230,11 @@ function Login() {
         </Button>
       </fieldset>
       <div className="fs-14 font-regular text-gray07 flex items-center justify-center gap-1">
-        <Link to="#" className="px-1">
+        <Link to="find-id" className="px-1">
           아이디 찾기
         </Link>
         <span aria-hidden={true} className="bg-gray04 h-[11px] w-[1px]"></span>
-        <Link to="#" className="px-1">
+        <Link to="reset-password" className="px-1">
           비밀번호 재설정
         </Link>
         <span aria-hidden={true} className="bg-gray04 h-[11px] w-[1px]"></span>
@@ -196,7 +251,22 @@ function Login() {
           </span>
         </div>
       </div>
-      {isOpen && modalType === 'login' && <Modal mode="alert" type="login" />}
+      {isOpen && (
+        <AlertDialog
+          header="로그인에 실패하였습니다."
+          description={['아이디 또는 비밀번호를', '다시 확인해 주세요.']}
+          button={[
+            {
+              text: '확인',
+              onClick: () => {
+                closeModal();
+                setIdValue('');
+                setPwValue('');
+              },
+            },
+          ]}
+        />
+      )}
     </main>
   );
 }

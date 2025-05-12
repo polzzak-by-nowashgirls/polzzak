@@ -1,53 +1,51 @@
-import { useState } from 'react';
+import PolzzakSection from '@/components/Polzzak/PolzzakSection';
+import { ListItemType } from '@/pages/Polzzak/Polzzak';
 
-import { POLZZAK_LIST, PolzzakType } from '@/mockData/PolzzakListDummyData';
-
-import PolzzakListItem from './PolzzakListItem';
-
-// 한글 받침 여부에 따라 조사 결정
-const getParticle = (str: string) =>
-  (str.charCodeAt(str.length - 1) - 0xac00) % 28 !== 0 ? '이' : '가';
-
-// title에 따라 이모지 추가
-const getTitleWithEmoji = (title: string) => {
-  const emojiMap: { [key: string]: string } = {
-    '폴짝 중': '🐰',
-    '폴짝 준비': '🎒',
-    '폴짝 완료': '🏁',
+function PolzzakList({
+  data,
+  refetch,
+}: {
+  data: ListItemType[];
+  refetch: () => Promise<void>;
+}) {
+  const section: [string[], ListItemType[]][] = [
+    [['/images/rabbit_face.png', '폴짝 중'], []],
+    [['/images/backpack.png', '폴짝 준비'], []],
+    [['/images/flag.png', '폴짝 완료'], []],
+  ];
+  const compareDate = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   };
-  return `${emojiMap[title] || ''} ${title}`;
-};
 
-function PolzzakList() {
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const today = compareDate(new Date());
+
+  data.forEach((item) => {
+    const start = item.startDate ? compareDate(new Date(item.startDate)) : null;
+    const end = item.endDate ? compareDate(new Date(item.endDate)) : null;
+
+    if (!start) {
+      section[1][1].push(item);
+    } else if (
+      (start.getTime() === today.getTime() && !end) ||
+      (start <= today && end && end >= today)
+    ) {
+      section[0][1].push(item);
+    } else if (start < today) {
+      section[2][1].push(item);
+    } else {
+      section[1][1].push(item);
+    }
+  });
 
   return (
     <div className="flex flex-col gap-6">
-      {POLZZAK_LIST.map((data: PolzzakType) => (
-        <section key={data.title} className="flex flex-col gap-2">
-          <h3 className="fs-14 flex items-center gap-2 font-semibold text-black">
-            {getTitleWithEmoji(data.title)}
-            <span className="text-primary">{data.list.length}</span>
-          </h3>
-          <ul role="group" className="flex flex-col gap-4">
-            {data.list.length === 0 ? (
-              <li className="bg-gray01 text-gray07 fs-14 rounded-sm px-4 py-2">
-                {data.title}
-                {getParticle(data.title)} 비어있습니다.
-              </li>
-            ) : (
-              data.list.map((item) => (
-                <PolzzakListItem
-                  key={item.label}
-                  item={item}
-                  img={data.img}
-                  openMenuId={openMenuId}
-                  setOpenMenuId={setOpenMenuId}
-                />
-              ))
-            )}
-          </ul>
-        </section>
+      {section.map((i, idx) => (
+        <PolzzakSection
+          key={`${i[0][2]}${idx}`}
+          title={i[0]}
+          items={i[1]}
+          refetch={refetch}
+        />
       ))}
     </div>
   );

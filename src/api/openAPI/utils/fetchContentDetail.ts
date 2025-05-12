@@ -1,3 +1,5 @@
+import { AxiosResponse } from 'axios';
+
 import { client } from '@/api/openAPI/client';
 
 // 관광지, 문화시설, 축제공연행사, 레포츠, 숙박, 쇼핑, 음식점
@@ -11,14 +13,60 @@ import { client } from '@/api/openAPI/client';
 //   '2758120', // 음식점
 // ];
 
+interface OpenAPIResponse<T> {
+  response: {
+    body: {
+      items: {
+        item: T[];
+      };
+    };
+  };
+}
+
+interface IntroItem {
+  [key: string]: string;
+}
+
+interface CommonItem {
+  title: string;
+  firstimage?: string;
+  addr1: string;
+  addr2?: string;
+  overview?: string;
+  eventhomepage?: string;
+  eventplace?: string;
+  placeinfo?: string;
+  playtime?: string;
+  program?: string;
+  subevent?: string;
+  usetimefestival?: string;
+}
+
 /* 📍 detail=true는 콘텐츠가 세부 페이지일 때 */
 async function fetchContentDetail(
   contentId: string,
   contentTypeId: string,
   detail: boolean = false,
 ) {
+  /* 📌 응답 객체가 유효한 형식인지 검사 */
+  // const isValidResponse = (res) => {
+  //   return typeof res?.data === 'object' && res?.data?.response?.body;
+  // };
+
+  const isValidResponse = <T>(
+    res: AxiosResponse<OpenAPIResponse<T>>,
+  ): res is AxiosResponse<OpenAPIResponse<T>> => {
+    return (
+      typeof res?.data === 'object' &&
+      Array.isArray(res.data.response?.body?.items?.item)
+    );
+  };
+
   /* 🧩 detailCommon1과 detailIntro1 함께 호출 */
-  const [commonRes, introRes] = await Promise.all([
+  const [commonRes, introRes]: [
+    AxiosResponse<OpenAPIResponse<CommonItem>>,
+    AxiosResponse<OpenAPIResponse<IntroItem>>,
+  ] = await Promise.all([
     client.get(`/detailCommon1`, {
       params: {
         contentId,
@@ -43,8 +91,19 @@ async function fetchContentDetail(
     }),
   ]);
 
-  const commonItem = commonRes.data.response.body.items.item[0];
-  const introItem = introRes.data.response.body.items.item[0];
+  /* 📌 공통 API 응답(commonRes) 또는 소개 API 응답(introRes)이 유효하지 않을 경우 */
+  if (!isValidResponse(commonRes) || !isValidResponse(introRes)) {
+    console.error('❌ API 요청 실패:', {
+      common: commonRes.data,
+      intro: introRes.data,
+    });
+    throw new Error(
+      'OpenAPI 요청 제한을 초과했습니다. 잠시 후 다시 시도해주세요.',
+    );
+  }
+
+  const commonItem = commonRes.data?.response?.body.items.item[0];
+  const introItem = introRes.data?.response?.body.items.item[0];
 
   /* 🔑 받아온 주소에서 "region: 서울, destrict: 용산구" 뽑아냄 */
   const [region, district] = commonItem.addr1.split(' ') ?? [];

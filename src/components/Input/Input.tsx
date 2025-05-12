@@ -2,13 +2,15 @@ import * as React from 'react';
 
 import { Label } from '@/components/Label';
 import { cn } from '@/lib/utils';
+import { usePolzzakStore } from '@/store/usePolzzakStroe';
 
 interface InputProps extends Omit<React.ComponentProps<'input'>, 'type'> {
-  type?: 'text' | 'password' | 'button' | 'file';
+  type?: 'text' | 'password' | 'button' | 'file' | 'time';
   label: string;
   hideLabel?: boolean;
   placeholder?: string;
   children?: React.ReactNode;
+  timeValue?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -20,19 +22,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       hideLabel = false,
       placeholder,
       children,
+      timeValue,
       ...props
     },
     ref,
   ) => {
     const labelId = React.useId();
-    const [fileName, setFileName] = React.useState<string>('');
+    const { thumbnail, fileName } = usePolzzakStore();
     const Wrapper = children ? 'div' : React.Fragment;
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      setFileName(file ? file.name : '');
-      props.onChange?.(e); // 파일 자체를 상위에 넘기기 위함
-    };
 
     const inputClassName = cn(
       'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-full file:cursor-pointer file:border-0 file:bg-transparent file:pr-2 file:font-medium',
@@ -63,12 +60,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               data-slot="input"
               className="hidden"
               id={labelId}
-              onChange={handleFileChange}
               accept=".jpg,.jpeg,.png,.heic,.webp"
+              ref={ref}
               {...props}
             />
             <span
-              className={`${fileName ? 'text-black' : 'text-gray05'} flex-1 truncate text-left`}
+              className={`${thumbnail ? 'text-black' : 'text-gray05'} flex-1 truncate text-left`}
             >
               {fileName || placeholder}
             </span>
@@ -85,12 +82,48 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type="button"
             data-slot="input"
-            className={`${inputClassName} text-gray05 text-left`}
+            className={cn('text-gray05 text-left', inputClassName)}
             id={labelId}
-            placeholder={placeholder}
             {...props}
           />
 
+          {iconBtn}
+        </Wrapper>
+      </>
+    ) : type === 'time' ? (
+      <>
+        <Label hideLabel={hideLabel} htmlFor={labelId} className="m-1">
+          {label}
+        </Label>
+        <Wrapper {...(children ? { className: 'relative' } : {})}>
+          <input
+            type="text"
+            readOnly
+            data-slot="input"
+            id={labelId}
+            value={timeValue || ''}
+            placeholder={placeholder}
+            className={cn(
+              inputClassName,
+              !timeValue && 'text-gray05',
+              'cursor-pointer',
+            )}
+            onClick={() => {
+              if (ref && 'current' in ref && ref.current) {
+                ref.current?.showPicker();
+                ref.current?.focus();
+              }
+            }}
+          />
+          <input
+            type="time"
+            className="sr-only"
+            ref={ref}
+            id={`${labelId}-hidden`}
+            step={300}
+            tabIndex={-1}
+            {...props}
+          />
           {iconBtn}
         </Wrapper>
       </>

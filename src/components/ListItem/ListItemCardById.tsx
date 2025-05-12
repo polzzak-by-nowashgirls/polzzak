@@ -16,7 +16,7 @@ function ListItemCardById({
   contentId: string;
   contentTypeId: string;
 }) {
-  const [item, setItem] = useState<Record<string, string>>({});
+  const [item, setItem] = useState<Record<string, string | undefined>>({});
   const [likeAndReview, setLikeAndReview] = useState({ likes: 0, reviews: 0 });
   const [cardId, setCardId] = useState(''); // uuid로 변경 필요
   const [isCheck, setIsCheck] = useState(true);
@@ -55,7 +55,7 @@ function ListItemCardById({
 
     fetchData();
     getLikesAndReviews();
-  }, [contentId]);
+  }, [contentId, contentTypeId]);
 
   if (!item.title) return <p>불러오는 중...</p>;
 
@@ -157,25 +157,25 @@ function ListItemCardById({
   let periodInfo = '정보 없음';
   switch (contentTypeId) {
     case '12':
-      periodInfo = item.usetime;
+      periodInfo = item?.usetime ?? '';
       break;
     case '14':
-      periodInfo = item.usetimeculture;
+      periodInfo = item?.usetimeculture ?? '';
       break;
     case '15':
-      periodInfo = `${changeDate(item.eventstartdate)} ~ ${changeDate(item.eventenddate)}`;
+      periodInfo = `${changeDate(item?.eventstartdate ?? '')} ~ ${changeDate(item?.eventenddate ?? '')}`;
       break;
     case '28':
-      periodInfo = item.usetimeleports;
+      periodInfo = item?.usetimeleports ?? '';
       break;
     case '32':
-      periodInfo = `체크인: ${item.checkintime} ~ 체크아웃: ${item.checkouttime}`;
+      periodInfo = `체크인: ${item?.checkintime} ~ 체크아웃: ${item?.checkouttime}`;
       break;
     case '38':
-      periodInfo = item.opentime;
+      periodInfo = item?.opentime ?? '';
       break;
     case '39':
-      periodInfo = item.opentimefood;
+      periodInfo = item?.opentimefood ?? '';
       break;
     default:
       periodInfo = '정보 없음';

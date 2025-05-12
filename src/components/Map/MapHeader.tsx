@@ -2,92 +2,76 @@ import { MutableRefObject, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
-import Icon from '@/components/Icon/Icon';
+import Icon, { IconId } from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
-
-type LatLng = {
-  lat: number;
-  lng: number;
-};
+import { useDialogStore } from '@/store/useDialogStore';
+import { LatLng } from '@/types/LatLng';
 
 interface MapHeaderProps {
   mapRef: MutableRefObject<kakao.maps.Map | null>;
   myLocation: LatLng | null;
-  onFoodBtnClick: () => void;
-  onFestivalBtnClick: () => void;
-  onTourBtnClick: () => void;
+  isLoggedIn: boolean;
 }
 
-function MapHeader({
-  mapRef,
-  myLocation,
-  onFoodBtnClick,
-  onFestivalBtnClick,
-  onTourBtnClick,
-}: MapHeaderProps) {
+function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [activeFilterId, setActiveFilterId] = useState<number | null>(null);
+
+  // console.log(dialogOpen);
 
   const MAP_FILTER = [
-    {
-      id: 1,
-      name: '즐겨찾기',
-      path: '/map/favorite',
-    },
-    {
-      id: 2,
-      name: '나의폴짝',
-      path: '/map/polzzak',
-    },
-    {
-      id: 3,
-      name: '음식점',
-      path: '/map/food',
-    },
-    {
-      id: 4,
-      name: '축제',
-      path: '/map/festival',
-    },
-    {
-      id: 5,
-      name: '관광지',
-      path: '/map/tour',
-    },
+    { contentTypeId: '', category: 'favorite', label: '즐겨찾기' },
+    { contentTypeId: '', category: 'polzzak', label: '나의폴짝' },
+    { contentTypeId: '39', category: 'food', label: '음식점' },
+    { contentTypeId: '15', category: 'festival', label: '축제' },
+    { contentTypeId: '12', category: 'tour', label: '관광지' },
+    { contentTypeId: '28', category: 'leports', label: '레포츠' },
+    { contentTypeId: '38', category: 'shopping', label: '쇼핑' },
+    { contentTypeId: '32', category: 'hotels', label: '숙박' },
+    { contentTypeId: '14', category: 'cultural', label: '문화시설' },
   ];
 
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const { isOpen, closeModal } = useDialogStore();
+  const category = searchParams.get('category');
+
   useEffect(() => {
-    const category = searchParams.get('category');
-    const filterMap: { [key: string]: number } = {
-      food: 3,
-      festival: 4,
-      tour: 5,
-    };
+    setActiveFilter(category);
+  }, [category]);
 
-    setActiveFilterId(category ? (filterMap[category] ?? null) : null);
-  }, [searchParams]);
+  // ✅ 모달 닫혔을 경우
+  useEffect(() => {
+    if (!isOpen) {
+      setActiveFilter(null);
 
-  const handleFilterClick = (filterId: number, path: string | null) => {
-    if (filterId === activeFilterId) {
-      setActiveFilterId(null);
-      if (filterId === 3) onFoodBtnClick();
-      if (filterId === 4) onFestivalBtnClick();
-      if (filterId === 5) onTourBtnClick();
-      return;
+      const current = new URLSearchParams(searchParams);
+      current.delete('category');
+
+      navigate({
+        pathname: '/map',
+        search: current.toString(),
+      });
+    }
+  }, [isOpen, navigate, searchParams]);
+
+  // ✅ 필터링 버튼 클릭 시
+  const handleFilterClick = (category: string) => {
+    const current = new URLSearchParams(searchParams);
+    const isActive = category === activeFilter;
+
+    if (isActive) {
+      setActiveFilter(null);
+      current.delete('category');
+      closeModal();
+    } else {
+      setActiveFilter(category);
+      current.set('category', category);
     }
 
-    setActiveFilterId(filterId);
-
-    if (filterId === 3) {
-      onFoodBtnClick();
-    } else if (filterId === 4) {
-      onFestivalBtnClick();
-    } else if (filterId === 5) {
-      onTourBtnClick();
-    } else if (path) {
-      navigate(path);
-    }
+    navigate({
+      pathname: '/map',
+      search: current.toString(),
+    });
   };
 
   const handleLocationClick = () => {
@@ -114,13 +98,25 @@ function MapHeader({
       </header>
 
       <ul className="fixed top-[62px] right-0 left-0 z-10 flex gap-1 py-2">
-        {MAP_FILTER.map(({ id, name, path }) => (
-          <li key={id} className="first-of-type:ml-4">
+        {MAP_FILTER.filter(
+          ({ category }) =>
+            isLoggedIn || (category !== 'favorite' && category !== 'polzzak'),
+        ).map(({ category, label }) => (
+          <li key={category} className="first-of-type:ml-4">
             <button
-              className={`fs-14 text-gray07 border-gray07 rounded-4xl border px-3 py-1 whitespace-nowrap ${activeFilterId === id ? 'bg-primary border-primary text-white' : 'bg-white'}`}
-              onClick={() => handleFilterClick(id, path)}
+              className={`fs-14 text-gray07 border-gray03 flex items-center gap-1 rounded-4xl border px-3 py-1 whitespace-nowrap ${activeFilter === category ? 'bg-primary border-primary text-white' : 'bg-white'}`}
+              onClick={() => handleFilterClick(category)}
             >
-              {name}
+              <Icon
+                id={
+                  (category === 'favorite'
+                    ? 'favorite_off'
+                    : category) as IconId
+                }
+                size={16}
+                className={`${activeFilter === category ? 'text-white' : 'text-gray05'}`}
+              />
+              {label}
             </button>
           </li>
         ))}
