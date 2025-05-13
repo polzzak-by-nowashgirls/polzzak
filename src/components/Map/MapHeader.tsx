@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
 import { Carousel, CarouselContent } from '@/components/Home/Carousel';
-import Icon, { IconId } from '@/components/Icon/Icon';
+import Icon from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
 import { useDialogStore } from '@/store/useDialogStore';
 import { LatLng } from '@/types/LatLng';
@@ -100,7 +100,7 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
         opts={{ loop: false }}
         className="absolute top-[62px] right-0 left-0 z-10 py-2"
       >
-        <CarouselContent className="flex gap-1 first-of-type:ml-4">
+        <CarouselContent className="flex gap-1 overflow-clip first-of-type:ml-4">
           {MAP_FILTER.filter(
             ({ category }) =>
               isLoggedIn || (category !== 'favorite' && category !== 'polzzak'),
@@ -110,18 +110,10 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
               <Button
                 variant="secondary"
                 size="md"
-                className={`h-[40px] gap-[4px] rounded-full px-3.5 ${isActive ? 'bg-primary text-white' : ''}`}
+                className={`h-[40px] gap-[4px] rounded-full px-3.5 ${isActive ? 'bg-primary hover:bg-primary text-white hover:text-white hover:brightness-110' : ''}`}
                 onClick={() => handleFilterClick(category)}
               >
-                <Icon
-                  id={
-                    (category === 'favorite'
-                      ? 'favorite_off'
-                      : category) as IconId
-                  }
-                  size={16}
-                  className={`${isActive ? 'text-white' : 'text-gray05'}`}
-                />
+                <img src={`/icons/${category}.png`} width={16} height={16} />
                 {label}
               </Button>
             );
