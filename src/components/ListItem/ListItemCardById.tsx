@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { fetchContentDetail } from '@/api/openAPI/utils/fetchContentDetail';
 import supabase from '@/api/supabase';
@@ -7,7 +7,6 @@ import Button from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
 import RabbitFace from '@/components/RabbitFace/RabbitFace';
 import { useToast } from '@/hooks/useToast';
-import { useFavoritesStore } from '@/store/useFavoritesStore';
 
 function ListItemCardById({
   contentId,
@@ -16,11 +15,10 @@ function ListItemCardById({
   contentId: string;
   contentTypeId: string;
 }) {
+  const { id } = useParams();
   const [item, setItem] = useState<Record<string, string | undefined>>({});
   const [likeAndReview, setLikeAndReview] = useState({ likes: 0, reviews: 0 });
-  const [cardId, setCardId] = useState(''); // uuid로 변경 필요
   const [isCheck, setIsCheck] = useState(true);
-  const folderId = useFavoritesStore((state) => state.folderId);
   const showToast = useToast();
 
   useEffect(() => {
@@ -49,15 +47,13 @@ function ListItemCardById({
         likes: data?.likes ?? 0,
         reviews: data?.reviews ?? 0,
       });
-
-      setCardId(`${data?.ex_favorite[0].id}_0`);
     };
 
     fetchData();
     getLikesAndReviews();
   }, [contentId, contentTypeId]);
 
-  if (!item.title) return <p>불러오는 중...</p>;
+  if (!item.title) return <p>불러오는 중...</p>; // 추후 스켈레톤으로 변경
 
   /* 🍞 찜 기능 - 토스트 */
   const deleteToast = () => {
@@ -76,14 +72,10 @@ function ListItemCardById({
   };
 
   /* ⏳ 찜 기능 - DB연결 */
-  const addFavorite = async (
-    folderId: string,
-    contentId: string,
-    cardId?: string,
-  ) => {
+  const addFavorite = async (folderId: string, contentId: string) => {
     return await supabase
       .from('ex_favorite')
-      .insert([{ id: cardId, folder_id: folderId, content_id: contentId }]);
+      .insert([{ folder_id: folderId, content_id: contentId }]);
   };
   const removeFavorite = async (folderId: string, contentId: string) => {
     return await supabase
@@ -94,19 +86,11 @@ function ListItemCardById({
 
   /* 🕹️ 찜 기능 - 실행 */
   const handleFavorite = async (contentId: string) => {
-    if (!folderId) {
-      showToast(
-        '데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
-        'top-[64px]',
-        5000,
-      );
-      console.error('❌ 폴더 ID가 없습니다.');
-      return;
-    }
+    if (!id) return;
 
     if (isCheck) {
       try {
-        const { error } = await removeFavorite(folderId, contentId);
+        const { error } = await removeFavorite(id, contentId);
 
         if (error) {
           deleteToast();
@@ -126,7 +110,7 @@ function ListItemCardById({
       }
     } else {
       try {
-        const { error } = await addFavorite(folderId, contentId, cardId);
+        const { error } = await addFavorite(id, contentId);
 
         if (error) {
           addToast();

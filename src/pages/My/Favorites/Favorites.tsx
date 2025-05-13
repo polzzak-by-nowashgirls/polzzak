@@ -1,43 +1,101 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
+import supabase from '@/api/supabase';
 import SlideUpDialog from '@/components/Dialog/SlideUpDialog';
-import FavoritesList from '@/components/Favorites/FavoritesList';
+import FavoritesList, {
+  FolderProps,
+} from '@/components/Favorites/FavoritesList';
 import Input from '@/components/Input/Input';
 import Loader from '@/components/Loader/Loader';
 import { useToast } from '@/hooks/useToast';
 import RequireLogin from '@/pages/RequireLogin';
+import { useAuthStore } from '@/store/useAuthStore';
 import { useDialogStore } from '@/store/useDialogStore';
-import { useFavoritesStore } from '@/store/useFavoritesStore';
+
+const getFolders = async (userId: string, showToast: () => void) => {
+  const { data, error } = await supabase
+    .from('ex_favorite_folders')
+    .select('id, folder_name')
+    .eq('user_id', userId);
+
+  if (error) {
+    showToast();
+    console.log(error);
+    return;
+  }
+
+  return data;
+};
+const addFolder = async (
+  userId: string,
+  folderName: string,
+  showToast: () => void,
+) => {
+  const { error } = await supabase
+    .from('ex_favorite_folders')
+    .insert([{ user_id: userId, folder_name: folderName }]);
+
+  if (error) {
+    console.log(error);
+    showToast();
+    return;
+  }
+};
+const editFolder = async (
+  folderId: string,
+  folderName: string,
+  showToast: () => void,
+) => {
+  const { error } = await supabase
+    .from('ex_favorite_folders')
+    .update({ folder_name: folderName })
+    .eq('folder_id', folderId);
+
+  if (error) {
+    console.log(error);
+    showToast();
+    return;
+  }
+};
+const deleteFolder = async (folderId: string, showToast: () => void) => {
+  const { error } = await supabase
+    .from('ex_favorite_folders')
+    .delete()
+    .eq('folder_id', folderId);
+
+  if (error) {
+    console.log(error);
+    showToast();
+    return;
+  }
+};
 
 function Favorites() {
-  const loader = false;
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [folders, setFolders] = useState<FolderProps[]>([]);
+  const [currentFolder, setCurrentFolder] = useState<FolderProps>();
   const [dialogType, setDialogType] = useState<
     'add' | 'edit' | 'delete' | null
   >(null);
-
+  const loader = false;
+  const inputRef = useRef<HTMLInputElement>(null);
   const { isOpen, openModal, closeModal } = useDialogStore();
-  const {
-    folders,
-    folderId,
-    getFolders,
-    folderName,
-    setSelectFolder,
-    addFolder,
-    editFolder,
-    deleteFolder,
-  } = useFavoritesStore();
   const showToast = useToast();
+  const failToast = useCallback(() => {
+    showToast('잠시 후 다시 시도해 주세요.', 'bottom-[64px]', 2000);
+  }, [showToast]);
 
   // 유저
-  const isAuth = localStorage.getItem('user') || sessionStorage.getItem('user');
-  const isAuthPrimaryId =
-    localStorage.getItem('user_id') || sessionStorage.getItem('user_id');
+  const { user, isAuthenticated } = useAuthStore();
+  const userId = user?.id;
 
   useEffect(() => {
-    if (!isAuthPrimaryId) return;
-    getFolders(isAuthPrimaryId, showToast);
-  }, [isAuthPrimaryId, getFolders, showToast]);
+    if (!userId) return;
+    const fetchData = async () => {
+      const data = await getFolders(userId, failToast);
+      if (data) setFolders(data);
+    };
+    fetchData();
+  }, [userId, failToast]);
 
   useEffect(() => {
     if (isOpen && (dialogType === 'add' || dialogType === 'edit')) {
@@ -45,23 +103,45 @@ function Favorites() {
     }
   }, [isOpen, dialogType]);
 
-  if (!isAuth || !isAuthPrimaryId) {
+  if (!isAuthenticated || !userId) {
     return <RequireLogin />;
   }
 
   const handleAddClick = () => {
+    setCurrentFolder({ id: '', folder_name: '' });
     setDialogType('add');
     openModal();
   };
-  const handleEditClick = (id: string, name: string) => {
-    setSelectFolder({ id, name });
+  const handleEditClick = (id: string, folder_name: string) => {
+    setCurrentFolder({ id, folder_name });
     setDialogType('edit');
     openModal();
   };
-  const handleDeleteClick = (id: string, name: string) => {
-    setSelectFolder({ id, name });
+  const handleDeleteClick = (id: string, folder_name: string) => {
+    setCurrentFolder({ id, folder_name });
     setDialogType('delete');
     openModal();
+  };
+
+  const handleSaveFolder = async (type: 'add' | 'edit') => {
+    if (!currentFolder?.folder_name.trim()) {
+      inputRef.current?.focus();
+      return;
+    }
+
+    if (type === 'add') {
+      await addFolder(userId, currentFolder.folder_name.trim(), failToast);
+    } else {
+      await editFolder(
+        currentFolder.id,
+        currentFolder.folder_name.trim(),
+        failToast,
+      );
+    }
+    const data = await getFolders(userId, failToast);
+    if (data) setFolders(data);
+    closeModal();
+    setDialogType(null);
   };
 
   const addBtn = [
@@ -71,13 +151,7 @@ function Favorites() {
     {
       text: '추가',
       onClick: () => {
-        if (!folderName.trim()) {
-          inputRef.current?.focus();
-          return;
-        }
-        addFolder(isAuth, isAuthPrimaryId, folderName.trim(), showToast);
-        closeModal();
-        setDialogType(null);
+        handleSaveFolder('add');
       },
     },
   ];
@@ -88,14 +162,7 @@ function Favorites() {
     {
       text: '저장',
       onClick: () => {
-        if (!folderName.trim()) {
-          inputRef.current?.focus();
-          return;
-        }
-
-        editFolder(folderName.trim(), showToast);
-        closeModal();
-        setDialogType(null);
+        handleSaveFolder('edit');
       },
     },
   ];
@@ -105,10 +172,12 @@ function Favorites() {
     },
     {
       text: '삭제',
-      onClick: () => {
-        if (!folderId) return;
+      onClick: async () => {
+        if (!currentFolder?.id) return;
 
-        deleteFolder(showToast);
+        await deleteFolder(currentFolder.id, failToast);
+        const data = await getFolders(userId, failToast);
+        if (data) setFolders(data);
         setDialogType(null);
       },
     },
@@ -127,8 +196,17 @@ function Favorites() {
           <Input
             label="폴더 추가"
             hideLabel={true}
-            value={folderName ?? ''}
-            onChange={(e) => setSelectFolder({ name: e.target.value })}
+            value={currentFolder?.folder_name ?? ''}
+            onChange={(e) =>
+              setCurrentFolder((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      folder_name: e.target.value,
+                    }
+                  : undefined,
+              )
+            }
             placeholder="폴더 이름을 입력해 주세요."
             ref={inputRef}
           />
@@ -139,8 +217,17 @@ function Favorites() {
           <Input
             label="폴더명 편집"
             hideLabel={true}
-            value={folderName}
-            onChange={(e) => setSelectFolder({ name: e.target.value })}
+            value={currentFolder?.folder_name || ''}
+            onChange={(e) =>
+              setCurrentFolder((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      folder_name: e.target.value,
+                    }
+                  : undefined,
+              )
+            }
             placeholder="폴더 이름을 입력해 주세요."
             ref={inputRef}
           />
