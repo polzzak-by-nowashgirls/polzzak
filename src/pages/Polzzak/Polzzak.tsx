@@ -6,6 +6,7 @@ import Button from '@/components/Button/Button';
 import Icon from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
 import PolzzakList from '@/components/Polzzak/PolzzakList';
+import { useDebounce } from '@/hooks/useDebounce';
 import { useToast } from '@/hooks/useToast';
 import RequireLogin from '@/pages/RequireLogin';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -20,7 +21,26 @@ export type ListItemType = {
   created_at: string;
 };
 
+const fetchSearchData = async (inputValue: string) => {
+  if (!inputValue) return [];
+  const { data, error } = await supabase
+    .from('ex_polzzak_search_view')
+    .select('*')
+    .or(
+      `name.ilike.%${inputValue}%,region.ilike.%${inputValue}%,place.ilike.%${inputValue}%,memo.ilike.%${inputValue}%`,
+    );
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  return data.length ? [...new Set(data.map((i) => i.polzzak_id))] : [];
+};
+
 function Polzzak() {
+  const [inputValue, setInputValue] = useState('');
+  const [searchResult, setSearchResult] = useState<ListItemType[]>();
   const [myPolzzak, setMyPolzzak] = useState<ListItemType[]>();
   const location = useLocation();
   const isPolzzakPage = location.pathname === '/polzzak';
@@ -54,6 +74,29 @@ function Polzzak() {
     }
   }, [isPolzzakPage, userId, fetchMyPolzzak]);
 
+  /* 검색 */
+  const getInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+  };
+
+  const debouncedInput = useDebounce(inputValue, 300);
+  useEffect(() => {
+    const searchList = async () => {
+      const searchData = await fetchSearchData(debouncedInput);
+      const filteredList = myPolzzak?.filter((item) =>
+        searchData?.includes(item.id),
+      );
+      setSearchResult(filteredList);
+    };
+
+    if (debouncedInput.trim()) {
+      searchList();
+    } else {
+      setSearchResult([]);
+    }
+  }, [debouncedInput, myPolzzak]);
+
   return (
     <main className="flex h-full w-full flex-1 flex-col overflow-auto p-6">
       <h2 className="sr-only">폴짝</h2>
@@ -66,11 +109,20 @@ function Polzzak() {
                 label=""
                 hideLabel={true}
                 placeholder="폴짝 찾기"
+                onChange={(e) => {
+                  getInputValue(e);
+                }}
+                value={inputValue}
               >
                 <Icon id="search" className="text-gray05 cursor-pointer" />
               </Input>
             </div>
-            <PolzzakList data={myPolzzak ?? []} refetch={fetchMyPolzzak} />
+            <PolzzakList
+              data={myPolzzak ?? []}
+              refetch={fetchMyPolzzak}
+              searchData={searchResult}
+              isSearching={!!inputValue.trim()}
+            />
             <Button
               variant={'float'}
               onClick={handleAddPolzzak}
