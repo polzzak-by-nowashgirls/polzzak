@@ -15,7 +15,7 @@ import {
   useGetNearShoppingList,
   useGetNearTourList,
 } from '@/api/openAPI/hooks/map/useGetNearCategoryList';
-import { NearItemType } from '@/api/openAPI/hooks/map/useGetNearData';
+import { useGetNearKeywordList } from '@/api/openAPI/hooks/map/useGetNearKeywordList';
 import Button from '@/components/Button/Button';
 import SlideUpDialog from '@/components/Dialog/SlideUpDialog';
 import MapHeader from '@/components/Map/MapHeader';
@@ -23,7 +23,10 @@ import ModalContent from '@/components/Map/ModalContent';
 import ModalDetailContent from '@/components/Map/ModalDetailContent';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useDialogStore } from '@/store/useDialogStore';
-import { DetailCommonDataType } from '@/types/detailCommonDataType';
+import {
+  DetailCommonDataType,
+  NearItemType,
+} from '@/types/detailCommonDataType';
 import { LatLng } from '@/types/LatLng';
 
 function Map() {
@@ -33,6 +36,7 @@ function Map() {
   });
   const { isAuthenticated } = useAuthStore();
   const { isOpen, openModal } = useDialogStore();
+
   const [myLocation, setMyLocation] = useState<LatLng | null>(null);
   const [mapCenter, setMapCenter] = useState<LatLng | null>(null);
   const [showReSearchButton, setShowReSearchButton] = useState(false);
@@ -40,10 +44,13 @@ function Map() {
   const [selectedContentId, setSelectedContentId] = useState<string | null>(
     null,
   );
+
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [searchParams] = useSearchParams();
   const category = searchParams.get('category');
   const isFiltered = category !== null && category.trim() !== '';
+  const keyword = searchParams.get('keyword');
+  const keywordList = useGetNearKeywordList(keyword ?? '');
 
   // 위치 정보 가져오기 및 지도 초기화
   useEffect(() => {
@@ -165,7 +172,14 @@ function Map() {
     (item) => item.contentid === selectedContentId,
   );
 
+  // 검색어 데이터 처리
   useEffect(() => {
+    if (keyword) {
+      setDataList(keywordList);
+      setSelectedContentId(null);
+      return;
+    }
+
     if (!category) return;
 
     let newList: NearItemType[] = [];
@@ -207,13 +221,16 @@ function Map() {
     shoppingList,
     hotelsList,
     culturalList,
+    keyword,
+    keywordList,
   ]);
 
+  // 모달 자동 열기
   useEffect(() => {
-    if (dataList.length > 0 && category) {
+    if ((dataList.length > 0 && category) || keyword) {
       openModal();
     }
-  }, [dataList, category, openModal]);
+  }, [dataList, category, keyword, openModal]);
 
   // 🚩 마커 렌더링 함수
   const renderMarker = (data: DetailCommonDataType[]) =>
@@ -251,7 +268,6 @@ function Map() {
             options: { offset: { x: 14, y: 14 } },
           }}
           onClick={() => {
-            console.log('마커 클릭');
             setSelectedContentId(item.contentid ?? null);
             openModal();
           }}

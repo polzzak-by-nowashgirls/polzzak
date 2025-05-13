@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import { MutableRefObject, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
@@ -17,6 +17,7 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { closeModal } = useDialogStore();
+  const [searchValue, setSearchValue] = useState('');
 
   const MAP_FILTER = [
     { contentTypeId: '', category: 'favorite', label: '즐겨찾기' },
@@ -55,12 +56,37 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
     );
   };
 
+  const onChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+  };
+
+  const onSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const current = new URLSearchParams(searchParams);
+
+      if (searchValue) {
+        current.set('keyword', searchValue);
+      } else {
+        current.delete('keyword');
+        closeModal();
+      }
+      navigate({
+        pathname: '/map',
+        search: current.toString(),
+      });
+    }
+  };
+
   return (
     <>
-      <header className="fixed top-4 right-4 left-4 z-10 flex flex-col justify-between gap-2">
+      <header className="absolute top-4 right-4 left-4 z-10 m-auto flex flex-col justify-between gap-2">
         <Input
           label="검색"
           hideLabel={true}
+          value={searchValue}
+          onChange={onChangeSearch}
+          onKeyDown={onSearchKeyDown}
           placeholder="검색어를 입력해 주세요."
           className="bg-white"
         >
@@ -70,7 +96,7 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
         </Input>
       </header>
 
-      <ul className="fixed top-[62px] right-0 left-0 z-10 flex gap-1 py-2">
+      <ul className="absolute top-[62px] right-0 left-0 z-10 m-auto flex gap-1 overflow-hidden py-2">
         {MAP_FILTER.filter(
           ({ category }) =>
             isLoggedIn || (category !== 'favorite' && category !== 'polzzak'),
@@ -101,7 +127,7 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
       <Button
         variant="secondary"
         size="md"
-        className="fixed top-[116px] right-4 z-10 h-10 w-10"
+        className="absolute top-[116px] right-4 z-10 h-10 w-10"
         onClick={handleLocationClick}
       >
         <Icon id="location" />
