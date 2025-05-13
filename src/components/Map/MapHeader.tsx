@@ -2,6 +2,7 @@ import { MutableRefObject, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
+import { Carousel, CarouselContent } from '@/components/Home/Carousel';
 import Icon, { IconId } from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
 import { useDialogStore } from '@/store/useDialogStore';
@@ -95,17 +96,21 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
           </Button>
         </Input>
       </header>
-
-      <ul className="absolute top-[62px] right-0 left-0 z-10 m-auto flex gap-1 overflow-hidden py-2">
-        {MAP_FILTER.filter(
-          ({ category }) =>
-            isLoggedIn || (category !== 'favorite' && category !== 'polzzak'),
-        ).map(({ category, label }) => {
-          const isActive = searchParams.get('category') === category;
-          return (
-            <li key={category} className="first-of-type:ml-4">
-              <button
-                className={`fs-14 text-gray07 border-gray03 flex items-center gap-1 rounded-4xl border px-3 py-1 whitespace-nowrap ${isActive ? 'bg-primary border-primary text-white' : 'bg-white'}`}
+      <Carousel
+        opts={{ loop: false }}
+        className="absolute top-[62px] right-0 left-0 z-10 py-2"
+      >
+        <CarouselContent className="flex gap-1 first-of-type:ml-4">
+          {MAP_FILTER.filter(
+            ({ category }) =>
+              isLoggedIn || (category !== 'favorite' && category !== 'polzzak'),
+          ).map(({ category, label }) => {
+            const isActive = searchParams.get('category') === category;
+            return (
+              <Button
+                variant="secondary"
+                size="md"
+                className={`h-[40px] gap-[4px] rounded-full px-3.5 ${isActive ? 'bg-primary text-white' : ''}`}
                 onClick={() => handleFilterClick(category)}
               >
                 <Icon
@@ -118,16 +123,15 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
                   className={`${isActive ? 'text-white' : 'text-gray05'}`}
                 />
                 {label}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-
+              </Button>
+            );
+          })}
+        </CarouselContent>
+      </Carousel>
       <Button
         variant="secondary"
         size="md"
-        className="absolute top-[116px] right-4 z-10 h-10 w-10"
+        className="absolute top-[120px] right-4 z-10 h-10 w-10"
         onClick={handleLocationClick}
       >
         <Icon id="location" />
