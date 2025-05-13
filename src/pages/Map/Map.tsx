@@ -239,7 +239,7 @@ function Map() {
         switch (contentTypeId) {
           case '39': // 음식점
             return '/marker/map_food.svg';
-          case '15': // 축제/공연/행사 (예시)
+          case '15': // 축제/공연/행사
             return '/marker/map_festival.svg';
           case '12': // 관광지
             return '/marker/map_tour.svg';
