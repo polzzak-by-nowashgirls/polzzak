@@ -34,11 +34,11 @@ function ListItemCardById({
     const getLikesAndReviews = async () => {
       const { data, error } = await supabase
         .from('ex_contents')
-        .select('likes, reviews, ex_favorite(id)')
+        .select('likes, reviews, ex_favorite(folder_id)')
         .eq('contentid', contentId)
         .maybeSingle();
 
-      if (error || !data) {
+      if (error) {
         console.log('❌ getLikesAndReviews 에러:', error);
         return;
       }
