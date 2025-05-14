@@ -133,6 +133,7 @@ function Favorites() {
             }
             placeholder="폴더 이름을 입력해 주세요."
             ref={inputRef}
+            maxLength={20}
           />
         </SlideUpDialog>
       )}
@@ -156,6 +157,7 @@ function Favorites() {
             }
             placeholder="폴더 이름을 입력해 주세요."
             ref={inputRef}
+            maxLength={20}
           />
         </SlideUpDialog>
       )}
@@ -176,7 +178,8 @@ function Favorites() {
         </SlideUpDialog>
       )}
 
-      {isLoading && <Loader text="기다려주세요." />}
+      {/* 추후 스켈레톤 변경 필요 */}
+      {isLoading && <Loader text="데이터 불러오는 중.." />}
     </section>
   );
 }
