@@ -47,7 +47,7 @@ function FavoriteCard({
       return images.map((url, index) => (
         <img
           key={index}
-          src={url}
+          src={url === 'rabbit' ? '/images/rabbit_face.png' : url}
           alt={`${name} 폴더의 ${index + 1}번`}
           className={`${commonImgClass} ${images.length === 1 ? 'w-full' : 'w-1/2'}`}
         />
@@ -57,7 +57,7 @@ function FavoriteCard({
     return (
       <>
         <img
-          src={images[0]}
+          src={images[0] === 'rabbit' ? '/images/rabbit_face.png' : images[0]}
           alt={`${name} 폴더의 1번`}
           className={`${commonImgClass} w-3/5`}
         />
@@ -65,7 +65,7 @@ function FavoriteCard({
           {[images[1], images[2]].map((url, index) => (
             <img
               key={index}
-              src={url}
+              src={url === 'rabbit' ? '/images/rabbit_face.png' : url}
               alt={`${name} 폴더의 ${index + 1}번`}
               className={`${commonImgClass} aspect-[6/5]`}
             />
