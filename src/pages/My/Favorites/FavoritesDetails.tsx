@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import supabase from '@/api/supabase';
 import ListItemCardById from '@/components/ListItem/ListItemCardById';
@@ -10,8 +10,6 @@ import { useHeaderStore } from '@/store/useHeaderStore';
 
 function FavoritesDetails() {
   const { id } = useParams();
-  const [searchParams] = useSearchParams();
-  const folderName = decodeURIComponent(searchParams.get('name') || '');
   const navigate = useNavigate();
   const [itemList, setItemList] = useState<
     { contentid: string; contenttypeid: string }[] | null
@@ -21,27 +19,18 @@ function FavoritesDetails() {
   const { user, isAuthenticated } = useAuthStore();
   const userId = user?.id;
 
-  // 🕹️ 헤더 설정
-  useEffect(() => {
-    if (!id || !folderName) return;
-
-    setContentsTitle(folderName);
-    return () => setContentsTitle(null);
-  }, [id, folderName, setContentsTitle]);
-
   // 🕹️ 즐겨찾기 리스트 fetch
   const checkFolderExists = useCallback(
-    async (folderId: string, folderName: string) => {
+    async (folderId: string) => {
       const { data, error } = await supabase
         .from('ex_favorite_folders')
-        .select('user_id')
+        .select('user_id, folder_name')
         .eq('user_id', userId)
         .eq('id', folderId)
-        .eq('folder_name', folderName)
         .single();
 
       if (error || !data) {
-        navigate('/my/favorite');
+        navigate('/my/favorites');
         return null;
       }
 
@@ -55,7 +44,8 @@ function FavoritesDetails() {
       const { data, error } = await supabase
         .from('ex_favorite')
         .select('ex_contents(contentid, contenttypeid)')
-        .eq('folder_id', folderId);
+        .eq('folder_id', folderId)
+        .order('created_at', { ascending: false });
 
       if (error) {
         showToast(
@@ -87,15 +77,17 @@ function FavoritesDetails() {
   );
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || !userId) return;
     const init = async () => {
-      const folder = await checkFolderExists(id, folderName);
+      const folder = await checkFolderExists(id);
       if (!folder) return;
+      setContentsTitle(folder.folder_name);
 
       await fetchFavoriteList(id);
     };
     init();
-  }, [id, folderName, checkFolderExists, fetchFavoriteList]);
+    return () => setContentsTitle(null);
+  }, [id, userId, checkFolderExists, fetchFavoriteList, setContentsTitle]);
 
   if (!userId || !isAuthenticated) {
     return <RequireLogin />;
