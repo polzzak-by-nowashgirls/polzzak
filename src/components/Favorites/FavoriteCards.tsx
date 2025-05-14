@@ -36,7 +36,7 @@ function FavoritesCards({
     </div>
   ) : (
     <Link
-      to={`/my/favorites/${id}?name=${encodeURIComponent(name)}`}
+      to={`/my/favorites/${id}`}
       className={cn(
         'focus-visible:ring-ring relative w-full outline-none focus-visible:rounded-md focus-visible:ring-[2px] focus-visible:ring-offset-2',
       )}
