@@ -1,8 +1,9 @@
-import { MutableRefObject, useEffect, useState } from 'react';
+import { MutableRefObject, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Button from '@/components/Button/Button';
-import Icon, { IconId } from '@/components/Icon/Icon';
+import { Carousel, CarouselContent } from '@/components/Home/Carousel';
+import Icon from '@/components/Icon/Icon';
 import Input from '@/components/Input/Input';
 import { useDialogStore } from '@/store/useDialogStore';
 import { LatLng } from '@/types/LatLng';
@@ -16,8 +17,8 @@ interface MapHeaderProps {
 function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
-  // console.log(dialogOpen);
+  const { closeModal } = useDialogStore();
+  const [searchValue, setSearchValue] = useState('');
 
   const MAP_FILTER = [
     { contentTypeId: '', category: 'favorite', label: '즐겨찾기' },
@@ -31,40 +32,14 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
     { contentTypeId: '14', category: 'cultural', label: '문화시설' },
   ];
 
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const { isOpen, closeModal } = useDialogStore();
-  const category = searchParams.get('category');
-
-  useEffect(() => {
-    setActiveFilter(category);
-  }, [category]);
-
-  // ✅ 모달 닫혔을 경우
-  useEffect(() => {
-    if (!isOpen) {
-      setActiveFilter(null);
-
-      const current = new URLSearchParams(searchParams);
-      current.delete('category');
-
-      navigate({
-        pathname: '/map',
-        search: current.toString(),
-      });
-    }
-  }, [isOpen, navigate, searchParams]);
-
-  // ✅ 필터링 버튼 클릭 시
   const handleFilterClick = (category: string) => {
     const current = new URLSearchParams(searchParams);
-    const isActive = category === activeFilter;
+    const isActive = searchParams.get('category') === category;
 
     if (isActive) {
-      setActiveFilter(null);
       current.delete('category');
       closeModal();
     } else {
-      setActiveFilter(category);
       current.set('category', category);
     }
 
@@ -82,12 +57,37 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
     );
   };
 
+  const onChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+  };
+
+  const onSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const current = new URLSearchParams(searchParams);
+
+      if (searchValue) {
+        current.set('keyword', searchValue);
+      } else {
+        current.delete('keyword');
+        closeModal();
+      }
+      navigate({
+        pathname: '/map',
+        search: current.toString(),
+      });
+    }
+  };
+
   return (
     <>
-      <header className="fixed top-4 right-4 left-4 z-10 flex flex-col justify-between gap-2">
+      <header className="absolute top-4 right-4 left-4 z-10 m-auto flex flex-col justify-between gap-2">
         <Input
           label="검색"
           hideLabel={true}
+          value={searchValue}
+          onChange={onChangeSearch}
+          onKeyDown={onSearchKeyDown}
           placeholder="검색어를 입력해 주세요."
           className="bg-white"
         >
@@ -96,36 +96,34 @@ function MapHeader({ mapRef, myLocation, isLoggedIn }: MapHeaderProps) {
           </Button>
         </Input>
       </header>
-
-      <ul className="fixed top-[62px] right-0 left-0 z-10 flex gap-1 py-2">
-        {MAP_FILTER.filter(
-          ({ category }) =>
-            isLoggedIn || (category !== 'favorite' && category !== 'polzzak'),
-        ).map(({ category, label }) => (
-          <li key={category} className="first-of-type:ml-4">
-            <button
-              className={`fs-14 text-gray07 border-gray03 flex items-center gap-1 rounded-4xl border px-3 py-1 whitespace-nowrap ${activeFilter === category ? 'bg-primary border-primary text-white' : 'bg-white'}`}
-              onClick={() => handleFilterClick(category)}
-            >
-              <Icon
-                id={
-                  (category === 'favorite'
-                    ? 'favorite_off'
-                    : category) as IconId
-                }
-                size={16}
-                className={`${activeFilter === category ? 'text-white' : 'text-gray05'}`}
-              />
-              {label}
-            </button>
-          </li>
-        ))}
-      </ul>
-
+      <Carousel
+        opts={{ loop: false }}
+        className="absolute top-[62px] right-0 left-0 z-10 py-2"
+      >
+        <CarouselContent className="flex gap-1 first-of-type:ml-4 last-of-type:mr-4">
+          {MAP_FILTER.filter(
+            ({ category }) =>
+              isLoggedIn || (category !== 'favorite' && category !== 'polzzak'),
+          ).map(({ category, label }) => {
+            const isActive = searchParams.get('category') === category;
+            return (
+              <Button
+                variant="secondary"
+                size="md"
+                className={`h-[40px] gap-[4px] rounded-full px-3.5 ${isActive ? 'bg-primary hover:bg-primary text-white hover:text-white hover:brightness-110' : ''}`}
+                onClick={() => handleFilterClick(category)}
+              >
+                <img src={`/icons/${category}.png`} width={18} height={18} />
+                {label}
+              </Button>
+            );
+          })}
+        </CarouselContent>
+      </Carousel>
       <Button
         variant="secondary"
         size="md"
-        className="fixed top-[116px] right-4 z-10 h-10 w-10"
+        className="absolute top-[120px] right-4 z-10 h-10 w-10"
         onClick={handleLocationClick}
       >
         <Icon id="location" />
