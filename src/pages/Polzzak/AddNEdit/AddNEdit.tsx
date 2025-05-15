@@ -24,7 +24,6 @@ function AddNEdit() {
   const isEditPage = Boolean(id);
   const isAddPage = !isEditPage;
   const [editRegion, setEditRegion] = useState<string[] | null>(null);
-  console.log(editRegion); // Chip 컴포넌트 완료 후 수정
   const [showCropper, setShowCropper] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { isOpen, openModal, closeModal } = useDialogStore();
@@ -34,12 +33,14 @@ function AddNEdit() {
     dateRange,
     region,
     imageUrl,
+    thumbnailBlob,
     setName,
     setDateRange,
     setRegion,
     setThumbnail,
     setFileName,
     setImageUrl,
+    setThumbnailBlob,
     reset,
   } = usePolzzakStore();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -139,9 +140,30 @@ function AddNEdit() {
   };
 
   const handleCropDone = (blob: Blob) => {
+    setThumbnailBlob(blob);
     const previewUrl = URL.createObjectURL(blob);
     setThumbnail(previewUrl);
     setShowCropper(false);
+  };
+
+  const uploadFileToStorage = async (blob: Blob) => {
+    const tempId = crypto.randomUUID();
+    const path = `polzzak/${userId}/${tempId}/thumbnail.png`;
+
+    const { data, error } = await supabase.storage
+      .from('expolzzak')
+      .upload(path, blob, {
+        cacheControl: '3600',
+        upsert: true,
+        contentType: 'image/webp',
+      });
+
+    if (error) {
+      console.error(error);
+      throw error;
+    }
+
+    return data?.path;
   };
 
   /* 추가하기 */
@@ -155,6 +177,11 @@ function AddNEdit() {
 
   const saveAddPolzzak = async () => {
     setIsSaving(true);
+
+    let finalThumbnailPath = null;
+    if (thumbnailBlob) {
+      finalThumbnailPath = await uploadFileToStorage(thumbnailBlob);
+    }
     /* 폴짝 이름 저장 */
     const { data, error } = await supabase
       .from('ex_polzzak')
@@ -168,7 +195,7 @@ function AddNEdit() {
           endDate: dateRange?.to
             ? format(dateRange.to, 'yyyy-MM-dd', { locale: ko })
             : null,
-          thumbnail: thumbnail || null,
+          thumbnail: finalThumbnailPath ?? null,
         },
       ])
       .select();
@@ -314,7 +341,7 @@ function AddNEdit() {
                   : [...prev, selectChip.name];
               });
             }}
-            // selectedValues={editRegion}  // Chip 컴포넌트 완료 후 수정
+            selectedValues={editRegion} // Chip 컴포넌트 완료 후 수정
           />
         </div>
         <div>

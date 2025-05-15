@@ -49,6 +49,19 @@ function Schedule() {
     enabled: !!id,
   });
 
+  const { data: signedData } = useQuery({
+    queryKey: ['thumbnail-url', polzzakData?.thumbnail],
+    queryFn: async () => {
+      if (!polzzakData?.thumbnail) return null;
+      const { data, error } = await supabase.storage
+        .from('expolzzak')
+        .createSignedUrl(polzzakData.thumbnail, 86400);
+      if (error) throw error;
+      return { ...polzzakData, thumbnailUrl: data.signedUrl };
+    },
+    enabled: !!polzzakData?.thumbnail,
+  });
+
   const {
     data: scheduleData,
     isLoading: isScheduleLoading,
@@ -144,7 +157,7 @@ function Schedule() {
   return (
     <div className="flex flex-col gap-4">
       <section>
-        {polzzakData && <PolzzakListItem item={polzzakData} detail={true} />}
+        {signedData && <PolzzakListItem item={signedData} detail={true} />}
       </section>
       <TimelineSchedule schedule={mergedScheduled} />
     </div>
