@@ -244,6 +244,9 @@ function Details({ info, data }: DetailsTypes) {
           </Button>
         </div>
       ))}
+      <cite className="text-gray04 fs-13 ls lh font-light">
+        ※ 한국관광공사 TourAPI 4.0을 통해 제공받은 데이터 입니다.
+      </cite>
     </section>
   );
 }
