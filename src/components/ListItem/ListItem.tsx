@@ -42,6 +42,7 @@ function ListItem({ data }: ListItemData) {
     const [city = '', province = ''] = addressStr.split(' ');
     return { city, province };
   };
+
   useEffect(() => {
     const fetchDetails = async () => {
       const results = await Promise.all(
@@ -72,7 +73,6 @@ function ListItem({ data }: ListItemData) {
   const handleMoveDetail = (id: string) => {
     navigate(`/contents/${id}`);
   };
-  console.log(detailData);
 
   return (
     <ul className="flex flex-col gap-6">

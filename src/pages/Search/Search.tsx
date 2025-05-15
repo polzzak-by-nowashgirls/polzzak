@@ -73,10 +73,6 @@ function Search() {
     }
   };
 
-  const openCalendar = () => {
-    openModal('calendar');
-  };
-
   return (
     <main className="flex h-full w-full flex-1 flex-col overflow-auto p-6">
       <h1 className="sr-only">검색</h1>
