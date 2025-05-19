@@ -72,7 +72,8 @@ function Schedule() {
       const { data, error } = await supabase
         .from('ex_polzzak_schedule')
         .select('date, schedule_id')
-        .eq('polzzak_id', id);
+        .eq('polzzak_id', id)
+        .order('date', { ascending: true });
       if (error) throw error;
       return data;
     },
@@ -157,7 +158,7 @@ function Schedule() {
   return (
     <div className="flex flex-col gap-4">
       <section>
-        {signedData && <PolzzakListItem item={signedData} detail={true} />}
+        <PolzzakListItem item={signedData || polzzakData} detail={true} />
       </section>
       <TimelineSchedule schedule={mergedScheduled} />
     </div>
