@@ -23,15 +23,17 @@ function AddNEdit() {
   const { id } = useParams();
   const isEditPage = Boolean(id);
   const isAddPage = !isEditPage;
-  const [editRegion, setEditRegion] = useState<string[] | null>(null);
+  const [editFile, setEditFile] = useState<string | null>(null);
+  const [editRegion, setEditRegion] = useState<string[] | null>();
   const [showCropper, setShowCropper] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { isOpen, openModal, closeModal } = useDialogStore();
   const {
     name,
-    thumbnail,
     dateRange,
     region,
+    thumbnail,
+    fileName,
     imageUrl,
     thumbnailBlob,
     setName,
@@ -48,6 +50,12 @@ function AddNEdit() {
   const userId = getUserId?.id;
   const showToast = useToast();
 
+  useEffect(() => {
+    if (!userId) {
+      navigate('/polzzak', { replace: true });
+    }
+  }, [userId, navigate]);
+
   /* 편집 정보 가져오기 */
   const getEditInfo = useCallback(async () => {
     const { data, error } = await supabase
@@ -57,39 +65,64 @@ function AddNEdit() {
 
     if (error) {
       showToast(
-        '편집할 데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
+        '편집할 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
         'bottom-[64px]',
         5000,
       );
+      console.error(error);
       return;
     }
 
     const getEditRegion = async () => {
-      const { data, error } = await supabase
+      const { data: regionData, error: regionErr } = await supabase
         .from('ex_polzzak_region')
         .select('region')
         .eq('polzzak_id', id);
 
-      if (error) {
+      if (regionErr) {
         showToast(
-          '편집할 데이터를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
+          '편집할 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
           'bottom-[64px]',
           5000,
         );
+        console.error(regionErr);
         return;
-      } else if (!data || data.length === 0) {
-        return;
+      } else if (!regionData || regionData.length === 0) {
+        setRegion(() => []);
+        setEditRegion([]);
       } else {
-        const regionData = data.map((i) => i.region);
-        setEditRegion(regionData);
+        const editRegionData = regionData.map((i) => i.region);
+        setRegion(() => editRegionData);
+        setEditRegion(editRegionData);
       }
     };
+
+    if (data[0]?.thumbnail) {
+      const { data: urlData, error: urlError } = await supabase.storage
+        .from('expolzzak')
+        .createSignedUrl(data[0].thumbnail, 86400);
+
+      setFileName(
+        urlError
+          ? null
+          : (urlData?.signedUrl.split('?')[0].split('/').pop() ?? null),
+      );
+      setEditFile(data[0].thumbnail);
+    }
 
     setName(data[0]?.name ?? null);
     setDateRange({ from: data[0].startDate, to: data[0]?.endDate ?? null });
     setThumbnail(data[0]?.thumbnail ?? null);
     getEditRegion();
-  }, [id, setDateRange, setName, setThumbnail, showToast]);
+  }, [
+    id,
+    setDateRange,
+    setName,
+    setThumbnail,
+    setRegion,
+    setFileName,
+    showToast,
+  ]);
 
   useEffect(() => {
     reset();
@@ -148,7 +181,8 @@ function AddNEdit() {
 
   const uploadFileToStorage = async (blob: Blob) => {
     const tempId = crypto.randomUUID();
-    const path = `polzzak/${userId}/${tempId}/thumbnail.png`;
+    const safeName = fileName?.replace(/[^\w\-_.]/g, 'a');
+    const path = `polzzak/${userId}/${tempId}/${safeName ?? 'thumbnail.png'}`;
 
     const { data, error } = await supabase.storage
       .from('expolzzak')
@@ -160,16 +194,16 @@ function AddNEdit() {
 
     if (error) {
       console.error(error);
-      throw error;
+      return;
     }
 
     return data?.path;
   };
 
   /* 추가하기 */
-  const errToast = () => {
+  const errToast = (text: string) => {
     showToast(
-      '폴짝을 추가하지 못했어요. 잠시 후 다시 시도해 주세요.',
+      `폴짝을 ${text}하지 못했어요. 잠시 후 다시 시도해 주세요.`,
       'bottom-[64px]',
       5000,
     );
@@ -201,13 +235,15 @@ function AddNEdit() {
       .select();
 
     if (error) {
-      errToast();
-      throw error;
+      errToast('추가');
+      console.error(error);
+      return;
     }
 
     if (!data || data.length === 0) {
-      errToast();
-      throw error;
+      errToast('추가');
+      console.error(error);
+      return;
     }
 
     const polzzakId = data[0].id;
@@ -224,10 +260,7 @@ function AddNEdit() {
             },
           ]);
 
-        if (oneScheduleErr) {
-          errToast();
-          throw oneScheduleErr;
-        }
+        if (oneScheduleErr) throw oneScheduleErr;
       } else if (dateRange?.from && dateRange?.to) {
         const getDateRangeArray = (start: Date, end: Date) => {
           const result = [];
@@ -253,10 +286,7 @@ function AddNEdit() {
             })),
           );
 
-        if (scheduleErr) {
-          errToast();
-          throw scheduleErr;
-        }
+        if (scheduleErr) throw scheduleErr;
       }
 
       /* 폴짝 지역 저장 */
@@ -270,19 +300,117 @@ function AddNEdit() {
             })),
           );
 
-        if (regionErr) {
-          errToast();
-          throw regionErr;
-        }
+        if (regionErr) throw regionErr;
       }
 
       navigate(`/polzzak/${polzzakId}`, { replace: true });
     } catch (err) {
-      errToast();
+      errToast('추가');
       console.error('데이터 저장 실패 : ', err);
       if (polzzakId) {
         await supabase.from('ex_polzzak').delete().eq('id', polzzakId);
       }
+    } finally {
+      setIsSaving(false);
+      reset();
+    }
+  };
+
+  /* 편집 정보 저장 */
+  const isSameRegion = (a: string[], b: string[]) => {
+    const sortedA = [...a].sort();
+    const sortedB = [...b].sort();
+    return sortedA.every((val, idx) => val === sortedB[idx]);
+  };
+
+  const saveEditPolzzak = async () => {
+    setIsSaving(true);
+
+    try {
+      let finalThumbnailPath = thumbnail;
+      if ((thumbnailBlob || !thumbnail) && editFile) {
+        const { data, error } = await supabase.storage
+          .from('expolzzak')
+          .remove([editFile]);
+
+        if (error || !data) {
+          showToast(
+            '저장하지 못했어요. 잠시 후 다시 시도해 주세요.',
+            'bottom-[64px]',
+            5000,
+          );
+          console.error(error);
+          return;
+        }
+      }
+      if (thumbnailBlob) {
+        finalThumbnailPath = (await uploadFileToStorage(thumbnailBlob)) ?? null;
+      }
+
+      const { error } = await supabase
+        .from('ex_polzzak')
+        .update([
+          {
+            user_id: userId,
+            name: name || null,
+            startDate:
+              dateRange?.from &&
+              format(dateRange.from, 'yyyy-MM-dd', { locale: ko }),
+            endDate: dateRange?.to
+              ? format(dateRange.to, 'yyyy-MM-dd', { locale: ko })
+              : null,
+            thumbnail: finalThumbnailPath ?? null,
+          },
+        ])
+        .eq('id', id);
+
+      if (error) {
+        showToast(
+          '저장하지 못했어요. 잠시 후 다시 시도해 주세요.',
+          'bottom-[64px]',
+          5000,
+        );
+        console.error(error);
+        return;
+      }
+      let changeRegion = false;
+      if (region?.length) {
+        if (editRegion?.length) {
+          changeRegion = !isSameRegion(region, editRegion);
+        }
+        if (changeRegion) {
+          const { error: deleteErr } = await supabase
+            .from('ex_polzzak_region')
+            .delete()
+            .eq('polzzak_id', id);
+
+          if (deleteErr) throw deleteErr;
+
+          const { error: insertErr } = await supabase
+            .from('ex_polzzak_region')
+            .insert(
+              region.map((item) => ({
+                polzzak_id: id,
+                region: item,
+              })),
+            );
+
+          if (insertErr) throw insertErr;
+        }
+      } else {
+        if (editRegion?.length) {
+          const { error: deleteErr } = await supabase
+            .from('ex_polzzak_region')
+            .delete()
+            .eq('polzzak_id', id);
+
+          if (deleteErr) throw deleteErr;
+        }
+      }
+      navigate(`/polzzak`, { replace: true });
+    } catch (err) {
+      errToast('저장');
+      console.error('데이터 저장 실패 : ', err);
     } finally {
       setIsSaving(false);
       reset();
@@ -341,7 +469,7 @@ function AddNEdit() {
                   : [...prev, selectChip.name];
               });
             }}
-            selectedValues={editRegion} // Chip 컴포넌트 완료 후 수정
+            selectedValues={region}
           />
         </div>
         <div>
@@ -353,6 +481,20 @@ function AddNEdit() {
             onChange={handleFileChange}
             ref={inputRef}
           >
+            {thumbnail && (
+              <Button
+                variant="input"
+                onClick={() => {
+                  setThumbnail(null);
+                  setFileName(null);
+                  setImageUrl(null);
+                  setThumbnailBlob(null);
+                }}
+                className="text-gray07 ml-1"
+              >
+                <Icon id="close" className="h-4 w-4" />
+              </Button>
+            )}
             <Button
               variant={'tertiary'}
               size="md"
@@ -365,34 +507,34 @@ function AddNEdit() {
           </Input>
         </div>
 
-        {thumbnail && (
+        {thumbnail && imageUrl && (
           <figure>
             <figcaption className="fs-14 m-1 px-1">
               폴짝 사진 미리보기
             </figcaption>
-            <div className="relative w-1/2">
-              <img
-                src={thumbnail}
-                alt="선택한 폴짝 사진 미리보기"
-                className="rounded-lg border drop-shadow-md"
-              />
-              <Button
-                className="absolute top-2 right-2 h-6 w-6"
-                variant={'float'}
-                size={'md'}
-                onClick={() => {
-                  setThumbnail(null);
-                  setFileName(null);
-                  setImageUrl(null);
-                }}
-              >
-                <Icon id="close" />
-              </Button>
-            </div>
+            <img
+              src={thumbnail}
+              alt="선택한 폴짝 사진 미리보기"
+              className="w-1/2 rounded-lg border drop-shadow-md"
+            />
           </figure>
         )}
       </div>
-      <Button disabled={!dateRange?.from} onClick={saveAddPolzzak}>
+      <Button
+        disabled={isSaving || !dateRange?.from}
+        onClick={async () => {
+          if (!userId) {
+            navigate('/polzzak', { replace: true });
+            return;
+          }
+
+          if (isAddPage) {
+            await saveAddPolzzak();
+          } else {
+            await saveEditPolzzak();
+          }
+        }}
+      >
         {isAddPage ? '폴짝 추가하기' : '폴짝 저장하기'}
       </Button>
       {isOpen && (
