@@ -75,6 +75,16 @@ function PolzzakListItem({
       );
       console.error('폴짝 삭제 실패', error);
     } else {
+      if (item.thumbnail) {
+        const { data, error } = await supabase.storage
+          .from('expolzzak')
+          .remove([item.thumbnail]);
+
+        if (error || !data) {
+          console.error(error);
+          return;
+        }
+      }
       if (onDeleted) {
         onDeleted();
         showToast('삭제가 완료되었습니다.', 'top-[64px]', 2000);
@@ -141,6 +151,7 @@ function PolzzakListItem({
                   onClick: (e: React.MouseEvent) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    setOpenMeatball(false);
 
                     openModal(item.id);
                   },
