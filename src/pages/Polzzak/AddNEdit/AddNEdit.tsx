@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { DateRange } from 'react-day-picker';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import supabase from '@/api/supabase';
@@ -16,7 +17,72 @@ import Loader from '@/components/Loader/Loader';
 import { useToast } from '@/hooks/useToast';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useDialogStore } from '@/store/useDialogStore';
-import { usePolzzakStore } from '@/store/usePolzzakStroe';
+
+type PolzzakState = {
+  name: string | null;
+  dateRange: DateRange | null;
+  region: string[] | null;
+  thumbnail: string | null;
+  fileName: string | null;
+  imageUrl: string | null;
+  thumbnailBlob: Blob | null;
+};
+
+const initialPolzzakState: PolzzakState = {
+  name: null,
+  dateRange: null,
+  region: null,
+  thumbnail: null,
+  fileName: null,
+  imageUrl: null,
+  thumbnailBlob: null,
+};
+
+type PolzzakAction =
+  | { type: 'SET_NAME'; payload: string | null }
+  | { type: 'SET_DATE_RANGE'; payload: DateRange | null }
+  | { type: 'SET_REGION'; payload: string[] }
+  | { type: 'TOGGLE_REGION'; payload: string }
+  | { type: 'SET_THUMBNAIL'; payload: string | null }
+  | { type: 'SET_FILE_NAME'; payload: string | null }
+  | { type: 'SET_IMAGE_URL'; payload: string | null }
+  | { type: 'SET_THUMBNAIL_BLOB'; payload: Blob | null }
+  | { type: 'RESET' };
+
+function polzzakReducer(
+  state: PolzzakState,
+  action: PolzzakAction,
+): PolzzakState {
+  switch (action.type) {
+    case 'SET_NAME':
+      return { ...state, name: action.payload };
+    case 'SET_DATE_RANGE':
+      return { ...state, dateRange: action.payload };
+    case 'SET_REGION':
+      return { ...state, region: action.payload };
+    case 'TOGGLE_REGION': {
+      const exists = state.region?.includes(action.payload);
+      return {
+        ...state,
+        region: exists
+          ? (state.region?.filter((r) => r !== action.payload) ?? [])
+          : [...(state.region ?? []), action.payload],
+      };
+    }
+    case 'SET_THUMBNAIL':
+      return { ...state, thumbnail: action.payload };
+    case 'SET_FILE_NAME':
+      return { ...state, fileName: action.payload };
+    case 'SET_IMAGE_URL':
+      return { ...state, imageUrl: action.payload };
+    case 'SET_THUMBNAIL_BLOB':
+      return { ...state, thumbnailBlob: action.payload };
+    case 'RESET':
+      return initialPolzzakState;
+    default:
+      return state;
+  }
+}
 
 function AddNEdit() {
   const navigate = useNavigate();
@@ -28,6 +94,11 @@ function AddNEdit() {
   const [showCropper, setShowCropper] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { isOpen, openModal, closeModal } = useDialogStore();
+  const [state, dispatch] = useReducer(polzzakReducer, initialPolzzakState);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const getUserId = useAuthStore((state) => state.user);
+  const userId = getUserId?.id;
+  const showToast = useToast();
   const {
     name,
     dateRange,
@@ -36,19 +107,7 @@ function AddNEdit() {
     fileName,
     imageUrl,
     thumbnailBlob,
-    setName,
-    setDateRange,
-    setRegion,
-    setThumbnail,
-    setFileName,
-    setImageUrl,
-    setThumbnailBlob,
-    reset,
-  } = usePolzzakStore();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const getUserId = useAuthStore((state) => state.user);
-  const userId = getUserId?.id;
-  const showToast = useToast();
+  } = state;
 
   useEffect(() => {
     if (!userId) {
@@ -88,11 +147,11 @@ function AddNEdit() {
         console.error(regionErr);
         return;
       } else if (!regionData || regionData.length === 0) {
-        setRegion(() => []);
+        dispatch({ type: 'SET_REGION', payload: [] });
         setEditRegion([]);
       } else {
         const editRegionData = regionData.map((i) => i.region);
-        setRegion(() => editRegionData);
+        dispatch({ type: 'SET_REGION', payload: editRegionData });
         setEditRegion(editRegionData);
       }
     };
@@ -102,35 +161,31 @@ function AddNEdit() {
         .from('expolzzak')
         .createSignedUrl(data[0].thumbnail, 86400);
 
-      setFileName(
-        urlError
+      dispatch({
+        type: 'SET_FILE_NAME',
+        payload: urlError
           ? null
           : (urlData?.signedUrl.split('?')[0].split('/').pop() ?? null),
-      );
+      });
       setEditFile(data[0].thumbnail);
     }
 
-    setName(data[0]?.name ?? null);
-    setDateRange({ from: data[0].startDate, to: data[0]?.endDate ?? null });
-    setThumbnail(data[0]?.thumbnail ?? null);
+    dispatch({ type: 'SET_NAME', payload: data[0]?.name ?? null });
+    dispatch({
+      type: 'SET_DATE_RANGE',
+      payload: { from: data[0].startDate, to: data[0]?.endDate ?? null },
+    });
+    dispatch({ type: 'SET_THUMBNAIL', payload: data[0]?.thumbnail ?? null });
     getEditRegion();
-  }, [
-    id,
-    setDateRange,
-    setName,
-    setThumbnail,
-    setRegion,
-    setFileName,
-    showToast,
-  ]);
+  }, [id, showToast]);
 
   useEffect(() => {
-    reset();
+    dispatch({ type: 'RESET' });
 
     if (isEditPage) {
       getEditInfo();
     }
-  }, [reset, isEditPage, getEditInfo]);
+  }, [isEditPage, getEditInfo]);
 
   /* 날짜 선택 */
   const handleCalender = () => {
@@ -155,9 +210,7 @@ function AddNEdit() {
     },
     {
       text: '초기화',
-      onClick: () => {
-        setDateRange(undefined);
-      },
+      onClick: () => dispatch({ type: 'SET_DATE_RANGE', payload: null }),
     },
   ];
 
@@ -168,14 +221,14 @@ function AddNEdit() {
     if (!file) return;
 
     const url = URL.createObjectURL(file);
-    setImageUrl(url);
-    setFileName(file?.name);
+    dispatch({ type: 'SET_IMAGE_URL', payload: url });
+    dispatch({ type: 'SET_FILE_NAME', payload: file.name });
   };
 
   const handleCropDone = (blob: Blob) => {
-    setThumbnailBlob(blob);
+    dispatch({ type: 'SET_THUMBNAIL_BLOB', payload: blob });
     const previewUrl = URL.createObjectURL(blob);
-    setThumbnail(previewUrl);
+    dispatch({ type: 'SET_THUMBNAIL', payload: previewUrl });
     setShowCropper(false);
   };
 
@@ -312,7 +365,7 @@ function AddNEdit() {
       }
     } finally {
       setIsSaving(false);
-      reset();
+      dispatch({ type: 'RESET' });
     }
   };
 
@@ -385,18 +438,18 @@ function AddNEdit() {
             .eq('polzzak_id', id);
 
           if (deleteErr) throw deleteErr;
-
-          const { error: insertErr } = await supabase
-            .from('ex_polzzak_region')
-            .insert(
-              region.map((item) => ({
-                polzzak_id: id,
-                region: item,
-              })),
-            );
-
-          if (insertErr) throw insertErr;
         }
+
+        const { error: insertErr } = await supabase
+          .from('ex_polzzak_region')
+          .insert(
+            region.map((item) => ({
+              polzzak_id: id,
+              region: item,
+            })),
+          );
+
+        if (insertErr) throw insertErr;
       } else {
         if (editRegion?.length) {
           const { error: deleteErr } = await supabase
@@ -413,7 +466,7 @@ function AddNEdit() {
       console.error('데이터 저장 실패 : ', err);
     } finally {
       setIsSaving(false);
-      reset();
+      dispatch({ type: 'RESET' });
     }
   };
 
@@ -427,7 +480,9 @@ function AddNEdit() {
             type="text"
             placeholder="폴짝 이름을 입력해 주세요."
             value={name ?? ''}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) =>
+              dispatch({ type: 'SET_NAME', payload: e.target.value })
+            }
             maxLength={20}
           />
         </div>
@@ -459,16 +514,9 @@ function AddNEdit() {
             label="지역 선택"
             subLabel="다중 선택 가능합니다."
             type="multiple"
-            onClick={(selectChip) => {
-              setRegion((prev) => {
-                if (!prev) return [selectChip.name];
-
-                const isAlreadySelected = prev.includes(selectChip.name);
-                return isAlreadySelected
-                  ? prev.filter((chip) => chip !== selectChip.name)
-                  : [...prev, selectChip.name];
-              });
-            }}
+            onClick={(selectChip) =>
+              dispatch({ type: 'TOGGLE_REGION', payload: selectChip.name })
+            }
             selectedValues={region}
           />
         </div>
@@ -480,15 +528,17 @@ function AddNEdit() {
             onClick={() => setShowCropper(true)}
             onChange={handleFileChange}
             ref={inputRef}
+            thumbnail={thumbnail}
+            fileName={fileName}
           >
             {thumbnail && (
               <Button
                 variant="input"
                 onClick={() => {
-                  setThumbnail(null);
-                  setFileName(null);
-                  setImageUrl(null);
-                  setThumbnailBlob(null);
+                  dispatch({ type: 'SET_THUMBNAIL', payload: null });
+                  dispatch({ type: 'SET_FILE_NAME', payload: null });
+                  dispatch({ type: 'SET_IMAGE_URL', payload: null });
+                  dispatch({ type: 'SET_THUMBNAIL_BLOB', payload: null });
                 }}
                 className="text-gray07 ml-1"
               >
@@ -545,7 +595,9 @@ function AddNEdit() {
         >
           <CalendarCustom
             selected={dateRange ?? undefined}
-            onSelect={setDateRange}
+            onSelect={(range) =>
+              dispatch({ type: 'SET_DATE_RANGE', payload: range ?? null })
+            }
           />
         </SlideUpDialog>
       )}
