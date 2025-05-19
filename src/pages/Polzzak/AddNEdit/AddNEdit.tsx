@@ -89,8 +89,9 @@ function AddNEdit() {
   const { id } = useParams();
   const isEditPage = Boolean(id);
   const isAddPage = !isEditPage;
-  const [editFile, setEditFile] = useState<string | null>(null);
+  const [editDate, setEditDate] = useState<DateRange | null>(null);
   const [editRegion, setEditRegion] = useState<string[] | null>();
+  const [editFile, setEditFile] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { isOpen, openModal, closeModal } = useDialogStore();
@@ -175,6 +176,7 @@ function AddNEdit() {
       type: 'SET_DATE_RANGE',
       payload: { from: data[0].startDate, to: data[0]?.endDate ?? null },
     });
+    setEditDate({ from: data[0].startDate, to: data[0]?.endDate ?? null });
     dispatch({ type: 'SET_THUMBNAIL', payload: data[0]?.thumbnail ?? null });
     getEditRegion();
   }, [id, showToast]);
@@ -253,6 +255,17 @@ function AddNEdit() {
     return data?.path;
   };
 
+  // 저장할 날짜 배열로 변경
+  const getDateRangeArray = (start: Date, end: Date) => {
+    const result = [];
+    const current = new Date(start);
+    while (current <= end) {
+      result.push(new Date(current));
+      current.setDate(current.getDate() + 1);
+    }
+    return result;
+  };
+
   /* 추가하기 */
   const errToast = (text: string) => {
     showToast(
@@ -302,7 +315,6 @@ function AddNEdit() {
     const polzzakId = data[0].id;
     try {
       /* 폴짝 날짜 저장 */
-      // 날짜 single
       if (dateRange?.from && !dateRange.to) {
         const { error: oneScheduleErr } = await supabase
           .from('ex_polzzak_schedule')
@@ -315,16 +327,6 @@ function AddNEdit() {
 
         if (oneScheduleErr) throw oneScheduleErr;
       } else if (dateRange?.from && dateRange?.to) {
-        const getDateRangeArray = (start: Date, end: Date) => {
-          const result = [];
-          const current = new Date(start);
-          while (current <= end) {
-            result.push(new Date(current));
-            current.setDate(current.getDate() + 1);
-          }
-          return result;
-        };
-
         const dateList = getDateRangeArray(
           new Date(dateRange.from),
           new Date(dateRange.to),
@@ -426,6 +428,58 @@ function AddNEdit() {
         console.error(error);
         return;
       }
+
+      if (
+        dateRange?.from !== editDate?.from ||
+        dateRange?.to !== editDate?.to
+      ) {
+        const formatDate = (d: Date) => format(d, 'yyyy-MM-dd', { locale: ko });
+
+        const oldDates =
+          editDate?.from && editDate?.to
+            ? getDateRangeArray(
+                new Date(editDate.from),
+                new Date(editDate.to),
+              ).map(formatDate)
+            : editDate?.from
+              ? [formatDate(new Date(editDate.from))]
+              : [];
+
+        const newDates =
+          dateRange?.from && dateRange?.to
+            ? getDateRangeArray(
+                new Date(dateRange.from),
+                new Date(dateRange.to),
+              ).map(formatDate)
+            : dateRange?.from
+              ? [formatDate(new Date(dateRange.from))]
+              : [];
+
+        const toInsert = newDates.filter((d) => !oldDates.includes(d));
+        const toDelete = oldDates.filter((d) => !newDates.includes(d));
+
+        if (toDelete.length > 0) {
+          const { error: deleteScheduleErr } = await supabase
+            .from('ex_polzzak_schedule')
+            .delete()
+            .in('date', toDelete)
+            .eq('polzzak_id', id);
+          if (deleteScheduleErr) throw deleteScheduleErr;
+        }
+        // // 추가: 새로 생긴 날짜는 schedule만 insert
+        if (toInsert.length > 0) {
+          const { error: insertScheduleErr } = await supabase
+            .from('ex_polzzak_schedule')
+            .insert(
+              toInsert.map((date) => ({
+                polzzak_id: id,
+                date,
+              })),
+            );
+          if (insertScheduleErr) throw insertScheduleErr;
+        }
+      }
+
       let changeRegion = false;
       if (region?.length) {
         if (editRegion?.length) {
@@ -460,7 +514,7 @@ function AddNEdit() {
           if (deleteErr) throw deleteErr;
         }
       }
-      navigate(`/polzzak`, { replace: true });
+      navigate(-1);
     } catch (err) {
       errToast('저장');
       console.error('데이터 저장 실패 : ', err);
