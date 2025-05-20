@@ -1,18 +1,24 @@
 import { Link } from 'react-router-dom';
 
 import { CarouselItem } from '@/components/Home/Carousel';
-import { ThemeItemList } from '@/mockData/ListItemDummyData';
 
-function ThemeItemCard({ item }: { item: ThemeItemList }) {
-  const { imgUrl, title, region } = item;
+export interface ThemeItem {
+  contentId: string;
+  img: string;
+  title: string;
+  region: string;
+}
+
+function ThemeItemCard({ item }: { item: ThemeItem }) {
+  const { contentId, img, title, region } = item;
 
   return (
     <CarouselItem className="shrink-0 basis-[150px]">
       {/* 상세페이지 생성 후 수정 */}
-      <Link to={`/search/상세보기로이동`}>
+      <Link to={`/contents/${contentId}`}>
         <figure>
           <img
-            src={imgUrl}
+            src={img}
             alt={title}
             className="aspect-[4/3] w-full rounded-md object-cover object-center"
           />
