@@ -22,7 +22,7 @@ function CarouselThemes({ header, moreUrl, itemList }: ThemeItemProps) {
       <Carousel>
         <CarouselContent className="gap-4 px-6">
           {itemList.map((item) => (
-            <ThemeItemCard key={item.contentId} item={item} />
+            <ThemeItemCard key={item.contentid} item={item} />
           ))}
         </CarouselContent>
       </Carousel>
