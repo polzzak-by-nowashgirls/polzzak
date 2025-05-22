@@ -1,13 +1,45 @@
 import { client } from '@/api/openAPI/client';
 import { ThemeItem } from '@/components/Home/ThemeItemCard';
 
-interface SearchFestival extends ThemeItem {
+interface HomeThemes extends ThemeItem {
   [key: string]: string;
 }
+async function fetchRecommendTour(keyword: string) {
+  console.log('🐷 fetchRecommendTour 들어옴!');
+  try {
+    const res = await client.get('/searchKeyword1', {
+      params: {
+        keyword: keyword,
+        numOfRows: '70',
+        pageNo: '1',
+        arrange: 'R',
+      },
+    });
+    const items = res.data?.response?.body?.items?.item ?? [];
+    const randomTour = items
+      .filter(
+        (item: HomeThemes) =>
+          item.contenttypeid === '12' || item.contenttypeid === '15',
+      )
+      .splice(0, 7);
+    console.log('🐷 fetchRecommendTour 끝남! ‼️', randomTour);
+    return randomTour.map((item: HomeThemes) => ({
+      contentid: item.contentid,
+      title: item.title,
+      firstimage: item.firstimage,
+      addr1: item.addr1,
+    }));
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+}
+
+export { fetchRecommendTour };
 
 async function fetchGetFestival() {
   console.log('🐸 fetchGetFestival 들어옴!');
-  const eventStartDate = getPreviousMothStart();
+  const eventStartDate = getPreviousMonthStart();
 
   try {
     const res = await client.get('/searchFestival1', {
@@ -19,7 +51,7 @@ async function fetchGetFestival() {
     });
     const items = res.data?.response?.body?.items?.item ?? [];
     const ongoingFestivals = items
-      .filter((item: SearchFestival) =>
+      .filter((item: HomeThemes) =>
         isFestivalInCurrentMonth(item.eventstartdate, item.eventenddate),
       )
       .splice(0, 7);
@@ -31,7 +63,7 @@ async function fetchGetFestival() {
   }
 }
 
-const getPreviousMothStart = () => {
+const getPreviousMonthStart = () => {
   const now = new Date();
   const year = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
   const month = now.getMonth() === 0 ? 12 : now.getMonth();
@@ -92,10 +124,6 @@ async function fetchDetailCommons(contentIds: string[]) {
 
 export { fetchDetailCommons };
 
-interface AreaBasedList extends ThemeItem {
-  [key: string]: string;
-}
-
 async function fetchRandomContent(shortage: number, contentTypeId: number) {
   console.log('🦊 fetchRandomContent 들어옴!');
   try {
@@ -112,7 +140,7 @@ async function fetchRandomContent(shortage: number, contentTypeId: number) {
     const items = res?.data?.response?.body?.items?.item ?? [];
 
     console.log('🦊 fetchRandomContent 끝남! ‼️');
-    return items.map((item: AreaBasedList) => ({
+    return items.map((item: HomeThemes) => ({
       contentid: item.contentid,
       title: item.title,
       addr1: item.addr1,
