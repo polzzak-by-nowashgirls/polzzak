@@ -236,8 +236,9 @@ function AddNEdit() {
 
   const uploadFileToStorage = async (blob: Blob) => {
     const tempId = crypto.randomUUID();
-    const safeName = fileName?.replace(/[^\w\-_.]/g, 'a');
-    const path = `polzzak/${userId}/${tempId}/${safeName ?? 'thumbnail.png'}`;
+    const baseName =
+      fileName?.split('.')[0]?.replace(/[^\w\-_.]/g, '') ?? 'thumbnail';
+    const path = `polzzak/${userId}/${tempId}/${baseName}.webp`;
 
     const { data, error } = await supabase.storage
       .from('expolzzak')
