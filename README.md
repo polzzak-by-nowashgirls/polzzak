@@ -68,6 +68,7 @@
 <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566899596/noticon/slhw4nu8hybreryigopq.png" width="60">
 <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1570106347/noticon/hx52ypkqqdzjdvd8iaid.svg" width="60">
 <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1640152045/noticon/albswwsjaaxvxbyhmwig.png" width="60">
+<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566912267/noticon/kkbhzjg7hiqjjl3stwsw.png" width="60">
 </div>
 
 <br />
@@ -129,11 +130,106 @@
 
 ## 🕹️ 화면 구성 및 주요 기능
 
-|         초기화면          |
+|          로그인           |
 | :-----------------------: |
-| <img src="" width="450"/> |
+| <img src="" width="50%"/> |
 
-서비스 접속 초기화면으로 splash 화면이 잠시 나온 뒤 홈 페이지로 이동
+-
+
+<br />
+
+|         회원가입          |
+| :-----------------------: |
+| <img src="" width="50%"/> |
+
+-
+
+<br />
+
+|            홈             |
+| :-----------------------: |
+| <img src="" width="50%"/> |
+
+- **홈 배너** : 캐러셀 형식으로 구성되어 있으며 배너 클릭 시, 해당 키워드로 자동 검색
+- **카테고리 메뉴** : 해당 페이지 이동 및 카테고리별 바로 검색
+- **추천 장소** :
+  - 계절 또는 매달 다른 테마의 장소 추천
+  - 추천 장소 클릭 시 상세 페이지 또는 관련 검색 결과로 이동
+
+<br />
+
+|           검색            |
+| :-----------------------: |
+| <img src="" width="50%"/> |
+
+-
+
+<br />
+
+|           지도            |
+| :-----------------------: |
+| <img src="" width="50%"/> |
+
+-
+
+<br />
+
+|           폴짝            |
+| :-----------------------: |
+| <img src="" width="50%"/> |
+
+- 나만의 일정 생성, 편집, 삭제 기능 제공
+- 일정에 이름, 날짜, 지역, 이미지를 함께 등록 가능
+- 생성된 일정은 ‘중’, ‘준비’, ‘완료’ 상태로 구분되어 한눈에 확인 가능
+- 일정 제목 또는 포함된 카드 내용을 페이지 내에서 검색 가능
+
+<br />
+
+|         폴짝 상세         |
+| :-----------------------: |
+| <img src="" width="50%"/> |
+
+- 선택한 날짜별로 스케줄 생성, 편집, 삭제, 순서 변경 가능
+- 스케줄에는 장소, 시간, 메모를 함께 등록 가능
+- 장소는 지도 페이지를 통해 선택할 수 있음
+
+<br />
+
+|        마이페이지         |
+| :-----------------------: |
+| <img src="" width="50%"/> |
+
+-
+
+<br />
+
+|         즐겨찾기          |
+| :-----------------------: |
+| <img src="" width="50%"/> |
+
+- 기본 폴더 자동 제공
+- 나만의 폴더 생성, 이름 변경, 편집 및 삭제 가능
+- 즐겨찾기한 장소 목록 확인 가능
+- 하트 아이콘 클릭으로 찜 추가/삭제 가능
+- 목록 클릭 시, 해당 장소의 상세 페이지로 이동
+
+<br />
+
+|    콘텐츠 상세 페이지     |
+| :-----------------------: |
+| <img src="" width="50%"/> |
+
+- 장소(업체, 축제)의 이미지, 소개, 이용안내 확인 가능
+- 메뉴
+  - 즐겨찾기 아이콘 클릭 시 모달이 열리며 즐겨찾기할 폴더 선택 가능
+  - 폴짝 아이콘 클릭 시 신규/기존 폴짝을 선택해 스케줄에 추가 가능
+  - 리뷰작성 아이콘 클릭 시, 해당 영역으로 자동 스크롤
+    - 해당 장소에 작성된 리뷰 목록 확인
+    - 로그인 시 리뷰 작성 기능 활성화
+    - 리뷰가 3개 이상일 경우 ‘더보기’ 버튼 노출
+    - 클릭 시 모든 리뷰 확인 가능
+    - 리뷰는 무한 스크롤 방식으로 로딩
+  - 해당 장소를 공유할 수 있도록 기능 제공
 
 <br />
 
@@ -153,3 +249,7 @@
   - [Vercel 배포 후 API 요청 시 에러 발생](https://velog.io/@ttining/TroubleShooting-Vercel-%EB%B0%B0%ED%8F%AC-%ED%9B%84-API-%EC%9A%94%EC%B2%AD-%EC%8B%9C-%EC%97%90%EB%9F%AC-%EB%B0%9C%EC%83%9D)
 
 <br />
+
+## 📝 라이선스
+
+Copyright &copy; 폴짝. [Yooniverse42](https://github.com/Yooniverse42). [hyesom2](https://github.com/hyesom2). [ttining-real](https://github.com/ttining-real).
