@@ -31,7 +31,11 @@ function Radio({
   }, [data]);
 
   React.useEffect(() => {
-    if (selected && data?.length && typeof data[0].storage[0] === 'string') {
+    if (
+      selected &&
+      data?.length &&
+      (data[0].storage.length === 0 || typeof data[0].storage[0] === 'string')
+    ) {
       setSelectFolder(selected);
     }
   }, [selected, data, setSelectFolder]);
