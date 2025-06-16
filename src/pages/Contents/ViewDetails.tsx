@@ -182,6 +182,36 @@ function ViewDetails() {
       navigate('/login');
     } else {
       openModal('폴짝선택');
+      try {
+        setIsLoading('폴짝 가져오는 중...');
+        const { data, error } = await supabase
+          .from('polzzak')
+          .select(
+            'id, name, startDate, endDate, polzzak_schedule(schedule_id, date)',
+          )
+          .eq('user_id', userId);
+
+        if (error) {
+          throw error;
+        }
+        setRadioList(
+          data.map((item) => ({
+            id: item.id,
+            name: item.name,
+            startDate: item.startDate,
+            endDate: item.endDate,
+            storage: item.polzzak_schedule?.map((i) => ({
+              schedule_id: i.schedule_id,
+              date: i.date,
+            })),
+          })),
+        );
+      } catch (err) {
+        console.error(err);
+        return;
+      } finally {
+        setIsLoading('');
+      }
     }
   };
 
@@ -190,36 +220,6 @@ function ViewDetails() {
     if (!id || !userId) return;
 
     openModal('기존폴짝');
-    try {
-      setIsLoading('폴짝 가져오는 중...');
-      const { data, error } = await supabase
-        .from('polzzak')
-        .select(
-          'id, name, startDate, endDate, polzzak_schedule(schedule_id, date)',
-        )
-        .eq('user_id', userId);
-
-      if (error) {
-        throw error;
-      }
-      setRadioList(
-        data.map((item) => ({
-          id: item.id,
-          name: item.name,
-          startDate: item.startDate,
-          endDate: item.endDate,
-          storage: item.polzzak_schedule?.map((i) => ({
-            schedule_id: i.schedule_id,
-            date: i.date,
-          })),
-        })),
-      );
-    } catch (error) {
-      console.error(error);
-      return;
-    } finally {
-      setIsLoading('');
-    }
   };
 
   const onClickNewPolzzak = () => {
@@ -305,9 +305,11 @@ function ViewDetails() {
           {isOpenId === '폴짝선택' && (
             <AlertDialog
               header="폴짝 추가하기"
-              description={[
-                `신규${radioList?.length ? ' 또는 기존' : ''} 폴짝을 추가해 주세요.`,
-              ]}
+              description={
+                radioList?.length
+                  ? ['신규 또는 기존 폴짝을 추가해 주세요.']
+                  : ['기존 폴짝이 없어요.', '신규 폴짝을 먼저 추가해 주세요!']
+              }
               buttonDirection="col"
               button={
                 radioList?.length
