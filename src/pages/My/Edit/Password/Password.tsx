@@ -147,7 +147,7 @@ function Password() {
         return;
       }
       const { data: USER_DATA, error: fetchError } = await supabase
-        .from('ex_users')
+        .from('users')
         .select('*')
         .eq('user_id', USER_ID)
         .single();
@@ -164,7 +164,7 @@ function Password() {
       }
       if (USER_DATA.password) {
         const { error: UpdateError } = await supabase
-          .from('ex_users')
+          .from('users')
           .update({ password: changePw })
           .eq('user_id', USER_ID);
 

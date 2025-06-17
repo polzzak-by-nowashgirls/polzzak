@@ -30,7 +30,7 @@ function NickName() {
     error: '2~10자로 입력해 주세요.',
     errorDup: '이미 사용된 닉네임입니다.',
   };
-  const userData = useGetTable<ItemTypes>('ex_users');
+  const userData = useGetTable<ItemTypes>('users');
 
   const handleNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
