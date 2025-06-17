@@ -583,7 +583,7 @@ function AddNEdit() {
   };
 
   return (
-    <section className="flex flex-col justify-between gap-10">
+    <section className="flex h-full flex-col justify-between gap-10">
       <h1 className="sr-only">폴짝 추가하기</h1>
       <div className="flex flex-1 flex-col gap-4">
         <div>
