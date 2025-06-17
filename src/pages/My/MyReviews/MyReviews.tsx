@@ -64,7 +64,7 @@ function MyReviews() {
         <span className="triangle absolute -bottom-[0.1px] left-10"></span>
       </h2>
       {reviewList.length ? (
-        <>
+        <div className="mt-[50px]">
           <ReviewList
             userId={userId}
             reviewList={reviewList}
@@ -79,7 +79,7 @@ function MyReviews() {
           >
             Loading...
           </div>
-        </>
+        </div>
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center">
           <div className="flex flex-col items-center justify-center gap-3 py-12">
