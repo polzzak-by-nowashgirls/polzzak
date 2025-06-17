@@ -9,7 +9,6 @@ import { useModalStore } from '@/store/useModalStore';
 const menus = [
   { label: '닉네임 설정', href: 'nickname' },
   { label: '비밀번호 설정', href: 'password' },
-  { label: '휴대폰 번호 설정', href: 'phone-number' },
   { label: '이메일 설정', href: 'email' },
 ];
 

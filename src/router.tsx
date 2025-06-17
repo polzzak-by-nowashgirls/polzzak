@@ -20,13 +20,7 @@ import {
 } from '@/pages';
 import DetailReviews from '@/pages/Contents/DetailReviews';
 import ViewDetails from '@/pages/Contents/ViewDetails';
-import {
-  Edit as UserEdit,
-  Email,
-  NickName,
-  Password,
-  PhoneNumber,
-} from '@/pages/My/Edit';
+import { Edit as UserEdit, Email, NickName, Password } from '@/pages/My/Edit';
 import { Favorites, FavoritesDetails } from '@/pages/My/Favorites';
 import { AddNEdit, AddPlan, Schedule } from '@/pages/Polzzak';
 import SearchResult from '@/pages/Search/SearchResult';
@@ -119,10 +113,6 @@ export const routes = [
               {
                 path: 'password',
                 element: <Password />,
-              },
-              {
-                path: 'phone-number',
-                element: <PhoneNumber />,
               },
               {
                 path: 'email',
