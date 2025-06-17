@@ -1,12 +1,18 @@
 # 🐰 폴짝 🐰
 
 <div>
-<!-- 대표 이미지 필요 -->
-<strong>✨ 배포 사이트 :</strong> <span>https://polzzak.vercel.app/</span>
+<p align='center'>
+    <img src="https://capsule-render.vercel.app/api?type=waving&color=e66a47&fontColor=ffffff&height=300&section=header&text=%ED%8F%B4%EC%A7%9D&fontSize=90&animation=fadeIn&fontAlignY=38&desc=%EC%9D%BC%EC%83%81%EC%97%90%EC%84%9C%20%ED%95%9C%20%EA%B1%B8%EC%9D%8C%2C%20%EC%97%AC%ED%96%89%EC%9C%BC%EB%A1%9C%20%ED%8F%B4%EC%A7%9D&descAlignY=60&descAlign=62"/>
+</p>
+
+<strong>✨ 배포 사이트 :</strong> <a href="https://polzzak.vercel.app/" target="_blank" rel="noopener noreferrer">
+https://polzzak.vercel.app/
+</a>
 <br/>
-<strong>✨ 테스트 아이디  :</strong> <span>polzzak@test.com</span>
+<strong>✨ 테스트 아이디 :</strong> <span>polzzak@test.com</span>
 <br/>
 <strong>✨ 테스트 비밀번호 :</strong> <span>polzzak123!</span>
+
 </div>
 
 <br />
@@ -38,38 +44,112 @@
 
 ### Front-end
 
-<div style="display: flex; gap: 1rem;">
-<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1570946287/noticon/qgdiv5ctkcneujidjuv1.png" width="60">
-<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566557331/noticon/d5hqar2idkoefh6fjtpu.png" width="60">
-<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566913457/noticon/eh4d0dnic4n1neth3fui.png" width="60">
-<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1657314490/noticon/ur8spzfcq4acw7ijp68v.png" width="60">
-<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1741157974/noticon/whqhhulwqkiyt2ebgbr6.png" width="60">
-<img src="https://sohanemon.gallerycdn.vsassets.io/extensions/sohanemon/shadcn-wizard/0.0.3/1704375711705/Microsoft.VisualStudio.Services.Icons.Default" width="60">
-</div>
+<table>
+  <tr>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1570946287/noticon/qgdiv5ctkcneujidjuv1.png" width="60"><br>
+      JavaScript
+    </td>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566557331/noticon/d5hqar2idkoefh6fjtpu.png" width="60"><br>
+      React
+    </td>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566913457/noticon/eh4d0dnic4n1neth3fui.png" width="60"><br>
+      TypeScript
+    </td>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1657314490/noticon/ur8spzfcq4acw7ijp68v.png" width="60"><br>
+      Tailwind CSS
+    </td>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1741157974/noticon/whqhhulwqkiyt2ebgbr6.png" width="60"><br>
+      Zustand
+    </td>
+    <td align="center" width="80">
+      <img src="https://tanstack.com/assets/logo-color-100w-br5_Ikqp.png" width="60"><br>
+      TanStack Query
+    </td>
+    <td align="center" width="80">
+      <img src="https://reactrouter.com/_brand/React%20Router%20Brand%20Assets/React%20Router%20Logo/Light.svg" width="60"><br>
+      React Router DOM
+    </td>
+    <td align="center" width="80">
+      <img src="https://sohanemon.gallerycdn.vsassets.io/extensions/sohanemon/shadcn-wizard/0.0.3/1704375711705/Microsoft.VisualStudio.Services.Icons.Default" width="60"><br>
+      Shadcn
+    </td>
+  </tr>
+</table>
 
 <br />
 
 ### Tools
 
-<div style="display: flex; gap: 1rem;">
-<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1720579881/noticon/lxhyu7xo7ujsxvuxmiuc.png" width="60">
-<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1640982247/noticon/tpvr26zp02angin4t0jv.png" width="60">
-<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566913419/noticon/xf9bevlrgugi7xj6xkhp.png" width="60">
-<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1679535484/noticon/arqfoi6i7gubuqkpigud.png" width="60">
-<img src="https://static-00.iconduck.com/assets.00/vercel-icon-512x449-3422jidz.png" width="60">
-<img src="https://static-00.iconduck.com/assets.00/file-type-light-pnpm-icon-1024x1024-87eokmgo.png" width="60">
-</div>
+<table>
+  <tr>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1720579881/noticon/lxhyu7xo7ujsxvuxmiuc.png" width="60"><br>
+      Supabase
+    </td>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566913419/noticon/xf9bevlrgugi7xj6xkhp.png" width="60"><br>
+      Git
+    </td>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1679535484/noticon/arqfoi6i7gubuqkpigud.png" width="60"><br>
+      Vite
+    </td>
+    <td align="center" width="80">
+      <img src="https://static-00.iconduck.com/assets.00/vercel-icon-512x449-3422jidz.png" width="60"><br>
+      Vercel
+    </td>
+    <td align="center" width="80">
+      <img src="https://static-00.iconduck.com/assets.00/file-type-light-pnpm-icon-1024x1024-87eokmgo.png" width="60"><br>
+      pnpm
+    </td>
+    <td align="center" width="80">
+      <img src="https://icon.icepanel.io/Technology/svg/Azios.svg" width="60"><br>
+      Axios
+    </td>
+    <td align="center" width="80">
+      <img src="https://prettier.io/icon.png" width="60"><br>
+      Prettier
+    </td>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1599890132/noticon/c9dgkhp3m5rxmzn3fnp9.png" width="60"><br>
+      ESLint
+    </td>
+  </tr>
+</table>
 
 <br />
 
 ### Collaboration
 
-<div style="display: flex; gap: 1rem;">
-<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566899596/noticon/slhw4nu8hybreryigopq.png" width="60">
-<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1570106347/noticon/hx52ypkqqdzjdvd8iaid.svg" width="60">
-<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1640152045/noticon/albswwsjaaxvxbyhmwig.png" width="60">
-<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566912267/noticon/kkbhzjg7hiqjjl3stwsw.png" width="60">
-</div>
+<table>
+  <tr>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1640982247/noticon/tpvr26zp02angin4t0jv.png" width="60"><br>
+      Figma
+    </td>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566899596/noticon/slhw4nu8hybreryigopq.png" width="60"><br>
+      GitHub
+    </td>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1570106347/noticon/hx52ypkqqdzjdvd8iaid.svg" width="60"><br>
+      Notion
+    </td>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1640152045/noticon/albswwsjaaxvxbyhmwig.png" width="60"><br>
+      Discord
+    </td>
+    <td align="center" width="80">
+      <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566912267/noticon/kkbhzjg7hiqjjl3stwsw.png" width="60"><br>
+      Google Drive
+    </td>
+  </tr>
+</table>
 
 <br />
 
