@@ -423,10 +423,11 @@ function AddNEdit() {
     if (!name) return;
     const { data, error } = await supabase
       .from('polzzak')
-      .select('id, name')
+      .select('name')
       .match({ user_id: userId, name: name });
+    console.log(data);
 
-    if (data?.length && data[0].id !== id) {
+    if (data?.length) {
       showToast('같은 이름이 존재합니다.', 'bottom-[64px]', 2000);
       setIsSaving(false);
       return;
@@ -543,18 +544,24 @@ function AddNEdit() {
           changeRegion = !isSameRegion(region, editRegion);
         }
         if (changeRegion) {
-          const { error: upsertErr } = await supabase
+          const { error: deleteErr } = await supabase
             .from('polzzak_region')
-            .upsert(
-              region.map((item) => ({
-                polzzak_id: id,
-                region: item,
-              })),
-              { onConflict: 'polzzak_id,region' },
-            );
+            .delete()
+            .eq('polzzak_id', id);
 
-          if (upsertErr) throw upsertErr;
+          if (deleteErr) throw deleteErr;
         }
+
+        const { error: insertErr } = await supabase
+          .from('polzzak_region')
+          .insert(
+            region.map((item) => ({
+              polzzak_id: id,
+              region: item,
+            })),
+          );
+
+        if (insertErr) throw insertErr;
       } else {
         if (editRegion?.length) {
           const { error: deleteErr } = await supabase
